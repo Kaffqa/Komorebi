@@ -1,0 +1,36 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+@theme {
+  --color-komorebi-dark: #202e25;
+  --color-komorebi-green: #3d5a45;
+  --color-komorebi-green-light: #52795d;
+  --color-komorebi-sage: #819888;
+  --color-komorebi-light: #eef2ef;
+  --color-komorebi-cream: #faf9f6;
+  --color-komorebi-alert: #ef5350;
+  --color-komorebi-attention: #ff9800;
+
+  --font-heading: "Bosca", "Playfair Display", serif;
+  --font-body: "General Sans", "Inter", sans-serif;
+}
+
+@layer base {
+  html, body {
+    @apply bg-komorebi-cream text-komorebi-dark font-body antialiased;
+    scroll-behavior: smooth;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-normal tracking-tight text-komorebi-green;
+  }
+
+  /* Glassmorphism utilities */
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-sm rounded-2xl;
+  }
+  
+  .glass-card {
+    @apply bg-white/60 backdrop-blur-sm border border-white/30 shadow-sm rounded-xl transition-all duration-300 hover:shadow-md hover:bg-white/80;
+  }
+}
