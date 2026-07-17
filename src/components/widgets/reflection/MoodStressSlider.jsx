@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { Frown, Annoyed, Meh, Smile, Laugh } from "lucide-react";
 
 export function MoodStressSlider({ title, value, onValueChange, icons, labels }) {
   const defaultIcons = [
-    <Frown key="1" className="w-[22px] h-[22px] text-rose-500" />,
-    <Annoyed key="2" className="w-[22px] h-[22px] text-orange-500" />,
-    <Meh key="3" className="w-[22px] h-[22px] text-yellow-500" />,
-    <Smile key="4" className="w-[22px] h-[22px] text-lime-500" />,
-    <Laugh key="5" className="w-[22px] h-[22px] text-emerald-500" />
+    <img key="1" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f61e.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Bad" />,
+    <img key="2" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f615.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Not Bad" />,
+    <img key="3" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f610.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Neutral" />,
+    <img key="4" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f642.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Good" />,
+    <img key="5" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f604.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Very Good" />
   ];
   const displayIcons = icons || defaultIcons;
   const displayLabels = labels || ["Bad", "Not Bad", "Neutral", "Good", "Very Good"];

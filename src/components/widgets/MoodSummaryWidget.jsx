@@ -83,9 +83,37 @@ export function MoodSummaryWidget() {
     return () => window.removeEventListener('mood-updated', handler);
   }, [fetchMoodData]);
 
-  const radius = 70;
+  const radius = 80;
   const circumference = 2 * Math.PI * radius;
-  let currentOffset = 0;
+  
+  let offset = 0;
+  const chartSlices = data
+    .filter(d => d.percentage > 0)
+    .map(item => {
+      const targetLength = (item.percentage / 100) * circumference;
+      const gap = 6;
+      const strokeWidth = 32;
+      const dashArrayLength = Math.max(0, targetLength - gap - strokeWidth);
+      
+      const middleOffset = offset + (targetLength / 2);
+      let angle = (middleOffset / circumference) * 2 * Math.PI - (Math.PI / 2);
+      
+      // If the slice is 100%, its calculated middle is at the bottom.
+      // We force it to the top-right (-45 degrees) for better aesthetics and to avoid the legend.
+      if (item.percentage === 100) {
+        angle = -Math.PI / 4;
+      }
+      
+      const sliceData = {
+        ...item,
+        dashArrayLength,
+        strokeDashoffset: -offset,
+        angle
+      };
+      
+      offset += targetLength;
+      return sliceData;
+    });
 
   const legendData = [
     { label: "Bad", color: "#C9DBCF" },
@@ -129,65 +157,79 @@ export function MoodSummaryWidget() {
             <p className="text-gray-400 text-[14px] font-sans text-center">No mood data yet.<br/>Start logging your mood!</p>
           </div>
         )}
-        {/* Floating Labels */}
-        {hasData && (
-          <>
-            <motion.div animate={{ y: [-5, 5, -5] }} transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }} className="absolute top-4 left-0 bg-[#486E53] text-white text-[13px] font-bold px-3.5 py-1.5 rounded-[12px] rotate-[-12deg] z-10 shadow-sm">
-              {data.find(d => d.label === "Good")?.percentage}%
-            </motion.div>
-            <motion.div animate={{ y: [-4, 4, -4] }} transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut", delay: 0.5 }} className="absolute top-4 right-4 bg-[#678D73] text-white text-[13px] font-bold px-3.5 py-1.5 rounded-[12px] rotate-[15deg] z-10 shadow-sm">
-              {data.find(d => d.label === "Neutral")?.percentage}%
-            </motion.div>
-            <motion.div animate={{ y: [4, -4, 4] }} transition={{ repeat: Infinity, duration: 3.8, ease: "easeInOut", delay: 1.5 }} className="absolute top-[45%] -right-2 bg-[#8AAFA0] text-white text-[13px] font-bold px-3.5 py-1.5 rounded-[12px] rotate-[-5deg] z-10 shadow-sm">
-              {data.find(d => d.label === "Not Bad")?.percentage}%
-            </motion.div>
-            <motion.div animate={{ y: [-3, 3, -3] }} transition={{ repeat: Infinity, duration: 4.2, ease: "easeInOut", delay: 0.8 }} className="absolute bottom-8 right-6 bg-[#C9DBCF] text-white text-[13px] font-bold px-3.5 py-1.5 rounded-[12px] rotate-[8deg] z-10 shadow-sm">
-              {data.find(d => d.label === "Bad")?.percentage}%
-            </motion.div>
-            <motion.div animate={{ y: [5, -5, 5] }} transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut", delay: 1 }} className="absolute bottom-2 left-10 bg-[#274230] text-white text-[13px] font-bold px-3.5 py-1.5 rounded-[12px] rotate-[10deg] z-10 shadow-sm">
-              {data.find(d => d.label === "Very Good")?.percentage}%
-            </motion.div>
-          </>
-        )}
-
-        {/* SVG Donut Chart */}
+        {/* Floating Labels & Chart Wrapper */}
         <div className="w-[220px] h-[220px] relative">
           <svg viewBox="0 0 200 200" className="w-full h-full -rotate-90 drop-shadow-sm">
-            {data.map((item) => {
-              const gap = 12;
-              const strokeWidth = 32;
-              const targetLength = (item.percentage / 100) * circumference;
-              const dashArrayLength = Math.max(0, targetLength - gap - strokeWidth);
-              const strokeDasharray = `${dashArrayLength} ${circumference}`;
-              const strokeDashoffset = -currentOffset;
-              currentOffset += targetLength;
-
-              return (
-                <circle
-                  key={item.label}
-                  cx="100"
-                  cy="100"
-                  r={radius}
-                  fill="none"
-                  stroke={item.color}
-                  strokeWidth={strokeWidth}
-                  strokeLinecap="round"
-                  strokeDasharray={strokeDasharray}
-                  strokeDashoffset={strokeDashoffset}
-                  className="transition-all duration-1000 ease-out origin-center"
-                />
-              );
-            })}
+            {chartSlices.map((item) => (
+              <circle
+                key={item.label}
+                cx="100"
+                cy="100"
+                r={radius}
+                fill="none"
+                stroke={item.color}
+                strokeWidth={32}
+                strokeLinecap="round"
+                strokeDasharray={`${item.dashArrayLength} ${circumference}`}
+                strokeDashoffset={item.strokeDashoffset}
+                className="transition-all duration-1000 ease-out origin-center"
+              />
+            ))}
           </svg>
+          
+          {/* Dynamic Floating Labels */}
+          {chartSlices.map((item, idx) => {
+            const labelRadius = 148;
+            const x = Math.cos(item.angle) * labelRadius;
+            const y = Math.sin(item.angle) * labelRadius;
+            const rotations = [-12, 15, -5, 8, 10];
+            
+            const getSharpCornerClass = (angle) => {
+              let normalizedAngle = angle % (2 * Math.PI);
+              if (normalizedAngle < 0) normalizedAngle += 2 * Math.PI;
+
+              if (normalizedAngle >= 0 && normalizedAngle < Math.PI / 2) {
+                return '!rounded-tl-sm';
+              } else if (normalizedAngle >= Math.PI / 2 && normalizedAngle < Math.PI) {
+                return '!rounded-tr-sm';
+              } else if (normalizedAngle >= Math.PI && normalizedAngle < 3 * Math.PI / 2) {
+                return '!rounded-br-sm';
+              } else {
+                return '!rounded-bl-sm';
+              }
+            };
+            const sharpClass = getSharpCornerClass(item.angle);
+            
+            return (
+              <div 
+                key={item.label}
+                className="absolute z-10 pointer-events-none"
+                style={{ 
+                  left: `calc(50% + ${x}px)`,
+                  top: `calc(50% + ${y}px)`,
+                  transform: `translate(-50%, -50%) rotate(${rotations[idx % 5]}deg)`
+                }}
+              >
+                <motion.div 
+                  animate={{ y: [-4, 4, -4] }}
+                  transition={{ repeat: Infinity, duration: 3 + (idx * 0.2), ease: "easeInOut" }}
+                  className={`text-white text-[13px] font-bold px-3.5 py-1.5 rounded-[12px] ${sharpClass} shadow-sm whitespace-nowrap`}
+                  style={{ backgroundColor: item.color }}
+                >
+                  {item.percentage}%
+                </motion.div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
       {/* Legend */}
-      <div className="mt-8 flex justify-center items-center flex-wrap gap-x-5 gap-y-3 px-2">
+      <div className="mt-12 flex justify-center items-center flex-wrap xl:flex-nowrap gap-x-3 lg:gap-x-4 gap-y-3 px-2 w-full">
         {legendData.map((item) => (
-          <div key={item.label} className="flex items-center gap-2">
-            <span className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: item.color }}></span>
-            <span className="text-[13px] font-sans font-medium text-black">{item.label}</span>
+          <div key={item.label} className="flex items-center gap-1.5 shrink-0">
+            <span className="w-[18px] h-[18px] rounded-full shrink-0" style={{ backgroundColor: item.color }}></span>
+            <span className="text-[12px] lg:text-[13px] font-sans font-medium text-black whitespace-nowrap">{item.label}</span>
           </div>
         ))}
       </div>

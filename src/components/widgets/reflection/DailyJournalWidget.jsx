@@ -191,10 +191,10 @@ export function DailyJournalWidget() {
         {/* Tags display */}
         <div className="flex flex-wrap items-center gap-2">
           {tags.map((tag) => (
-            <span key={tag} className="inline-flex items-center gap-1 bg-[#7DA085]/10 text-[#5D8B66] px-3 py-1 rounded-lg text-[12px] font-medium">
+            <span key={tag} className="inline-flex items-center gap-1.5 bg-[#7DA085]/10 text-[#5D8B66] px-4 py-2 rounded-xl text-[13px] font-medium">
               #{tag}
               <button onClick={() => removeTag(tag)} className="hover:text-red-500 transition-colors">
-                <X className="w-3 h-3" />
+                <X className="w-3.5 h-3.5" />
               </button>
             </span>
           ))}
@@ -216,7 +216,7 @@ export function DailyJournalWidget() {
                   onBlur={() => setTimeout(() => setShowTagInput(false), 200)}
                   autoFocus
                   placeholder="Type a tag..."
-                  className="w-32 px-3 py-1.5 rounded-lg border border-gray-200 text-[12px] outline-none focus:ring-1 focus:ring-[#7DA085]"
+                  className="w-32 px-4 py-2 rounded-xl border border-gray-200 text-[13px] outline-none focus:ring-1 focus:ring-[#7DA085]"
                 />
                 {filteredSuggestions.length > 0 && (
                   <div className="absolute top-full mt-1 left-0 bg-white border border-gray-100 rounded-xl shadow-lg py-1 z-50 min-w-[150px]">
@@ -225,7 +225,7 @@ export function DailyJournalWidget() {
                         key={s}
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => addTag(s)}
-                        className="w-full text-left px-3 py-1.5 text-[12px] font-medium hover:bg-gray-50 text-gray-600 transition-colors"
+                        className="w-full text-left px-4 py-2 text-[13px] font-medium hover:bg-gray-50 text-gray-600 transition-colors"
                       >
                         #{s}
                       </button>

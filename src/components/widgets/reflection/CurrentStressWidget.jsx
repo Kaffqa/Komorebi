@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Laugh, Smile, Meh, Annoyed, Frown } from 'lucide-react';
 import { MoodStressSlider } from './MoodStressSlider';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { supabase } from '../../../services/supabase';
@@ -9,11 +8,11 @@ export function CurrentStressWidget() {
   const [stressScore, setStressScore] = useState(3);
   const debounceRef = useRef(null);
   const stressIcons = [
-    <Laugh key="1" className="w-[22px] h-[22px] text-emerald-500" />,
-    <Smile key="2" className="w-[22px] h-[22px] text-lime-500" />,
-    <Meh key="3" className="w-[22px] h-[22px] text-yellow-500" />,
-    <Annoyed key="4" className="w-[22px] h-[22px] text-orange-500" />,
-    <Frown key="5" className="w-[22px] h-[22px] text-rose-500" />
+    <img key="1" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f604.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Very Low" />,
+    <img key="2" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f642.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Low" />,
+    <img key="3" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f610.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Neutral" />,
+    <img key="4" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f615.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="High" />,
+    <img key="5" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f61e.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Very High" />
   ];
   const stressLabelsForSlider = ["Very Low", "Low", "Neutral", "High", "Very High"];
 
