@@ -1,7 +1,7 @@
-import { Outlet } from "react-router";
+import { Outlet, useLocation, useNavigate } from "react-router";
 import { Sidebar } from "./Sidebar";
 import { SettingsModal } from "./SettingsModal";
-import { Menu, Bell, Settings, Sun, CloudSun, MoonStar } from "lucide-react";
+import { Menu, Bell, Settings, Sun, CloudSun, MoonStar, Plus } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../utils/cn";
@@ -11,6 +11,8 @@ export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { profile } = useAuthStore();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -82,6 +84,15 @@ export function AppLayout() {
              {greeting.text}, {profile?.display_name || "Guest"} {greeting.icon}
            </div>
            <div className="flex items-center space-x-3">
+              {location.pathname === "/forum" && (
+                <button 
+                  onClick={() => navigate("/forum/new")}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-[#7DA085] hover:bg-[#688A70] text-white rounded-[10px] text-sm font-medium transition-colors font-sans mr-2 shadow-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  New Story
+                </button>
+              )}
               <div className="relative" ref={notificationRef}>
                 <button 
                   onClick={() => setShowNotifications(!showNotifications)}

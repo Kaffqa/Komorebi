@@ -21,6 +21,7 @@ export function DailyJournalWidget() {
   const [showAllJournals, setShowAllJournals] = useState(false);
   const [pastJournals, setPastJournals] = useState([]);
   const [loadingJournals, setLoadingJournals] = useState(false);
+  const [selectedJournal, setSelectedJournal] = useState(null);
   const [existingEntryId, setExistingEntryId] = useState(null);
   const tagInputRef = useRef(null);
 
@@ -273,7 +274,7 @@ export function DailyJournalWidget() {
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+              <div className="flex-1 overflow-y-auto space-y-4 pr-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {loadingJournals ? (
                   <p className="text-center text-gray-400 py-10">Loading journals...</p>
                 ) : pastJournals.length === 0 ? (
@@ -283,7 +284,11 @@ export function DailyJournalWidget() {
                   </div>
                 ) : (
                   pastJournals.map((journal) => (
-                    <div key={journal.id} className="border border-gray-100 rounded-2xl p-5 hover:border-gray-200 transition-colors">
+                    <div 
+                      key={journal.id} 
+                      onClick={() => setSelectedJournal(journal)}
+                      className="border border-gray-100 rounded-2xl p-5 hover:border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+                    >
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-[13px] font-medium text-gray-500">
                           {new Date(journal.entry_date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
@@ -297,6 +302,48 @@ export function DailyJournalWidget() {
                     </div>
                   ))
                 )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Detail Journal Modal */}
+      <AnimatePresence>
+        {selectedJournal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-[99999] flex items-center justify-center p-4"
+            onClick={() => setSelectedJournal(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 30, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-[24px] p-6 lg:p-8 w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl"
+            >
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h3 className="text-[20px] font-sans font-semibold text-black">
+                    {new Date(selectedJournal.entry_date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                  </h3>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-lg">{moodEmoji[selectedJournal.mood] || "😐"}</span>
+                    <span className="text-[13px] font-medium text-[#5D8B66] bg-[#7DA085]/10 px-3 py-1 rounded-lg">{selectedJournal.mood}</span>
+                  </div>
+                </div>
+                <button onClick={() => setSelectedJournal(null)} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto pr-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <p className="text-[15px] text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  {selectedJournal.content}
+                </p>
               </div>
             </motion.div>
           </motion.div>

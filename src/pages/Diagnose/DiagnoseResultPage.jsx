@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
-import { motion } from "framer-motion";
-import { ArrowLeft, Share2, Download, MessageSquare, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft, Share2, Download, MessageSquare, Loader2, Check, BookOpen } from "lucide-react";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { supabase } from "../../services/supabase";
 import {
@@ -18,6 +18,8 @@ export default function DiagnoseResultPage() {
   const navigate = useNavigate();
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showToast, setShowToast] = useState("");
 
   useEffect(() => {
     async function fetchResult() {
@@ -245,21 +247,114 @@ Bisakah kita bahas hasil ini?`;
                 Chat With Komi
               </button>
               <button
-                className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 hover:bg-gray-50 transition-colors"
-                title="Share"
+                onClick={() => {
+                  const shareTitle = `Mind Check-In: ${getSeverityLabel(severity)}`;
+                  const shareContent = `📊 Hasil Mind Check-In Saya\n\n` +
+                    `Tingkat: ${getSeverityLabel(severity)} ${getSeverityEmoji(severity)}\n` +
+                    `Akurasi: ${healthPct}%\n\n` +
+                    `Detail Breakdown:\n` +
+                    `• ${SUBSCALE_INFO.depression.name}: ${subscales.depression?.percentage || 0}% (${subscales.depression?.level || "Normal"})\n` +
+                    `• ${SUBSCALE_INFO.anxiety.name}: ${subscales.anxiety?.percentage || 0}% (${subscales.anxiety?.level || "Normal"})\n` +
+                    `• ${SUBSCALE_INFO.stress.name}: ${subscales.stress?.percentage || 0}% (${subscales.stress?.level || "Normal"})\n\n` +
+                    `Hasil ini hanya bersifat informatif dan bukan merupakan diagnosa medis profesional.`;
+
+                  navigate("/forum/new", {
+                    state: {
+                      draftTitle: shareTitle,
+                      draftContent: shareContent,
+                      draftTags: ["Self Improvement"],
+                    }
+                  });
+                }}
+                className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 hover:bg-[#7DA085]/10 hover:border-[#7DA085]/30 transition-colors group"
+                title="Share to Forum"
               >
-                <Share2 className="w-4 h-4 text-gray-500" />
+                <Share2 className="w-4 h-4 text-gray-500 group-hover:text-[#5D8B66]" />
               </button>
               <button
-                className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 hover:bg-gray-50 transition-colors"
-                title="Download"
+                onClick={async () => {
+                  if (isSaving) return;
+                  setIsSaving(true);
+                  try {
+                    const today = new Date().toISOString().split('T')[0];
+                    const journalContent = `📋 Hasil Mind Check-In\n` +
+                      `Tingkat: ${getSeverityLabel(severity)} ${getSeverityEmoji(severity)}\n` +
+                      `Akurasi: ${healthPct}%\n\n` +
+                      `Detail:\n` +
+                      `• ${SUBSCALE_INFO.depression.name}: ${subscales.depression?.percentage || 0}% (${subscales.depression?.level || "Normal"})\n` +
+                      `• ${SUBSCALE_INFO.anxiety.name}: ${subscales.anxiety?.percentage || 0}% (${subscales.anxiety?.level || "Normal"})\n` +
+                      `• ${SUBSCALE_INFO.stress.name}: ${subscales.stress?.percentage || 0}% (${subscales.stress?.level || "Normal"})\n\n` +
+                      `#MindCheckIn #${getSeverityLabel(severity).replace(/\s+/g, '')}`;
+
+                    // Check if today's journal entry exists
+                    const { data: existing } = await supabase
+                      .from('journal_entries')
+                      .select('id, content')
+                      .eq('user_id', user.id)
+                      .eq('entry_date', today)
+                      .maybeSingle();
+
+                    if (existing) {
+                      // Append to existing journal
+                      const updatedContent = existing.content + '\n\n---\n\n' + journalContent;
+                      const { error } = await supabase
+                        .from('journal_entries')
+                        .update({ content: updatedContent })
+                        .eq('id', existing.id);
+                      if (error) throw error;
+                    } else {
+                      // Create new journal entry
+                      const { error } = await supabase
+                        .from('journal_entries')
+                        .insert({
+                          user_id: user.id,
+                          content: journalContent,
+                          mood: 'Neutral',
+                          mood_score: 3,
+                          stress_level: 'Moderate',
+                          stress_score: 3,
+                          entry_date: today,
+                        });
+                      if (error) throw error;
+                    }
+                    setShowToast("Saved to Journal!");
+                    setTimeout(() => setShowToast(""), 3000);
+                  } catch (error) {
+                    console.error("Error saving to journal:", error);
+                    alert("Gagal menyimpan. " + (error.message || ""));
+                  } finally {
+                    setIsSaving(false);
+                  }
+                }}
+                disabled={isSaving}
+                className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 hover:bg-[#7DA085]/10 hover:border-[#7DA085]/30 transition-colors group disabled:opacity-50"
+                title="Save to Journal"
               >
-                <Download className="w-4 h-4 text-gray-500" />
+                {isSaving ? (
+                  <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />
+                ) : (
+                  <BookOpen className="w-4 h-4 text-gray-500 group-hover:text-[#5D8B66]" />
+                )}
               </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 40 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[9999] bg-[#5D8B66] text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 text-sm font-medium font-sans"
+          >
+            <Check className="w-4 h-4" />
+            {showToast}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

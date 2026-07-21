@@ -12,6 +12,9 @@ import DiagnosePage from './pages/Diagnose/DiagnosePage'
 import MindCheckFlow from './pages/Diagnose/MindCheckFlow'
 import DiagnoseResultPage from './pages/Diagnose/DiagnoseResultPage'
 import ChatPage from './pages/Chat/ChatPage'
+import ForumPage from './pages/Forum/ForumPage'
+import NewStoryPage from './pages/Forum/NewStoryPage'
+import HelpPage from './pages/Help/HelpPage'
 
 function App() {
   const { initialize } = useAuthStore()
@@ -34,7 +37,9 @@ function App() {
           <Route path="/expert/check" element={<MindCheckFlow />} />
           <Route path="/expert/result/:id" element={<DiagnoseResultPage />} />
           <Route path="/chat" element={<ChatPage />} />
-          {/* Tambahkan route lainnya di sini: forum, help */}
+          <Route path="/forum" element={<ForumPage />} />
+          <Route path="/forum/new" element={<NewStoryPage />} />
+          <Route path="/help" element={<HelpPage />} />
         </Route>
       </Route>
     </Routes>
