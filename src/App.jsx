@@ -8,6 +8,10 @@ import LandingPage from './pages/LandingPage/LandingPage'
 import LoginPage from './pages/Auth/LoginPage'
 import Dashboard from './pages/Dashboard/Dashboard'
 import JournalingPage from './pages/Journaling/JournalingPage'
+import DiagnosePage from './pages/Diagnose/DiagnosePage'
+import MindCheckFlow from './pages/Diagnose/MindCheckFlow'
+import DiagnoseResultPage from './pages/Diagnose/DiagnoseResultPage'
+import ChatPage from './pages/Chat/ChatPage'
 
 function App() {
   const { initialize } = useAuthStore()
@@ -26,7 +30,11 @@ function App() {
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/journaling" element={<JournalingPage />} />
-          {/* Tambahkan route lainnya di sini: expert, chat, forum, help */}
+          <Route path="/expert" element={<DiagnosePage />} />
+          <Route path="/expert/check" element={<MindCheckFlow />} />
+          <Route path="/expert/result/:id" element={<DiagnoseResultPage />} />
+          <Route path="/chat" element={<ChatPage />} />
+          {/* Tambahkan route lainnya di sini: forum, help */}
         </Route>
       </Route>
     </Routes>
@@ -34,3 +42,4 @@ function App() {
 }
 
 export default App
+

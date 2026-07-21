@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, User, Bell, Shield, LogOut, Check, Loader2 } from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
@@ -13,13 +13,17 @@ export function SettingsModal({ isOpen, onClose }) {
   // Form states for Profile
   const [displayName, setDisplayName] = useState('');
   const [username, setUsername] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (profile) {
       setDisplayName(profile.display_name || '');
       setUsername(profile.username || '');
+      setAvatarUrl(profile.avatar_url || '');
     }
   }, [profile]);
 
@@ -37,6 +41,7 @@ export function SettingsModal({ isOpen, onClose }) {
         .update({
           display_name: displayName,
           username: username,
+          avatar_url: avatarUrl,
           updated_at: new Date().toISOString()
         })
         .eq('id', user.id);
@@ -51,6 +56,36 @@ export function SettingsModal({ isOpen, onClose }) {
       alert("Failed to update profile: " + (err.message || "Unknown error"));
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleAvatarUpload = async (e) => {
+    try {
+      const file = e.target.files?.[0];
+      if (!file || !user) return;
+      
+      setIsUploading(true);
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-${Math.random()}.${fileExt}`;
+
+      // Asumsikan bucket bernama "avatars" (harus dibuat di dashboard Supabase)
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+
+      setAvatarUrl(data.publicUrl);
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      alert('Gagal mengupload avatar. Pastikan bucket "avatars" sudah dibuat di Supabase Storage dan di-set ke public. Error: ' + error.message);
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -130,15 +165,31 @@ export function SettingsModal({ isOpen, onClose }) {
                 <form onSubmit={handleSaveProfile} className="space-y-5">
                   <div className="flex items-center gap-4 mb-6">
                     <div className="w-20 h-20 rounded-2xl bg-[#E5EBE7] border-2 border-white shadow-md flex items-center justify-center overflow-hidden">
-                      {profile?.avatar_url ? (
-                        <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                      {isUploading ? (
+                        <Loader2 className="w-6 h-6 animate-spin text-[#7DA085]" />
+                      ) : avatarUrl ? (
+                        <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                       ) : (
                          <span className="text-2xl">👤</span>
                       )}
                     </div>
-                    <button type="button" className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">
-                      Change Avatar
-                    </button>
+                    <div>
+                      <input 
+                        type="file" 
+                        ref={fileInputRef} 
+                        onChange={handleAvatarUpload} 
+                        accept="image/*" 
+                        className="hidden" 
+                      />
+                      <button 
+                        type="button" 
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploading}
+                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-50"
+                      >
+                        {isUploading ? "Uploading..." : "Change Avatar"}
+                      </button>
+                    </div>
                   </div>
 
                   <div>

@@ -20,7 +20,7 @@ const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutGrid, fillOnActive: true },
   { name: "Reflection", href: "/journaling", icon: BookOpen, showStreak: true, fillOnActive: false },
   { name: "Diagnose", href: "/expert", icon: Search, fillOnActive: false },
-  { name: "Chat", href: "/chat", icon: MessageSquare, fillOnActive: true },
+  { name: "Chat with Komi", href: "/chat", icon: MessageSquare, fillOnActive: true },
   { name: "Sharing", href: "/forum", icon: Users, fillOnActive: true },
   { name: "Help", href: "/help", icon: HelpCircle, fillOnActive: false },
 ];

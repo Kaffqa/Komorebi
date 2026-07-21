@@ -2,7 +2,8 @@ import { Outlet } from "react-router";
 import { Sidebar } from "./Sidebar";
 import { SettingsModal } from "./SettingsModal";
 import { Menu, Bell, Settings, Sun, CloudSun, MoonStar } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../utils/cn";
 import { useAuthStore } from "../../stores/useAuthStore";
 
@@ -20,6 +21,25 @@ export function AppLayout() {
     return { text: "Good Evening", icon: <div className={iconClass}><MoonStar className="w-5 h-5" /></div> };
   };
   const greeting = getGreeting();
+
+  const [showNotifications, setShowNotifications] = useState(false);
+  const notificationRef = useRef(null);
+
+  useEffect(() => {
+    function handleClick(e) {
+      if (notificationRef.current && !notificationRef.current.contains(e.target)) {
+        setShowNotifications(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const dummyNotifications = [
+    { id: 1, type: "reminder", title: "Jangan lupa isi jurnal hari ini", time: "1 jam lalu", read: false },
+    { id: 2, type: "system", title: "Mind Check-In mingguan tersedia", time: "5 jam lalu", read: false },
+    { id: 3, type: "ai", title: "Komi menunggu cerita terbarumu!", time: "1 hari lalu", read: true },
+  ];
 
   return (
     <div className="flex h-screen bg-[#F8F9FA] overflow-hidden">
@@ -62,9 +82,39 @@ export function AppLayout() {
              {greeting.text}, {profile?.display_name || "Guest"} {greeting.icon}
            </div>
            <div className="flex items-center space-x-3">
-              <button className="p-2 rounded-xl border border-gray-200 text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors">
-                <Bell className="w-5 h-5" />
-              </button>
+              <div className="relative" ref={notificationRef}>
+                <button 
+                  onClick={() => setShowNotifications(!showNotifications)}
+                  className="relative p-2 rounded-xl border border-gray-200 text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors"
+                >
+                  <Bell className="w-5 h-5" />
+                  <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white translate-x-1/3 -translate-y-1/3"></span>
+                </button>
+                
+                <AnimatePresence>
+                  {showNotifications && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50"
+                    >
+                      <div className="p-4 border-b border-gray-50 flex justify-between items-center">
+                        <h3 className="font-bold font-sans text-gray-900">Notifications</h3>
+                        <span className="text-xs text-[#5D8B66] font-medium cursor-pointer hover:underline">Mark all as read</span>
+                      </div>
+                      <div className="max-h-80 overflow-y-auto">
+                        {dummyNotifications.map(notif => (
+                          <div key={notif.id} className={`p-4 border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer ${!notif.read ? 'bg-[#F7FAF8]/50' : ''}`}>
+                            <p className={`text-sm ${!notif.read ? 'font-semibold text-gray-900' : 'text-gray-600'}`}>{notif.title}</p>
+                            <p className="text-xs text-gray-400 mt-1">{notif.time}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
               <button 
                 onClick={() => setIsSettingsOpen(true)}
                 className="p-2 rounded-xl border border-gray-200 text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors"
