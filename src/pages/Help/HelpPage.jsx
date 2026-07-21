@@ -155,19 +155,30 @@ export default function HelpPage() {
       {/* Filters */}
       <div className="flex items-center gap-3 mb-8">
         <div className="flex items-center gap-3 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {FILTER_OPTIONS.map((filter) => (
-            <button
-              key={filter}
-              onClick={() => setActiveFilter(filter)}
-              className={`whitespace-nowrap px-6 py-2 rounded-full border text-[13px] font-medium transition-colors font-sans ${
-                activeFilter === filter
-                  ? "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] text-white"
-                  : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              {filter}
-            </button>
-          ))}
+          {FILTER_OPTIONS.map((filter) => {
+            const isActive = activeFilter === filter;
+            return (
+              <button
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+                className={`relative whitespace-nowrap px-6 py-2 rounded-full border text-[13px] font-medium transition-colors font-sans overflow-hidden ${
+                  isActive
+                    ? "text-white border-transparent"
+                    : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeHelpFilter"
+                    className="absolute inset-0 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] rounded-full"
+                    initial={false}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">{filter}</span>
+              </button>
+            );
+          })}
         </div>
         
         <div className="relative shrink-0 pb-2">

@@ -6,13 +6,34 @@ import Logo from "../../assets/logo.svg";
 
 export function Navbar({ onOpenAuth }) {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("/");
   const location = useLocation();
 
   useEffect(() => {
+    const sectionIds = ["stories", "how-it-works", "expert", "faq", "testimonials"];
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
+
+      // Track active section on scroll
+      const scrollPosition = window.scrollY + 250;
+      let current = "/";
+
+      for (const id of sectionIds) {
+        const element = document.getElementById(id);
+        if (element) {
+          const top = element.offsetTop;
+          const height = element.offsetHeight;
+          if (scrollPosition >= top && scrollPosition < top + height) {
+            current = `/#${id}`;
+          }
+        }
+      }
+      setActiveSection(current);
     };
+
     window.addEventListener("scroll", handleScroll);
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -44,38 +65,47 @@ export function Navbar({ onOpenAuth }) {
         </Link>
 
         <div className="hidden md:flex items-center space-x-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              to={link.path}
-              onClick={(e) => {
-                if (location.pathname === "/") {
-                  if (link.path.startsWith("/#")) {
-                    e.preventDefault();
-                    const targetId = link.path.replace("/#", "");
-                    const element = document.getElementById(targetId);
-                    if (element) {
-                      element.scrollIntoView({ behavior: "smooth" });
-                      window.history.pushState(null, "", link.path);
+          {navLinks.map((link) => {
+            const isActive = activeSection === link.path;
+            return (
+              <Link
+                key={link.name}
+                to={link.path}
+                onClick={(e) => {
+                  setActiveSection(link.path);
+                  if (location.pathname === "/") {
+                    if (link.path.startsWith("/#")) {
+                      e.preventDefault();
+                      const targetId = link.path.replace("/#", "");
+                      const element = document.getElementById(targetId);
+                      if (element) {
+                        element.scrollIntoView({ behavior: "smooth" });
+                        window.history.pushState(null, "", link.path);
+                      }
+                    } else if (link.path === "/") {
+                      e.preventDefault();
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                      window.history.pushState(null, "", "/");
                     }
-                  } else if (link.path === "/") {
-                    e.preventDefault();
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                    window.history.pushState(null, "", "/");
                   }
-                }
-              }}
-              className="text-[15px] font-normal transition-colors text-white/80 hover:text-white"
-            >
-              {link.name}
-            </Link>
-          ))}
+                }}
+                className={cn(
+                  "text-[15px] font-body transition-all duration-200 tracking-wide",
+                  isActive
+                    ? "font-medium text-white"
+                    : "font-light text-white/75 hover:text-white"
+                )}
+              >
+                {link.name}
+              </Link>
+            );
+          })}
         </div>
 
         <div className="flex items-center">
           <Button
             onClick={onOpenAuth}
-            className="bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white font-medium px-6 py-2 rounded-full transition-all duration-300 text-[15px]"
+            className="bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white font-body font-light px-6 py-2 rounded-full transition-all duration-300 text-[15px]"
           >
             Get Started
           </Button>

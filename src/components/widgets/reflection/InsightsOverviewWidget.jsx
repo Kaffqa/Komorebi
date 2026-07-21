@@ -104,24 +104,24 @@ export function InsightsOverviewWidget() {
   }, [user, fetchInsights]);
 
   return (
-    <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col h-full">
-      <div className="flex items-center justify-between mb-8">
-        <h3 className="text-[20px] font-sans font-semibold text-black">Insights Overview</h3>
-        <span className="text-sm font-medium text-gray-500 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
+    <div className="bg-white rounded-[24px] p-6 lg:p-7 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col h-fit">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-[20px] font-sans font-medium text-black tracking-tight">Insights Overview</h3>
+        <div className="flex items-center justify-center text-[13px] font-medium text-gray-700 bg-white px-4 py-1.5 rounded-full border border-[#5D8B66]/40 cursor-default">
           Weekly
-        </span>
+        </div>
       </div>
 
-      <div className="flex-1 flex flex-col gap-3">
+      <div className="flex flex-col gap-3">
         {insights.map((item, idx) => (
-          <div key={idx} className="flex items-center justify-between border border-gray-100 rounded-2xl p-3">
+          <div key={idx} className="flex items-center justify-between border border-gray-200/80 rounded-xl p-3 bg-white hover:border-gray-300 transition-colors">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl border border-[#7DA085]/30 bg-[#7DA085]/10 flex items-center justify-center text-[#5D8B66]">
+              <div className="w-10 h-10 rounded-[10px] border border-[#5D8B66]/40 bg-transparent flex items-center justify-center text-[#5D8B66]">
                 <item.icon className="w-5 h-5" strokeWidth={1.5} />
               </div>
-              <span className="font-sans font-medium text-[14px] text-black">{item.label}</span>
+              <span className="font-sans font-medium text-[15px] text-gray-900">{item.label}</span>
             </div>
-            <span className="font-sans font-semibold text-[15px] text-[#5D8B66]">{item.value}</span>
+            <span className="font-sans font-medium text-[17px] text-[#5D8B66]">{item.value}</span>
           </div>
         ))}
       </div>

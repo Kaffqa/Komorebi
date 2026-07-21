@@ -93,9 +93,23 @@ export default function DiagnoseResultPage() {
   ];
 
   // Donut chart parameters
-  const donutRadius = 80;
+  const donutRadius = 76;
   const donutCircumference = 2 * Math.PI * donutRadius;
-  const donutFilled = (healthPct / 100) * donutCircumference;
+  const gap = 38; // Leaves a visual gap after strokeWidth (38 - 24 = 14px)
+  
+  let L1 = 0;
+  let L2 = 0;
+  let currentGap = 0;
+  
+  if (healthPct >= 100) {
+    L1 = donutCircumference;
+  } else if (healthPct <= 0) {
+    L2 = donutCircumference;
+  } else {
+    currentGap = gap;
+    L1 = Math.max(1, (healthPct / 100) * (donutCircumference - 2 * currentGap));
+    L2 = Math.max(1, donutCircumference - 2 * currentGap - L1);
+  }
 
   return (
     <div className="w-full max-w-7xl mx-auto animate-in fade-in duration-500 pb-10">
@@ -173,29 +187,39 @@ export default function DiagnoseResultPage() {
               className="relative w-[220px] h-[220px] mb-6"
             >
               <svg viewBox="0 0 200 200" className="w-full h-full -rotate-90">
-                {/* Background circle */}
-                <circle
-                  cx="100"
-                  cy="100"
-                  r={donutRadius}
-                  fill="none"
-                  stroke="#E5EBE7"
-                  strokeWidth={24}
-                />
-                {/* Filled circle */}
-                <motion.circle
-                  cx="100"
-                  cy="100"
-                  r={donutRadius}
-                  fill="none"
-                  stroke="#5D8B66"
-                  strokeWidth={24}
-                  strokeLinecap="round"
-                  strokeDasharray={donutCircumference}
-                  initial={{ strokeDashoffset: donutCircumference }}
-                  animate={{ strokeDashoffset: donutCircumference - donutFilled }}
-                  transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
-                />
+                {/* Empty circle segment */}
+                {L2 > 0 && (
+                  <motion.circle
+                    cx="100"
+                    cy="100"
+                    r={donutRadius}
+                    fill="none"
+                    stroke="#EEF3F0"
+                    strokeWidth={24}
+                    strokeLinecap="round"
+                    strokeDasharray={`${L2} ${donutCircumference}`}
+                    strokeDashoffset={-(L1 + currentGap)}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.8 }}
+                  />
+                )}
+                {/* Filled circle segment */}
+                {L1 > 0 && (
+                  <motion.circle
+                    cx="100"
+                    cy="100"
+                    r={donutRadius}
+                    fill="none"
+                    stroke="#43674F"
+                    strokeWidth={24}
+                    strokeLinecap="round"
+                    strokeDasharray={`${L1} ${donutCircumference}`}
+                    initial={{ strokeDashoffset: L1 }}
+                    animate={{ strokeDashoffset: 0 }}
+                    transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
+                  />
+                )}
               </svg>
               {/* Center text */}
               <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -203,7 +227,7 @@ export default function DiagnoseResultPage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1 }}
-                  className="text-[36px] font-bold text-[#5D8B66] font-sans leading-none"
+                  className="text-[36px] font-bold text-black font-sans leading-none"
                 >
                   {healthPct}%
                 </motion.span>
@@ -211,7 +235,7 @@ export default function DiagnoseResultPage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1.2 }}
-                  className="text-[13px] text-gray-400 font-sans mt-1"
+                  className="text-[14px] text-gray-500 font-sans mt-1"
                 >
                   Accuracy
                 </motion.span>

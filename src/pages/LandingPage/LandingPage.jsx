@@ -56,9 +56,7 @@ const steps = [
     image: HowItWorks1,
     desc: (
       <>
-        Start with our safe, guided screening. There's no <br className="hidden lg:block" />
-        judgment here just an intelligent tool designed <br className="hidden lg:block" />
-        to understand what you're going through.
+        Start with our safe, guided screening. There's no judgment here just an intelligent tool designed to understand what you're going through.
       </>
     )
   },
@@ -67,9 +65,7 @@ const steps = [
     image: HowItWorks2,
     desc: (
       <>
-        We take the guesswork out of therapy. Based on <br className="hidden lg:block" />
-        your results, we connect you with the right <br className="hidden lg:block" />
-        psychologist or psychiatrist for you.
+        We take the guesswork out of therapy. Based on your results, we connect you with the right psychologist or psychiatrist for you.
       </>
     )
   },
@@ -78,9 +74,7 @@ const steps = [
     image: HowItWorks3,
     desc: (
       <>
-        Whether you prefer talking from the comfort of <br className="hidden lg:block" />
-        your couch or visiting a local expert face-to-face, <br className="hidden lg:block" />
-        we make your first session easy to schedule.
+        Whether you prefer talking from the comfort of your couch or visiting a local expert face-to-face, we make your first session easy to schedule.
       </>
     )
   }
@@ -207,7 +201,7 @@ export default function LandingPage() {
                 hidden: { opacity: 1 },
                 visible: { opacity: 1, transition: { staggerChildren: 0.01, delayChildren: 0.8 } }
               }}
-              className="text-[11px] lg:text-[12px] text-[#5D8B66]/80 text-right lg:max-w-[360px] leading-[1.6] font-sans lg:pb-3 self-end lg:self-auto"
+              className="text-[11px] lg:text-[12px] text-[#5D8B66]/80 text-right lg:max-w-[360px] leading-[1.6] font-sans font-medium lg:pb-3 self-end lg:self-auto"
             >
               {"Stop second-guessing how you feel. Our advanced screening system accurately evaluates your symptoms to connect you with certified psychiatrists and psychologists who specialize in exactly what you're going through.".split(" ").map((word, wordIndex) => (
                 <span key={`word-${wordIndex}`} className="inline-block whitespace-pre">
@@ -236,11 +230,11 @@ export default function LandingPage() {
           >
             <SpotlightText 
               className="w-full mb-16 mx-auto text-center"
-              textClassName="text-[28px] md:text-4xl lg:text-[36px] xl:text-[40px] leading-[1.4]"
+              textClassName="text-[28px] md:text-[36px] lg:text-[42px] xl:text-[48px] leading-[1.4]"
             >
-              Mental health journeys rarely start with clear answers. Too often, people <br className="hidden xl:block" />
-              spend months trying to figure out what they are feeling and who they <br className="hidden xl:block" />
-              should talk to. We built this platform because we believe getting the <br className="hidden xl:block" />
+              Mental health journeys rarely start with clear answers. Too often, people <br className="hidden lg:block" />
+              spend months trying to figure out what they are feeling and who they <br className="hidden lg:block" />
+              should talk to. We built this platform because we believe getting the <br className="hidden lg:block" />
               right care shouldn't feel like a guessing game.
             </SpotlightText>
             
@@ -249,7 +243,7 @@ export default function LandingPage() {
               <img 
                 src={AboutImg} 
                 alt="Our Stories" 
-                className="w-full h-full object-cover" 
+                className="w-full h-full object-cover object-[center_15%]" 
               />
             </div>
           </motion.div>
@@ -264,44 +258,63 @@ export default function LandingPage() {
           </h2>
           
           <div className="flex flex-col md:flex-row justify-between items-center bg-[#43674F] rounded-3xl md:rounded-full p-2 md:p-2 w-full mx-auto shadow-sm gap-2 md:gap-0">
-            {steps.map((step, idx) => (
-              <button
-                key={idx}
-                onClick={() => setActiveStep(idx)}
-                className={`flex-1 w-full text-center px-4 py-3 md:py-4 rounded-2xl md:rounded-full text-[14px] md:text-[18px] transition-all duration-300 font-medium md:font-normal ${
-                  activeStep === idx 
-                    ? "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] text-white" 
-                    : "text-white/80 hover:text-white border border-transparent"
-                }`}
-              >
-                {step.title}
-              </button>
-            ))}
+            {steps.map((step, idx) => {
+              const isActive = activeStep === idx;
+              return (
+                <button
+                  key={idx}
+                  onClick={() => setActiveStep(idx)}
+                  className={`relative flex-1 w-full text-center px-4 py-3 md:py-4 rounded-2xl md:rounded-full text-[14px] md:text-[18px] font-body font-light transition-all duration-300 overflow-hidden ${
+                    isActive 
+                      ? "text-white" 
+                      : "text-white/80 hover:text-white"
+                  }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeStepIndicator"
+                      className="absolute inset-0 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] rounded-2xl md:rounded-full"
+                      initial={false}
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">{step.title}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
         <div className="relative w-full h-[60vh] md:h-[75vh] xl:h-[80vh] rounded-[32px] overflow-hidden bg-gray-100 shadow-sm mt-4 md:mt-0">
-          <AnimatePresence mode="wait">
+          <AnimatePresence>
             <motion.div 
               key={activeStep}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.4 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
               className="absolute inset-0 w-full h-full"
             >
-              <img 
+              <motion.img 
+                initial={{ scale: 1.1 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 1.5, ease: "easeOut" }}
                 src={steps[activeStep].image} 
                 alt={steps[activeStep].title} 
-                className={`w-full h-full object-cover transition-transform duration-500 ${activeStep === 1 ? "scale-105 object-[center_85%]" : "object-[center_20%]"}`} 
+                className={`w-full h-full object-cover ${activeStep === 1 ? "object-[center_85%]" : "object-[center_20%]"}`} 
               />
               
               {/* Info Card - Docked to bottom on mobile, bottom-right on desktop */}
-              <div className="absolute bottom-0 left-0 right-0 md:left-auto md:right-0 bg-white/95 md:bg-white backdrop-blur-sm md:backdrop-blur-none rounded-t-[24px] md:rounded-t-none md:rounded-tl-[32px] p-5 md:p-8 w-full md:max-w-[450px] lg:max-w-[500px] shadow-2xl">
-                <p className="text-[#5D8B66] text-[14px] md:text-[16px] lg:text-[18px] font-medium leading-[1.6]">
+              <motion.div 
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.3 }}
+                className="absolute bottom-0 left-0 right-0 md:left-auto md:right-0 bg-white/95 md:bg-white backdrop-blur-sm md:backdrop-blur-none rounded-t-[24px] md:rounded-t-none md:rounded-tl-[32px] p-5 md:p-8 w-full md:max-w-[450px] lg:max-w-[500px] shadow-2xl"
+              >
+                <p className="text-[#5F916F] text-[16px] md:text-[18px] lg:text-[16px] font-light leading-[1.6]">
                   {steps[activeStep].desc}
                 </p>
-              </div>
+              </motion.div>
             </motion.div>
           </AnimatePresence>
         </div>
@@ -337,7 +350,7 @@ export default function LandingPage() {
             {/* Text Box (Animated on hover) */}
             <div className="absolute bottom-0 left-0 right-0 px-8 py-8 md:px-10 md:py-8 bg-white flex flex-col justify-center transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
               <h3 className="text-xl md:text-2xl font-medium text-[#5D8B66] mb-3">Therapy from Home</h3>
-              <p className="text-[#5D8B66]/80 text-[14px] md:text-[16px] leading-relaxed">
+              <p className="text-[#5D8B66]/80 text-[14px] md:text-[16px] font-sans font-normal leading-relaxed">
                 Skip the commute. Speak to a dedicated expert via secure online video calls from a space where you feel safest.
               </p>
             </div>
@@ -353,7 +366,7 @@ export default function LandingPage() {
             {/* Text Box (Animated on hover) */}
             <div className="absolute bottom-0 left-0 right-0 px-8 py-8 md:px-10 md:py-8 bg-white flex flex-col justify-center transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
               <h3 className="text-xl md:text-2xl font-medium text-[#5D8B66] mb-3">Local Clinic Visits</h3>
-              <p className="text-[#5D8B66]/80 text-[14px] md:text-[16px] leading-relaxed">
+              <p className="text-[#5D8B66]/80 text-[14px] md:text-[16px] font-sans font-normal leading-relaxed">
                 Meet your doctor in a supportive, physical clinical environment. We track your location to surface nearby experts ready to welcome you.
               </p>
             </div>
@@ -378,25 +391,44 @@ export default function LandingPage() {
           </motion.p>
         </div>
 
-        <div className="space-y-4">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.15 }
+            }
+          }}
+          className="space-y-4"
+        >
           {faqs.map((faq, idx) => (
             <motion.div 
-              initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn}
+              variants={{
+                hidden: { opacity: 0, y: 30 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+              }}
               key={idx}
               onClick={() => setOpenFaq(openFaq === idx ? -1 : idx)}
-              className={`cursor-pointer overflow-hidden transition-all duration-300 rounded-[16px] md:rounded-[20px] ${
+              className={`cursor-pointer overflow-hidden transition-all duration-300 rounded-[28px] md:rounded-[36px] ${
                 openFaq === idx 
                   ? "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] text-white"
                   : "bg-white border border-[#5D8B66]/30 hover:border-[#5D8B66]/50 shadow-sm"
               }`}
             >
               <div className="px-6 py-5 md:px-8 md:py-5 flex justify-between items-center">
-                <h3 className={`font-medium text-[16px] md:text-[18px] ${openFaq === idx ? "text-white" : "text-[#455A4A]"}`}>
+                <h3 className={`font-sans font-normal text-[14px] md:text-[16px] leading-relaxed pr-4 ${openFaq === idx ? "text-white" : "text-[#455A4A]"}`}>
                   {faq.question}
                 </h3>
-                <span className={`text-xl md:text-2xl font-light ml-4 flex-shrink-0 ${openFaq === idx ? "text-white" : "text-[#5D8B66]"}`}>
+                <motion.span 
+                  animate={{ rotate: openFaq === idx ? 180 : 0 }}
+                  transition={{ duration: 0.3 }}
+                  className={`text-xl md:text-2xl font-light ml-4 flex-shrink-0 flex items-center justify-center w-6 h-6 ${openFaq === idx ? "text-white" : "text-[#5D8B66]"}`}
+                >
                   {openFaq === idx ? "—" : "+"}
-                </span>
+                </motion.span>
               </div>
               
               <AnimatePresence initial={false}>
@@ -409,7 +441,7 @@ export default function LandingPage() {
                     className="overflow-hidden"
                   >
                     <div className="px-6 pb-6 md:px-8 md:pb-6 pt-0">
-                      <p className="text-white/95 text-[14px] md:text-[15px] leading-relaxed">
+                      <p className="text-white/95 font-sans font-normal text-[14px] md:text-[16px] leading-relaxed">
                         {faq.answer}
                       </p>
                     </div>
@@ -425,7 +457,7 @@ export default function LandingPage() {
           >
             Ask Another Question
           </motion.button>
-        </div>
+        </motion.div>
       </section>
 
       {/* Testimonials */}
@@ -446,13 +478,13 @@ export default function LandingPage() {
           {testimonialsData.map((item, idx) => (
             <div key={idx} className="w-[85vw] md:w-[350px] lg:w-[380px] h-auto shrink-0 bg-white rounded-[24px] shadow-sm border border-gray-100 flex flex-col overflow-hidden">
               <div className="w-full aspect-[4/3] relative shrink-0 rounded-t-[24px] overflow-hidden">
-                <img src={item.image} alt={`Review ${idx + 1}`} className="w-full h-full object-cover object-top rounded-t-[24px]" />
+                <img src={item.image} alt={`Review ${idx + 1}`} className="w-full h-full object-cover object-[center_30%] rounded-t-[24px]" />
               </div>
               <div className="p-6 md:p-8 flex flex-col flex-1 justify-between gap-4">
-                <p className="text-[#5D8B66] text-[14px] md:text-[15px] leading-relaxed font-medium">
+                <p className="text-[#5D8B66] text-[14px] md:text-[15px] font-sans font-normal leading-relaxed">
                   {item.text}
                 </p>
-                <p className="text-[#5D8B66]/60 text-[13px] md:text-[14px]">
+                <p className="text-gray-400 text-[13px] md:text-[14px] font-light">
                   — {item.author}
                 </p>
               </div>
@@ -469,11 +501,8 @@ export default function LandingPage() {
             <img src={FooterImg} alt="Clear Answers" className="absolute inset-0 w-full h-full object-cover object-[center_30%]" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
             <div className="relative w-full px-8 pb-3">
-              <h2 className="w-full hidden md:flex justify-between text-[#CDDDD2] text-5xl lg:text-[72px] xl:text-[82px] font-heading leading-none">
-                <span>Clear</span>
-                <span>Answers.</span>
-                <span>Compassionate</span>
-                <span>Care.</span>
+              <h2 className="w-full hidden md:block text-center text-[#CDDDD2] text-[40px] md:text-[5.5vw] xl:text-[90px] 2xl:text-[96px] font-heading leading-none tracking-tight whitespace-nowrap">
+                Clear Answers. Compassionate Care.
               </h2>
               <h2 className="w-full md:hidden text-center text-[#CDDDD2] text-4xl font-heading leading-tight">
                 Clear Answers.<br/>Compassionate Care.
@@ -481,49 +510,53 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Stats Section */}
-          <div className="pt-10 pb-10 flex flex-col md:flex-row justify-between items-center md:items-start gap-12 md:gap-4 w-full">
-            <div className="flex flex-col items-center md:items-start text-center md:text-left">
-              <h3 className="text-[#5D8B66] text-4xl md:text-5xl lg:text-[56px] font-sans font-medium mb-3">25,000+</h3>
-              <p className="text-gray-400 text-[13px] md:text-[15px] font-sans font-medium">Assessments Completed</p>
+          {/* Stats and Links Container */}
+          <div className="w-full px-4 lg:px-12 xl:px-16">
+            {/* Stats Section */}
+            <div className="pt-12 pb-10 flex flex-col md:flex-row md:justify-between items-center md:items-start gap-12 md:gap-0 w-full">
+              <div className="flex flex-col items-center md:items-start text-center md:text-left">
+                <h3 className="text-[#5D8B66] text-4xl md:text-5xl lg:text-[56px] font-sans font-medium mb-3">25,000+</h3>
+                <p className="text-gray-400 text-[13px] md:text-[15px] font-sans font-medium">Assessments Completed</p>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <h3 className="text-[#5D8B66] text-4xl md:text-5xl lg:text-[56px] font-sans font-medium mb-3">500+</h3>
+                <p className="text-gray-400 text-[13px] md:text-[15px] font-sans font-medium">Licensed Psychologists & Psychiatrists</p>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <h3 className="text-[#5D8B66] text-4xl md:text-5xl lg:text-[56px] font-sans font-medium mb-3">4.9/5</h3>
+                <p className="text-gray-400 text-[13px] md:text-[15px] font-sans font-medium">Patient Care Rating</p>
+              </div>
+              <div className="flex flex-col items-center md:items-end text-center md:text-right">
+                <h3 className="text-[#5D8B66] text-4xl md:text-5xl lg:text-[56px] font-sans font-medium mb-3">92%</h3>
+                <p className="text-gray-400 text-[13px] md:text-[15px] font-sans font-medium">Accurate Initial Match Rate</p>
+              </div>
             </div>
-            <div className="flex flex-col items-center md:items-start text-center md:text-left">
-              <h3 className="text-[#5D8B66] text-4xl md:text-5xl lg:text-[56px] font-sans font-medium mb-3">500+</h3>
-              <p className="text-gray-400 text-[13px] md:text-[15px] font-sans font-medium">Licensed Psychologists & Psychiatrists</p>
-            </div>
-            <div className="flex flex-col items-center md:items-start text-center md:text-left">
-              <h3 className="text-[#5D8B66] text-4xl md:text-5xl lg:text-[56px] font-sans font-medium mb-3">4.9/5</h3>
-              <p className="text-gray-400 text-[13px] md:text-[15px] font-sans font-medium">Patient Care Rating</p>
-            </div>
-            <div className="flex flex-col items-center md:items-end text-center md:text-right">
-              <h3 className="text-[#5D8B66] text-4xl md:text-5xl lg:text-[56px] font-sans font-medium mb-3">92%</h3>
-              <p className="text-gray-400 text-[13px] md:text-[15px] font-sans font-medium">Accurate Initial Match Rate</p>
-            </div>
-          </div>
-
           <div className="w-full h-px bg-gray-100 mb-10"></div>
-
-          {/* Links Section */}
-          <div className="flex flex-wrap gap-12 justify-between pb-32 relative z-10 w-full">
-            <div className="flex flex-col gap-5 min-w-[200px]">
-              <h4 className="text-[#5D8B66] font-sans font-medium mb-2 text-[15px]">Explore</h4>
-              <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">How It Works</a>
-              <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Our Experts</a>
-              <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Testimonials</a>
-              <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">FAQs</a>
-            </div>
-            <div className="flex flex-col gap-5 min-w-[200px]">
-              <h4 className="text-[#5D8B66] font-sans font-medium mb-2 text-[15px]">Legal & Trust</h4>
-              <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Privacy Policy</a>
-              <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Terms of Service</a>
-              <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Healthcare Data Safety</a>
-              <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Informed Consent</a>
-            </div>
-            <div className="flex flex-col gap-5 min-w-[200px] md:text-right">
-              <h4 className="text-[#5D8B66] font-sans font-medium mb-2 text-[15px]">Reach Out</h4>
-              <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Support Center</a>
-              <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Contact Us</a>
-              <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Partner Clinics</a>
+  
+            {/* Links Section */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-0 pb-32 relative z-10 w-full">
+              <div className="flex flex-col items-center md:items-start text-center md:text-left gap-5">
+                <h4 className="text-[#5D8B66] font-sans font-medium mb-2 text-[15px]">Explore</h4>
+                <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">How It Works</a>
+                <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Our Experts</a>
+                <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Testimonials</a>
+                <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">FAQs</a>
+              </div>
+              <div className="flex flex-col items-center md:items-center">
+                <div className="flex flex-col items-start text-left gap-5">
+                  <h4 className="text-[#5D8B66] font-sans font-medium mb-2 text-[15px]">Legal & Trust</h4>
+                  <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Privacy Policy</a>
+                  <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Terms of Service</a>
+                  <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Healthcare Data Safety</a>
+                  <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Informed Consent</a>
+                </div>
+              </div>
+              <div className="flex flex-col items-center md:items-end text-center md:text-right gap-5">
+                <h4 className="text-[#5D8B66] font-sans font-medium mb-2 text-[15px]">Reach Out</h4>
+                <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Support Center</a>
+                <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Contact Us</a>
+                <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Partner Clinics</a>
+              </div>
             </div>
           </div>
           

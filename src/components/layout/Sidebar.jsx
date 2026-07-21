@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router";
+import { motion } from "framer-motion";
 import { 
   LayoutGrid, 
   BookOpen, 
@@ -112,15 +113,23 @@ export function Sidebar() {
                 key={item.name}
                 to={item.href}
                 className={cn(
-                  "group flex items-center px-4 py-3 text-[15px] font-sans font-medium rounded-xl transition-all duration-200 overflow-hidden",
+                  "relative group flex items-center px-4 py-3 text-[15px] font-sans font-medium rounded-xl transition-all duration-200 overflow-hidden",
                   isActive
-                    ? "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] text-white"
+                    ? "text-white"
                     : "text-gray-700 hover:bg-gray-50 border border-transparent",
                   isCollapsed ? "justify-center" : "justify-between"
                 )}
                 title={isCollapsed ? item.name : undefined}
               >
-                <div className="flex items-center">
+                {isActive && (
+                  <motion.div
+                    layoutId="activeSidebarIndicator"
+                    className="absolute inset-0 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] rounded-xl"
+                    initial={false}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <div className="flex items-center relative z-10">
                   <item.icon
                     className={cn(
                       "flex-shrink-0 h-[20px] w-[20px] transition-colors",
@@ -134,7 +143,7 @@ export function Sidebar() {
                   {!isCollapsed && <span className="whitespace-nowrap">{item.name}</span>}
                 </div>
                 {item.showStreak && !isActive && streak > 0 && !isCollapsed && (
-                  <span className="text-[13px] font-medium px-2.5 py-1 rounded-lg border bg-white text-black border-[#7DA085]/60 shadow-sm flex-shrink-0">
+                  <span className="text-[13px] font-medium px-2.5 py-1 rounded-lg border bg-white text-black border-[#7DA085]/60 shadow-sm flex-shrink-0 relative z-10">
                     {streak} 🔥
                   </span>
                 )}

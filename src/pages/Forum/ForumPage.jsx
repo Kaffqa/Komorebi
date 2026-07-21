@@ -204,19 +204,30 @@ export default function ForumPage() {
       {/* Filters & Sort */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-2 overflow-x-auto w-full pb-2 sm:pb-0 hide-scrollbar">
-          {filters.map(filter => (
-            <button
-              key={filter}
-              onClick={() => setActiveFilter(filter)}
-              className={`whitespace-nowrap px-6 py-2 rounded-full border text-sm font-medium transition-colors font-sans ${
-                activeFilter === filter 
-                  ? "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] text-white" 
-                  : "bg-transparent border-gray-200 text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              {filter}
-            </button>
-          ))}
+          {filters.map(filter => {
+            const isActive = activeFilter === filter;
+            return (
+              <button
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+                className={`relative whitespace-nowrap px-6 py-2 rounded-full border text-sm font-medium transition-colors font-sans overflow-hidden ${
+                  isActive 
+                    ? "text-white border-transparent" 
+                    : "bg-transparent border-gray-200 text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeForumFilter"
+                    className="absolute inset-0 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] rounded-full"
+                    initial={false}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">{filter}</span>
+              </button>
+            );
+          })}
         </div>
         
         <button className="flex items-center gap-2 px-5 py-2 rounded-full border border-gray-200 bg-transparent text-sm font-medium text-gray-700 hover:bg-gray-50 whitespace-nowrap">

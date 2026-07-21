@@ -1,4 +1,4 @@
-import { Outlet, useLocation, useNavigate } from "react-router";
+import { useOutlet, useLocation, useNavigate } from "react-router";
 import { Sidebar } from "./Sidebar";
 import { SettingsModal } from "./SettingsModal";
 import { Menu, Bell, Settings, Sun, CloudSun, MoonStar, Plus } from "lucide-react";
@@ -13,6 +13,7 @@ export function AppLayout() {
   const { profile } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
+  const currentOutlet = useOutlet();
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -144,7 +145,18 @@ export function AppLayout() {
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto p-4 md:p-8">
-          <Outlet />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="min-h-full"
+            >
+              {currentOutlet}
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
 
