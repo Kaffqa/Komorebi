@@ -97,7 +97,7 @@ export function Sidebar() {
         )}
         <button 
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+          className="p-1.5 rounded-lg border border-[#7DA085]/60 text-[#5D8B66] hover:bg-[#7DA085]/10 transition-colors flex-shrink-0"
         >
           {isCollapsed ? <PanelLeftOpen className="w-5 h-5" /> : <PanelLeftClose className="w-5 h-5" />}
         </button>
@@ -114,8 +114,8 @@ export function Sidebar() {
                 className={cn(
                   "group flex items-center px-4 py-3 text-[15px] font-sans font-medium rounded-xl transition-all duration-200 overflow-hidden",
                   isActive
-                    ? "bg-[#7DA085] text-white shadow-sm"
-                    : "text-gray-700 hover:bg-gray-50",
+                    ? "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] text-white"
+                    : "text-gray-700 hover:bg-gray-50 border border-transparent",
                   isCollapsed ? "justify-center" : "justify-between"
                 )}
                 title={isCollapsed ? item.name : undefined}
@@ -134,7 +134,7 @@ export function Sidebar() {
                   {!isCollapsed && <span className="whitespace-nowrap">{item.name}</span>}
                 </div>
                 {item.showStreak && !isActive && streak > 0 && !isCollapsed && (
-                  <span className="text-xs px-2 py-0.5 rounded-lg border bg-white text-black border-gray-200 shadow-sm flex-shrink-0">
+                  <span className="text-[13px] font-medium px-2.5 py-1 rounded-lg border bg-white text-black border-[#7DA085]/60 shadow-sm flex-shrink-0">
                     {streak} 🔥
                   </span>
                 )}

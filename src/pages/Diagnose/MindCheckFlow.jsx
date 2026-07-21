@@ -115,8 +115,17 @@ export default function MindCheckFlow() {
   if (!started) {
     return (
       <div className="w-full max-w-7xl mx-auto animate-in fade-in duration-500 pb-10">
-        <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-8 lg:p-12 flex flex-col items-center text-center max-w-2xl mx-auto">
+        <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 overflow-hidden relative">
+          <div className="absolute top-6 left-6 lg:top-8 lg:left-8">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 text-gray-400 hover:text-gray-600 text-[13px] font-medium transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </button>
+          </div>
+          <div className="p-8 pt-16 lg:p-12 flex flex-col items-center text-center max-w-2xl mx-auto">
             {/* Icon */}
             <div className="w-20 h-20 bg-[#5D8B66]/10 rounded-full flex items-center justify-center mb-6">
               <Brain className="w-10 h-10 text-[#5D8B66]" />
@@ -164,7 +173,7 @@ export default function MindCheckFlow() {
 
             <button
               onClick={() => setStarted(true)}
-              className="bg-[#5D8B66] hover:bg-[#4A7A55] text-white px-10 py-3.5 rounded-full text-[15px] font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
+              className="bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white px-10 py-3.5 rounded-full text-[15px] font-semibold transition-all duration-300"
             >
               Mulai Sekarang
             </button>
@@ -308,7 +317,7 @@ export default function MindCheckFlow() {
                 <button
                   onClick={handleSubmit}
                   disabled={submitting}
-                  className="flex items-center gap-2 bg-[#5D8B66] hover:bg-[#4A7A55] text-white px-8 py-3 rounded-full text-[14px] font-semibold transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-70"
+                  className="flex items-center justify-center gap-2 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white px-8 py-3 rounded-full text-[14px] font-semibold transition-all duration-300 disabled:opacity-70"
                 >
                   {submitting ? (
                     <>
@@ -326,10 +335,10 @@ export default function MindCheckFlow() {
                 <button
                   onClick={goNext}
                   disabled={currentAnswer === undefined}
-                  className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-[14px] font-semibold transition-all duration-200 ${
+                  className={`flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-[14px] font-semibold transition-all duration-200 ${
                     currentAnswer === undefined
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-[#5D8B66] hover:bg-[#4A7A55] text-white shadow-sm hover:shadow-md"
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-transparent"
+                      : "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white"
                   }`}
                 >
                   Next

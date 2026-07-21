@@ -87,7 +87,7 @@ export function AppLayout() {
               {location.pathname === "/forum" && (
                 <button 
                   onClick={() => navigate("/forum/new")}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-[#7DA085] hover:bg-[#688A70] text-white rounded-[10px] text-sm font-medium transition-colors font-sans mr-2 shadow-sm"
+                  className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white rounded-[10px] text-sm font-medium transition-all duration-300 font-sans mr-2"
                 >
                   <Plus className="w-4 h-4" />
                   New Story
@@ -96,7 +96,7 @@ export function AppLayout() {
               <div className="relative" ref={notificationRef}>
                 <button 
                   onClick={() => setShowNotifications(!showNotifications)}
-                  className="relative p-2 rounded-xl border border-gray-200 text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors"
+                  className="relative p-2 rounded-lg border border-[#7DA085]/60 text-[#5D8B66] hover:bg-[#7DA085]/10 transition-colors"
                 >
                   <Bell className="w-5 h-5" />
                   <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white translate-x-1/3 -translate-y-1/3"></span>
@@ -128,11 +128,11 @@ export function AppLayout() {
               </div>
               <button 
                 onClick={() => setIsSettingsOpen(true)}
-                className="p-2 rounded-xl border border-gray-200 text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors"
+                className="p-2 rounded-lg border border-[#7DA085]/60 text-[#5D8B66] hover:bg-[#7DA085]/10 transition-colors"
               >
                 <Settings className="w-5 h-5" />
               </button>
-              <div className="w-10 h-10 rounded-xl bg-[#7DA085] flex items-center justify-center text-white overflow-hidden shadow-sm border border-gray-100">
+              <div className="w-10 h-10 rounded-lg bg-[#7DA085] flex items-center justify-center text-white overflow-hidden shadow-sm border border-[#7DA085]/60">
                  {profile?.avatar_url ? (
                    <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
                  ) : (

@@ -241,7 +241,7 @@ Bisakah kita bahas hasil ini?`;
                   
                   navigate("/chat", { state: { diagnosisSummary: summaryText } });
                 }}
-                className="flex-1 flex items-center justify-center gap-2 bg-[#5D8B66] hover:bg-[#4A7A55] text-white py-3 rounded-full text-[14px] font-semibold transition-all duration-200 shadow-sm"
+                className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white py-3 rounded-full text-[14px] font-semibold transition-all duration-300"
               >
                 <MessageSquare className="w-4 h-4" />
                 Chat With Komi

@@ -75,7 +75,7 @@ export function Navbar({ onOpenAuth }) {
         <div className="flex items-center">
           <Button
             onClick={onOpenAuth}
-            className="bg-gradient-to-r from-[#5F916F] to-[#94B59F] border border-white/30 shadow-sm text-white hover:brightness-110 font-medium px-6 py-2 rounded-full transition-all duration-300 text-[15px]"
+            className="bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white font-medium px-6 py-2 rounded-full transition-all duration-300 text-[15px]"
           >
             Get Started
           </Button>

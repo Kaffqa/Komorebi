@@ -161,7 +161,7 @@ export default function HelpPage() {
               onClick={() => setActiveFilter(filter)}
               className={`whitespace-nowrap px-6 py-2 rounded-full border text-[13px] font-medium transition-colors font-sans ${
                 activeFilter === filter
-                  ? "bg-[#7DA085] border-[#7DA085] text-white shadow-sm"
+                  ? "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] text-white"
                   : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
               }`}
             >
@@ -384,7 +384,7 @@ export default function HelpPage() {
                 <div className="flex flex-col gap-2.5 mt-auto">
                   <a
                     href={`tel:${selectedSpecialist.phone}`}
-                    className="w-full py-3 bg-[#7DA085] hover:bg-[#688A70] text-white rounded-full text-[13px] font-semibold transition-colors font-sans flex items-center justify-center gap-2 shadow-sm"
+                    className="w-full py-3 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white rounded-full text-[13px] font-semibold transition-all duration-300 font-sans flex items-center justify-center gap-2"
                   >
                     <Phone className="w-4 h-4" />
                     Hubungi Sekarang

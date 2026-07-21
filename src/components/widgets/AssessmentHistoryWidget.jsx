@@ -68,7 +68,7 @@ export function AssessmentHistoryWidget() {
               if (latestId) navigate(`/expert/result/${latestId}`);
               else navigate("/expert");
             }}
-            className="w-full bg-[#7DA085] hover:bg-[#688A70] text-white py-3.5 rounded-full font-medium transition-colors shadow-sm text-[15px]"
+            className="w-full bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white py-3.5 rounded-full font-medium transition-all duration-300 text-[15px]"
           >
             See Full Recap
           </button>

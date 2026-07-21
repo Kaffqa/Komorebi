@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "../../components/layout/Navbar";
 import { Button } from "../../components/ui/Button";
@@ -122,8 +123,17 @@ export default function LandingPage() {
   const [activeStep, setActiveStep] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const location = useLocation();
 
   const scrollContainerRef = useRef(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('login') === 'true') {
+      setIsAuthModalOpen(true);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [location.search]);
 
   useEffect(() => {
     const container = scrollContainerRef.current;
@@ -260,7 +270,7 @@ export default function LandingPage() {
                 onClick={() => setActiveStep(idx)}
                 className={`flex-1 w-full text-center px-4 py-3 md:py-4 rounded-2xl md:rounded-full text-[14px] md:text-[18px] transition-all duration-300 font-medium md:font-normal ${
                   activeStep === idx 
-                    ? "bg-gradient-to-r from-[#5F916F] to-[#94B59F] border border-white/30 text-white shadow-sm" 
+                    ? "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] text-white" 
                     : "text-white/80 hover:text-white border border-transparent"
                 }`}
               >
@@ -376,7 +386,7 @@ export default function LandingPage() {
               onClick={() => setOpenFaq(openFaq === idx ? -1 : idx)}
               className={`cursor-pointer overflow-hidden transition-all duration-300 rounded-[16px] md:rounded-[20px] ${
                 openFaq === idx 
-                  ? "bg-gradient-to-r from-[#5F916F] to-[#94B59F] border border-white/30 text-white shadow-md"
+                  ? "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] text-white"
                   : "bg-white border border-[#5D8B66]/30 hover:border-[#5D8B66]/50 shadow-sm"
               }`}
             >
@@ -411,7 +421,7 @@ export default function LandingPage() {
           
           <motion.button 
             initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn}
-            className="w-full mt-6 py-4 rounded-full bg-gradient-to-r from-[#5F916F] to-[#94B59F] text-white font-medium text-[16px] hover:brightness-110 transition-all border border-white/30 shadow-sm"
+            className="w-full mt-6 py-4 rounded-full bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white font-medium text-[16px] transition-all"
           >
             Ask Another Question
           </motion.button>

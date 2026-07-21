@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   
   const { signIn, signUp } = useAuthStore();
@@ -19,15 +20,18 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
     setIsLoading(true);
 
     try {
       if (isLogin) {
         await signIn(email, password);
+        navigate("/dashboard");
       } else {
         await signUp(email, password, username, displayName);
+        setIsLogin(true);
+        setSuccess("Account created successfully! Please sign in.");
       }
-      navigate("/dashboard");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -56,8 +60,13 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm text-center">
               {error}
+            </div>
+          )}
+          {success && (
+            <div className="mb-4 p-3 bg-[#F4F7F5] text-[#5D8B66] border border-[#5D8B66]/30 rounded-lg text-sm text-center">
+              {success}
             </div>
           )}
 
@@ -122,7 +131,7 @@ export default function LoginPage() {
 
             <Button 
               type="submit" 
-              className="w-full mt-6"
+              className="w-full mt-6 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white py-3 rounded-2xl font-medium text-[16px] transition-all duration-300"
               disabled={isLoading}
             >
               {isLoading ? "Memproses..." : (isLogin ? "Masuk" : "Daftar")}

@@ -167,15 +167,19 @@ export function DailyJournalWidget() {
             <button 
               onClick={handleSave}
               disabled={isSaving || isSaved || !content.trim()}
-              className={`px-6 py-2 rounded-full text-[13px] font-medium transition-colors text-white ${
-                isSaved ? "bg-green-500" : "bg-[#7DA085] hover:bg-[#688A70] disabled:bg-gray-300"
+              className={`w-[140px] flex justify-center items-center py-2 border rounded-full text-[13px] font-medium transition-all duration-300 text-white ${
+                isSaved 
+                  ? "bg-green-500 border-transparent shadow-sm" 
+                  : !content.trim() || isSaving 
+                    ? "bg-gray-300 border-transparent cursor-not-allowed shadow-sm" 
+                    : "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px]"
               }`}
             >
               {isSaving ? "Saving..." : isSaved ? "Saved!" : "Save"}
             </button>
             <button 
               onClick={loadPastJournals}
-              className="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-5 py-2 rounded-full text-[13px] font-medium transition-colors"
+              className="w-[140px] flex justify-center items-center bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 py-2 rounded-full text-[13px] font-medium transition-colors"
             >
               See All Journal
             </button>

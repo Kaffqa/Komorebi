@@ -152,10 +152,12 @@ export function MoodInputWidget() {
       <button 
         onClick={handleSend}
         disabled={isLoading || isSuccess}
-        className={`w-full py-3.5 rounded-full font-medium transition-colors shadow-sm text-[15px] text-white ${
+        className={`w-full py-3.5 rounded-full font-medium transition-all duration-300 text-[15px] text-white ${
           isSuccess 
-            ? "bg-green-500 hover:bg-green-600" 
-            : "bg-[#7DA085] hover:bg-[#688A70] disabled:bg-gray-300"
+            ? "bg-green-500 hover:bg-green-600 shadow-sm" 
+            : isLoading 
+              ? "bg-gray-300 cursor-not-allowed shadow-sm"
+              : "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px]"
         }`}
       >
         {isLoading ? "Sending..." : isSuccess ? "Saved Successfully!" : "Send"}

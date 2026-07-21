@@ -210,7 +210,7 @@ export default function ForumPage() {
               onClick={() => setActiveFilter(filter)}
               className={`whitespace-nowrap px-6 py-2 rounded-full border text-sm font-medium transition-colors font-sans ${
                 activeFilter === filter 
-                  ? "bg-[#7DA085] border-[#7DA085] text-white" 
+                  ? "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] text-white" 
                   : "bg-transparent border-gray-200 text-gray-600 hover:bg-gray-50"
               }`}
             >
@@ -380,7 +380,7 @@ export default function ForumPage() {
                   <button 
                     onClick={submitComment}
                     disabled={!newComment.trim()}
-                    className="p-3 bg-[#7DA085] hover:bg-[#688A70] text-white rounded-full transition-colors disabled:opacity-50"
+                    className="p-3 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white rounded-full transition-all duration-300 disabled:opacity-50"
                   >
                     <Send className="w-5 h-5" />
                   </button>

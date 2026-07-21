@@ -162,8 +162,8 @@ export default function NewStoryPage() {
                     <button
                       key={tag}
                       onClick={() => { toggleTag(tag); setShowTagMenu(false); }}
-                      className={`px-3 py-1.5 rounded-full text-xs font-medium font-sans transition-colors ${
-                        tags.includes(tag) ? "bg-[#7DA085] text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                      className={`px-3 py-1.5 rounded-full border text-xs font-medium font-sans transition-all duration-300 ${
+                        tags.includes(tag) ? "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100 border-transparent"
                       }`}
                     >
                       {tag}
@@ -231,7 +231,7 @@ export default function NewStoryPage() {
             <button 
               onClick={handlePublish}
               disabled={isPublishing}
-              className="flex-1 sm:flex-none px-8 py-2.5 bg-[#7DA085] hover:bg-[#688A70] text-white rounded-full font-medium font-sans transition-colors disabled:opacity-50"
+              className="flex-1 sm:flex-none px-8 py-2.5 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white rounded-full font-medium font-sans transition-all duration-300 disabled:opacity-50"
             >
               {isPublishing ? "Saving..." : "Save"}
             </button>

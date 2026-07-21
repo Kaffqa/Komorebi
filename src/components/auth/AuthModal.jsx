@@ -12,6 +12,7 @@ export function AuthModal({ isOpen, onClose }) {
   const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -28,6 +29,7 @@ export function AuthModal({ isOpen, onClose }) {
         setUsername("");
         setDisplayName("");
         setError(null);
+        setSuccess(null);
         setShowPassword(false);
       }, 300);
     }
@@ -48,16 +50,19 @@ export function AuthModal({ isOpen, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
     setIsLoading(true);
 
     try {
       if (isLogin) {
         await signIn(email, password);
+        onClose();
+        navigate("/dashboard");
       } else {
         await signUp(email, password, username, displayName);
+        setIsLogin(true);
+        setSuccess("Account created successfully! Please sign in.");
       }
-      onClose();
-      navigate("/dashboard");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -115,6 +120,15 @@ export function AuthModal({ isOpen, onClose }) {
                   className="mb-6 p-4 bg-red-50 text-red-600 rounded-2xl text-sm font-sans text-center border border-red-100"
                 >
                   {error}
+                </motion.div>
+              )}
+              {success && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-6 p-4 bg-[#F4F7F5] text-[#5D8B66] rounded-2xl text-sm font-sans text-center border border-[#5D8B66]/30"
+                >
+                  {success}
                 </motion.div>
               )}
 
@@ -189,7 +203,7 @@ export function AuthModal({ isOpen, onClose }) {
                 <motion.div layout="position">
                   <Button 
                     type="submit" 
-                    className="w-full mt-2 bg-gradient-to-r from-[#5F916F] to-[#94B59F] border border-white/30 text-white py-4 rounded-2xl font-medium text-[16px] transition-all duration-300 hover:brightness-110 shadow-md shadow-[#5D8B66]/20"
+                    className="w-full mt-2 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white py-4 rounded-2xl font-medium text-[16px] transition-all duration-300"
                     disabled={isLoading}
                   >
                     {isLoading ? "Processing..." : (isLogin ? "Sign In" : "Create Account")}
