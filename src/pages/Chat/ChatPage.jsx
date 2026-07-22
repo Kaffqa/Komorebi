@@ -295,7 +295,7 @@ export default function ChatPage() {
               <img src={Logo} alt="Komi" className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-[15px] font-bold text-black font-sans">
+              <h2 className="text-[15px] font-medium text-black font-sans">
                 Komi: Your Daily Companion
               </h2>
               <div className="flex items-center gap-1.5">

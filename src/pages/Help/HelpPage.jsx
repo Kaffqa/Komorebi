@@ -161,16 +161,16 @@ export default function HelpPage() {
               <button
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
-                className={`relative whitespace-nowrap px-6 py-2 rounded-full border text-[13px] font-medium transition-colors font-sans overflow-hidden ${
+                className={`relative whitespace-nowrap px-6 py-2 rounded-full border text-[13px] font-medium transition-colors font-sans overflow-hidden shrink-0 ${
                   isActive
                     ? "text-white border-transparent"
-                    : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                    : "bg-white border-[#B5CCBD] text-gray-600 hover:bg-gray-50"
                 }`}
               >
                 {isActive && (
                   <motion.div
                     layoutId="activeHelpFilter"
-                    className="absolute inset-0 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] rounded-full"
+                    className="absolute inset-[-1px] bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] rounded-full"
                     initial={false}
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
@@ -184,7 +184,7 @@ export default function HelpPage() {
         <div className="relative shrink-0 pb-2">
           <button 
             onClick={() => setShowSortMenu(!showSortMenu)}
-            className="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-full border border-[#B5CCBD] bg-white hover:bg-gray-50 transition-colors"
           >
             <SlidersHorizontal className="w-4 h-4 text-gray-500" />
           </button>
@@ -261,11 +261,11 @@ export default function HelpPage() {
                 {/* Meta row */}
                 <div className="flex items-center justify-between mt-auto">
                   <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200 text-[11px] font-medium text-gray-600 font-sans">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-[11px] font-medium text-gray-600 font-sans">
                       <ThumbsUp className="w-3.5 h-3.5" />
                       {specialist.rating}
                     </div>
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200 text-[11px] font-medium text-gray-600 font-sans">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-[11px] font-medium text-gray-600 font-sans">
                       <Briefcase className="w-3.5 h-3.5" />
                       {specialist.experience}
                     </div>
@@ -335,11 +335,11 @@ export default function HelpPage() {
                 {/* Meta row */}
                 <div className="flex items-center justify-between mb-5">
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-100 text-[11px] font-medium text-gray-600 font-sans">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-[11px] font-medium text-gray-600 font-sans">
                       <ThumbsUp className="w-3.5 h-3.5" />
                       {selectedSpecialist.rating}
                     </div>
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-100 text-[11px] font-medium text-gray-600 font-sans">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-[11px] font-medium text-gray-600 font-sans">
                       <Briefcase className="w-3.5 h-3.5" />
                       {selectedSpecialist.experience}
                     </div>
@@ -381,10 +381,7 @@ export default function HelpPage() {
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {selectedSpecialist.expertise.map((exp) => (
-                      <span 
-                        key={exp}
-                        className="px-3 py-1.5 rounded-full border border-gray-200 text-[11px] font-medium text-gray-600 font-sans"
-                      >
+                      <span key={exp} className="px-3 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-[11px] font-medium text-gray-600 font-sans">
                         {exp}
                       </span>
                     ))}
@@ -403,7 +400,7 @@ export default function HelpPage() {
                   <div className="flex gap-2.5">
                     <a
                       href={`mailto:${selectedSpecialist.email}`}
-                      className="flex-1 py-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-full text-[13px] font-semibold transition-colors font-sans flex items-center justify-center gap-2"
+                      className="flex-1 py-3 border border-[#B5CCBD] bg-white hover:bg-gray-50 text-gray-700 rounded-full text-[13px] font-semibold transition-colors font-sans flex items-center justify-center gap-2"
                     >
                       <Mail className="w-4 h-4" />
                       Email
@@ -412,7 +409,7 @@ export default function HelpPage() {
                       href={`https://wa.me/${selectedSpecialist.phone.replace(/[^0-9]/g, '')}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 py-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-full text-[13px] font-semibold transition-colors font-sans flex items-center justify-center gap-2"
+                      className="flex-1 py-3 border border-[#B5CCBD] bg-white hover:bg-gray-50 text-gray-700 rounded-full text-[13px] font-semibold transition-colors font-sans flex items-center justify-center gap-2"
                     >
                       <ExternalLink className="w-4 h-4" />
                       WhatsApp

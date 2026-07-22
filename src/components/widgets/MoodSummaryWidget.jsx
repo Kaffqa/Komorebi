@@ -130,7 +130,7 @@ export function MoodSummaryWidget() {
         <div className="relative" ref={dropdownRef}>
           <button 
             onClick={() => setShowDropdown(!showDropdown)}
-            className="flex items-center gap-2 text-[13px] font-medium px-4 py-1.5 rounded-full border border-gray-200 text-black hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-2 text-[13px] font-medium px-4 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-black hover:bg-gray-50 transition-colors"
           >
             {view}
             <ChevronDown className="w-4 h-4 text-gray-400" />
@@ -143,8 +143,8 @@ export function MoodSummaryWidget() {
                 exit={{ opacity: 0, y: 10 }}
                 className="absolute top-full right-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50 min-w-[120px]"
               >
-                <button onClick={() => {setView("Weekly"); setShowDropdown(false);}} className="w-full text-left px-4 py-2 hover:bg-gray-50 text-[13px] font-medium transition-colors text-gray-700">Weekly</button>
-                <button onClick={() => {setView("Monthly"); setShowDropdown(false);}} className="w-full text-left px-4 py-2 hover:bg-gray-50 text-[13px] font-medium transition-colors text-gray-700">Monthly</button>
+                <button onClick={() => {setView("Weekly"); setShowDropdown(false);}} className="w-full text-left px-4 py-2 hover:bg-gray-50 text-[13px] font-light transition-colors text-gray-700">Weekly</button>
+                <button onClick={() => {setView("Monthly"); setShowDropdown(false);}} className="w-full text-left px-4 py-2 hover:bg-gray-50 text-[13px] font-light transition-colors text-gray-700">Monthly</button>
               </motion.div>
             )}
           </AnimatePresence>

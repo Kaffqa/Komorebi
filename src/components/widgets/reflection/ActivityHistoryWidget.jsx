@@ -129,13 +129,13 @@ export function ActivityHistoryWidget() {
             <ChevronLeft className="w-4 h-4 text-gray-400" />
           </button>
           <div className="relative">
-            <button 
-              onClick={() => setShowMonthPicker(!showMonthPicker)}
-              className="flex items-center gap-2 text-[13px] font-medium px-4 py-1.5 rounded-full border border-gray-200 text-black hover:bg-gray-50 transition-colors"
-            >
-              {monthName} {year}
-              <ChevronDown className="w-4 h-4 text-gray-400" />
-            </button>
+              <button 
+                onClick={() => setShowMonthPicker(!showMonthPicker)}
+                className="flex items-center gap-2 text-[13px] font-medium px-4 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                {monthName} {year}
+                <ChevronDown className="w-4 h-4 text-gray-400" />
+              </button>
             <AnimatePresence>
               {showMonthPicker && (
                 <motion.div

@@ -162,12 +162,12 @@ export function DailyJournalWidget() {
     <>
       <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col w-full">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-          <h3 className="text-[20px] font-sans font-semibold text-black">Daily Journal</h3>
+          <h3 className="text-[20px] font-sans font-medium text-black">Daily Journal</h3>
           <div className="flex items-center gap-3">
             <button 
               onClick={handleSave}
               disabled={isSaving || isSaved || !content.trim()}
-              className={`w-[140px] flex justify-center items-center py-2 border rounded-full text-[13px] font-medium transition-all duration-300 text-white ${
+              className={`w-[140px] flex justify-center items-center py-2 border rounded-full text-[13px] font-light transition-all duration-300 text-white ${
                 isSaved 
                   ? "bg-green-500 border-transparent shadow-sm" 
                   : !content.trim() || isSaving 
@@ -177,12 +177,12 @@ export function DailyJournalWidget() {
             >
               {isSaving ? "Saving..." : isSaved ? "Saved!" : "Save"}
             </button>
-            <button 
-              onClick={loadPastJournals}
-              className="w-[140px] flex justify-center items-center bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 py-2 rounded-full text-[13px] font-medium transition-colors"
-            >
-              See All Journal
-            </button>
+              <button 
+                onClick={loadPastJournals}
+                className="w-[140px] flex justify-center items-center border border-[#B5CCBD] bg-white text-black hover:bg-gray-50 py-1.5 rounded-full text-[13px] font-medium transition-colors"
+              >
+                See All Journal
+              </button>
           </div>
         </div>
 

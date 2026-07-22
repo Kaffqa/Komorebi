@@ -125,7 +125,7 @@ export default function DiagnoseResultPage() {
       <div className="bg-white rounded-[24px] p-6 lg:p-10 shadow-sm border border-gray-100">
         {/* Title */}
         <div className="mb-8">
-          <h1 className="text-[24px] lg:text-[28px] font-bold text-black font-sans">
+          <h1 className="text-[24px] lg:text-[28px] font-medium text-black font-sans">
             {getSeverityLabel(severity)}{" "}
             <span className="text-[28px]">{getSeverityEmoji(severity)}</span>
           </h1>
@@ -227,7 +227,7 @@ export default function DiagnoseResultPage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1 }}
-                  className="text-[36px] font-bold text-black font-sans leading-none"
+                  className="text-[36px] font-medium text-black font-sans leading-none"
                 >
                   {healthPct}%
                 </motion.span>
@@ -235,7 +235,7 @@ export default function DiagnoseResultPage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1.2 }}
-                  className="text-[14px] text-gray-500 font-sans mt-1"
+                  className="text-[14px] text-gray-500 font-medium font-sans mt-1"
                 >
                   Accuracy
                 </motion.span>
@@ -243,7 +243,7 @@ export default function DiagnoseResultPage() {
             </motion.div>
 
             {/* Disclaimer */}
-            <p className="text-[11px] text-gray-400 text-center font-sans leading-relaxed mb-6 max-w-[260px]">
+            <p className="text-[11px] text-gray-400 text-center font-light font-sans leading-relaxed mb-6 max-w-[260px]">
               These results are for informational purposes only. Please consult
               a professional if your symptoms persist.
             </p>
@@ -265,7 +265,7 @@ Bisakah kita bahas hasil ini?`;
                   
                   navigate("/chat", { state: { diagnosisSummary: summaryText } });
                 }}
-                className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white py-3 rounded-full text-[14px] font-semibold transition-all duration-300"
+                className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white py-3 rounded-full text-[14px] font-light transition-all duration-300"
               >
                 <MessageSquare className="w-4 h-4" />
                 Chat With Komi

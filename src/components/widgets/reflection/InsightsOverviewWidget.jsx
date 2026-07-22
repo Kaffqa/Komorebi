@@ -107,9 +107,9 @@ export function InsightsOverviewWidget() {
     <div className="bg-white rounded-[24px] p-6 lg:p-7 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col h-fit">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-[20px] font-sans font-medium text-black tracking-tight">Insights Overview</h3>
-        <div className="flex items-center justify-center text-[13px] font-medium text-gray-700 bg-white px-4 py-1.5 rounded-full border border-[#5D8B66]/40 cursor-default">
-          Weekly
-        </div>
+          <div className="flex items-center justify-center text-[13px] font-medium text-gray-700 border border-[#B5CCBD] bg-white px-4 py-1.5 rounded-full cursor-default">
+            Weekly
+          </div>
       </div>
 
       <div className="flex flex-col gap-3">

@@ -133,7 +133,7 @@ export default function NewStoryPage() {
         {/* Tags Section */}
         <div className="flex flex-wrap items-center gap-2 mb-8 relative">
           {tags.map(tag => (
-            <span key={tag} className="flex items-center gap-1 bg-white border border-gray-200 text-gray-700 px-3 py-1.5 rounded-full text-sm font-medium font-sans">
+            <span key={tag} className="flex items-center gap-1 bg-white border border-[#B5CCBD] text-gray-700 px-3 py-1.5 rounded-full text-sm font-medium font-sans">
               {tag}
               <button onClick={() => toggleTag(tag)} className="text-gray-400 hover:text-gray-600">
                 <X className="w-3 h-3" />
@@ -143,7 +143,7 @@ export default function NewStoryPage() {
           
           <button 
             onClick={() => setShowTagMenu(!showTagMenu)}
-            className="flex items-center gap-1.5 bg-white border border-gray-200 text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium font-sans hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-1.5 bg-white border border-[#B5CCBD] text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium font-sans hover:bg-gray-50 transition-colors"
           >
             <Plus className="w-4 h-4" />
             Add Tags
@@ -237,7 +237,7 @@ export default function NewStoryPage() {
             </button>
             <button 
               onClick={() => navigate("/forum")}
-              className="flex-1 sm:flex-none px-8 py-2.5 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-full font-medium font-sans transition-colors"
+              className="flex-1 sm:flex-none px-8 py-2.5 border border-[#B5CCBD] bg-white text-gray-700 hover:bg-gray-50 rounded-full font-medium font-sans transition-colors"
             >
               Drafts
             </button>

@@ -3,10 +3,10 @@ import { Link, useLocation } from "react-router";
 import { motion } from "framer-motion";
 import { 
   LayoutGrid, 
-  BookOpen, 
+  BookOpenText, 
   Search, 
-  MessageSquare, 
-  Users, 
+  MessageCircleMore, 
+  UsersRound, 
   HelpCircle,
   PanelLeftClose,
   PanelLeftOpen
@@ -19,10 +19,10 @@ import { getLocalDateString } from "../../utils/date";
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutGrid, fillOnActive: true },
-  { name: "Reflection", href: "/journaling", icon: BookOpen, showStreak: true, fillOnActive: false },
+  { name: "Reflection", href: "/journaling", icon: BookOpenText, showStreak: true, fillOnActive: false },
   { name: "Diagnose", href: "/expert", icon: Search, fillOnActive: false },
-  { name: "Chat with Komi", href: "/chat", icon: MessageSquare, fillOnActive: true },
-  { name: "Sharing", href: "/forum", icon: Users, fillOnActive: true },
+  { name: "Chat with Komi", href: "/chat", icon: MessageCircleMore, fillOnActive: false },
+  { name: "Sharing", href: "/forum", icon: UsersRound, fillOnActive: true },
   { name: "Help", href: "/help", icon: HelpCircle, fillOnActive: false },
 ];
 

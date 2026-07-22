@@ -97,7 +97,7 @@ export function ActivitySuggestionWidget() {
         <h3 className="text-[20px] font-sans font-semibold text-black">Suggested For You</h3>
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="text-[13px] font-medium px-4 py-1.5 rounded-full border border-gray-200 text-black hover:bg-gray-50 transition-colors"
+          className="flex items-center justify-center text-[13px] font-medium px-4 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-black hover:bg-gray-50 transition-colors"
         >
           See More
         </button>
@@ -138,11 +138,11 @@ export function ActivitySuggestionWidget() {
             >
               <div className="p-6 sm:p-8 border-b border-gray-100 flex items-start justify-between bg-gray-50/50">
                 <div>
-                  <h2 className="text-2xl font-bold font-sans text-gray-900 mb-2 flex items-center gap-2">
+                  <h2 className="text-2xl font-medium font-sans text-gray-900 mb-2 flex items-center gap-2">
                     <Activity className="w-6 h-6 text-[#7DA085]" />
                     Rekomendasi Aktivitas
                   </h2>
-                  <p className="text-sm text-gray-500 max-w-lg">
+                  <p className="text-sm font-light text-gray-500 max-w-lg">
                     {moodLevel === "calming" && "Berdasarkan riwayat emosi Anda yang sedang menurun, berikut adalah aktivitas menenangkan untuk memulihkan energi."}
                     {moodLevel === "productive" && "Anda sedang bersemangat! Berikut adalah aktivitas produktif untuk memaksimalkan potensi Anda hari ini."}
                     {moodLevel === "balanced" && "Kondisi Anda cukup seimbang. Berikut adalah rutinitas ringan untuk menjaga kestabilan pikiran Anda."}
@@ -159,11 +159,11 @@ export function ActivitySuggestionWidget() {
               <div className="p-6 sm:p-8 overflow-y-auto space-y-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {activities.map((activity) => (
                   <div key={activity.id} className="flex flex-col sm:flex-row gap-6 p-4 rounded-2xl bg-white border border-gray-100 hover:shadow-md transition-shadow">
-                    <div className="w-full sm:w-32 h-32 sm:h-auto rounded-xl overflow-hidden flex-shrink-0">
+                    <div className="w-full sm:w-[120px] h-[160px] sm:h-[120px] rounded-xl overflow-hidden flex-shrink-0">
                       <img src={activity.image} alt={activity.title} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 flex flex-col justify-center">
-                      <h4 className="text-lg font-bold text-gray-900 font-sans mb-2">{activity.title}</h4>
+                      <h4 className="text-lg font-medium text-gray-900 font-sans mb-2">{activity.title}</h4>
                       <p className="text-sm text-gray-600 font-sans leading-relaxed">{activity.desc}</p>
                       
                       <button 
