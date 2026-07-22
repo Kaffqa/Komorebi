@@ -209,6 +209,7 @@ export default function ForumPage() {
             const isActive = activeFilter === filter;
             return (
                 <button
+                  key={filter}
                   onClick={() => setActiveFilter(filter)}
                   className={`relative whitespace-nowrap px-6 py-2 rounded-full border text-sm font-medium transition-colors font-sans overflow-hidden ${
                     isActive 
