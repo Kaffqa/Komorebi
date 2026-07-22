@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "../../stores/useAuthStore";
+import { supabase } from "../../services/supabase";
 import { Button } from "../../components/ui/Button";
 
 export default function LoginPage() {
@@ -25,8 +26,20 @@ export default function LoginPage() {
 
     try {
       if (isLogin) {
-        await signIn(email, password);
-        navigate("/dashboard");
+        const data = await signIn(email, password);
+        
+        // Check if user is admin
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+          
+        if (profile?.role === 'admin') {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
         await signUp(email, password, username, displayName);
         setIsLogin(true);

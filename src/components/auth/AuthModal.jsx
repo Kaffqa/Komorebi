@@ -3,6 +3,7 @@ import { Mail, Lock, User, Eye, EyeOff, Smile } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router";
 import { useAuthStore } from "../../stores/useAuthStore";
+import { supabase } from "../../services/supabase";
 import { Button } from "../ui/Button";
 
 export function AuthModal({ isOpen, onClose }) {
@@ -55,9 +56,21 @@ export function AuthModal({ isOpen, onClose }) {
 
     try {
       if (isLogin) {
-        await signIn(email, password);
+        const data = await signIn(email, password);
         onClose();
-        navigate("/dashboard");
+        
+        // Check if user is admin
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+          
+        if (profile?.role === 'admin') {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
         await signUp(email, password, username, displayName);
         setIsLogin(true);

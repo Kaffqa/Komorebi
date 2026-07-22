@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, SlidersHorizontal, ThumbsUp, Briefcase, X, MapPin, Shield, Phone, Mail, ExternalLink } from "lucide-react";
+import { supabase } from "../../services/supabase";
 
 const SPECIALISTS = [
   {
@@ -104,6 +105,8 @@ const SPECIALISTS = [
 const FILTER_OPTIONS = ["All", "Psikiater", "Psikolog Klinis", "Konsultan Psikiater", "In Your Area", "Online Session"];
 
 export default function HelpPage() {
+  const [specialists, setSpecialists] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
   const [selectedSpecialist, setSelectedSpecialist] = useState(null);
@@ -112,7 +115,34 @@ export default function HelpPage() {
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [activeSort, setActiveSort] = useState("Default");
 
-  const filteredSpecialists = SPECIALISTS.filter((s) => {
+  useEffect(() => {
+    async function fetchSpecialists() {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('specialists')
+          .select('*')
+          .order('created_at', { ascending: true });
+        
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          setSpecialists(data);
+        } else {
+          setSpecialists(SPECIALISTS); // Fallback to hardcoded if DB is empty
+        }
+      } catch (error) {
+        console.error("Error fetching specialists:", error);
+        setSpecialists(SPECIALISTS); // Fallback on error
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchSpecialists();
+  }, []);
+
+  const filteredSpecialists = specialists.filter((s) => {
     const matchesSearch = !searchQuery || s.name.toLowerCase().includes(searchQuery.toLowerCase());
     
     // Filter logic based on role
@@ -225,7 +255,11 @@ export default function HelpPage() {
 
       {/* Specialist Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filteredSpecialists.length === 0 ? (
+        {loading ? (
+          <div className="col-span-full text-center py-16">
+            <div className="w-10 h-10 border-4 border-[#7DA085]/30 border-t-[#7DA085] rounded-full animate-spin mx-auto"></div>
+          </div>
+        ) : filteredSpecialists.length === 0 ? (
           <div className="col-span-full text-center py-16 bg-white rounded-2xl border border-gray-100">
             <Search className="w-10 h-10 text-gray-200 mx-auto mb-3" />
             <p className="text-gray-400 font-sans">No specialists found.</p>
@@ -243,7 +277,7 @@ export default function HelpPage() {
               {/* Image */}
               <div className="w-full aspect-[4/3] rounded-xl overflow-hidden bg-gray-100 mb-4 shrink-0">
                 <img
-                  src={specialist.avatar}
+                  src={specialist.avatar_url || `https://api.dicebear.com/9.x/notionists/svg?seed=${specialist.name}`}
                   alt={specialist.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -312,7 +346,7 @@ export default function HelpPage() {
                 {/* Image */}
                 <div className="w-full h-[220px] rounded-2xl overflow-hidden bg-gray-100 mb-5 relative shrink-0">
                   <img
-                    src={selectedSpecialist.avatar}
+                    src={selectedSpecialist.avatar_url || `https://api.dicebear.com/9.x/notionists/svg?seed=${selectedSpecialist.name}`}
                     alt={selectedSpecialist.name}
                     className="w-full h-full object-cover"
                   />

@@ -1,4 +1,4 @@
-import { useOutlet, useLocation, useNavigate } from "react-router";
+import { useOutlet, useLocation, useNavigate, Link } from "react-router";
 import { Sidebar } from "./Sidebar";
 import { SettingsModal } from "./SettingsModal";
 import { Menu, Bell, Settings, Sun, CloudSun, MoonStar, Plus } from "lucide-react";
@@ -127,6 +127,16 @@ export function AppLayout() {
                   )}
                 </AnimatePresence>
               </div>
+              
+              {profile?.role === 'admin' && (
+                <Link
+                  to="/admin"
+                  className="hidden sm:flex items-center gap-2 px-3 py-2 bg-[#5D8B66] text-white rounded-lg hover:bg-[#43674F] transition-colors shadow-sm border border-[#43674F]/20 text-[13px] font-bold"
+                >
+                  Admin Panel
+                </Link>
+              )}
+
               <button 
                 onClick={() => setIsSettingsOpen(true)}
                 className="p-2 rounded-lg border border-[#7DA085]/60 text-[#5D8B66] hover:bg-[#7DA085]/10 transition-colors"

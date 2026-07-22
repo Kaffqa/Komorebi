@@ -20,8 +20,25 @@ export const useAuthStore = create((set, get) => ({
     // Listen for auth changes
     supabase.auth.onAuthStateChange(async (event, currentSession) => {
       set({ session: currentSession, user: currentSession?.user || null });
+      
+      // Clear all existing channels to prevent duplicate subscription errors
+      await supabase.removeAllChannels();
+
       if (currentSession?.user) {
         await get().fetchProfile(currentSession.user.id);
+        
+        // Subscribe to profile changes with a completely unique channel name
+        // to avoid race conditions when onAuthStateChange fires multiple times rapidly
+        const uniqueChannel = `public:profiles:${currentSession.user.id}:${Date.now()}`;
+        supabase.channel(uniqueChannel)
+          .on(
+            'postgres_changes',
+            { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${currentSession.user.id}` },
+            (payload) => {
+              if (payload.new) set({ profile: payload.new });
+            }
+          )
+          .subscribe();
       } else {
         set({ profile: null });
       }
