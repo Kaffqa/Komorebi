@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../utils/cn";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { supabase } from "../../services/supabase";
+import { KomiCompanion } from "../widgets/KomiCompanion";
+import { KomiOnboardingTour } from "../widgets/KomiOnboardingTour";
 
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -15,6 +17,48 @@ export function AppLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const currentOutlet = useOutlet();
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  // Check if user has completed onboarding
+  useEffect(() => {
+    async function checkOnboarding() {
+      if (!profile?.id) return;
+      try {
+        const { data } = await supabase
+          .from('profiles')
+          .select('has_onboarded')
+          .eq('id', profile.id)
+          .maybeSingle();
+
+        if (data && !data.has_onboarded) {
+          setShowOnboarding(true);
+        }
+      } catch (err) {
+        // Column might not exist yet, silently ignore
+        console.log('Onboarding check:', err.message);
+      }
+    }
+    checkOnboarding();
+
+    // Listen for tour restart event
+    const handler = () => setShowOnboarding(true);
+    window.addEventListener('restart-tour', handler);
+    return () => window.removeEventListener('restart-tour', handler);
+  }, [profile?.id]);
+
+  const handleOnboardingComplete = async () => {
+    setShowOnboarding(false);
+    if (profile?.id) {
+      try {
+        await supabase
+          .from('profiles')
+          .update({ has_onboarded: true })
+          .eq('id', profile.id);
+      } catch (err) {
+        console.error('Error updating onboarding status:', err);
+      }
+    }
+  };
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -29,6 +73,7 @@ export function AppLayout() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const notificationRef = useRef(null);
+  const mainContentRef = useRef(null);
 
   const fetchNotifications = async () => {
     if (!profile?.id) return;
@@ -315,7 +360,7 @@ export function AppLayout() {
         </div>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-8">
+        <main ref={mainContentRef} className="flex-1 overflow-y-auto p-4 md:p-8 relative">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
@@ -336,6 +381,14 @@ export function AppLayout() {
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
       />
+
+      {/* Komi Companion Pet (Hidden during onboarding) */}
+      {!showOnboarding && <KomiCompanion constraintsRef={mainContentRef} />}
+
+      {/* Onboarding Tour Guide */}
+      {showOnboarding && (
+        <KomiOnboardingTour onComplete={handleOnboardingComplete} />
+      )}
     </div>
   );
 }

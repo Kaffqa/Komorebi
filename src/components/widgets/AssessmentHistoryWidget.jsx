@@ -44,6 +44,7 @@ export function AssessmentHistoryWidget() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="bg-white rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col h-full"
+      data-tour-id="assessment-history"
     >
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-[20px] font-sans font-semibold text-black">Assessment History</h3>

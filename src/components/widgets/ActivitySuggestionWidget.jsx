@@ -92,7 +92,7 @@ export function ActivitySuggestionWidget() {
   };
 
   return (
-    <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 h-full flex flex-col">
+    <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 h-full flex flex-col" data-tour-id="activity-suggestion">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-[20px] font-sans font-semibold text-black">Suggested For You</h3>
         <button 

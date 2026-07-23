@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, User, Bell, Shield, LogOut, Check, Loader2 } from 'lucide-react';
+import { X, User, Bell, Shield, LogOut, Check, Loader2, RotateCcw } from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { supabase } from '../../services/supabase';
 import { useNavigate } from 'react-router';
@@ -253,6 +253,21 @@ export function SettingsModal({ isOpen, onClose }) {
                       <input type="checkbox" className="sr-only peer" />
                       <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#7DA085]"></div>
                     </label>
+                  </div>
+
+                  <div className="pt-4 mt-4 border-t border-gray-100">
+                    <p className="font-medium text-gray-900 text-sm mb-1">Tour Platform</p>
+                    <p className="text-sm text-gray-500 mb-3">Tampilkan ulang tur pengenalan fitur platform oleh Komi.</p>
+                    <button
+                      onClick={() => {
+                        onClose();
+                        window.dispatchEvent(new Event('restart-tour'));
+                      }}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#5D8B66]/10 text-[#5D8B66] hover:bg-[#5D8B66]/20 font-medium text-sm transition-colors"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      Ulangi Tour Komi
+                    </button>
                   </div>
                 </div>
               </motion.div>

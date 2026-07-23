@@ -94,7 +94,7 @@ export function MoodInputWidget() {
   };
 
   return (
-    <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col h-full">
+    <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col h-full" data-tour-id="mood-input">
       <h3 className="text-[20px] font-sans font-semibold text-black mb-1">How Are You Feeling Today?</h3>
       <p className="text-[14px] text-gray-400 font-sans mb-12">
         Sharing your mood gives us a clearer picture of your well being so we can tailor your care

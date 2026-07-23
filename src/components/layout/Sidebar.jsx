@@ -18,12 +18,12 @@ import { supabase } from "../../services/supabase";
 import { getLocalDateString } from "../../utils/date";
 
 const navItems = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutGrid, fillOnActive: true },
-  { name: "Reflection", href: "/journaling", icon: BookOpenText, showStreak: true, fillOnActive: false },
-  { name: "Diagnose", href: "/expert", icon: Search, fillOnActive: false },
-  { name: "Chat with Komi", href: "/chat", icon: MessageCircleMore, fillOnActive: false },
-  { name: "Sharing", href: "/forum", icon: UsersRound, fillOnActive: true },
-  { name: "Help", href: "/help", icon: HelpCircle, fillOnActive: false },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutGrid, fillOnActive: true, tourId: "nav-dashboard" },
+  { name: "Reflection", href: "/journaling", icon: BookOpenText, showStreak: true, fillOnActive: false, tourId: "nav-reflection" },
+  { name: "Diagnose", href: "/expert", icon: Search, fillOnActive: false, tourId: "nav-diagnose" },
+  { name: "Chat with Komi", href: "/chat", icon: MessageCircleMore, fillOnActive: false, tourId: "nav-chat" },
+  { name: "Sharing", href: "/forum", icon: UsersRound, fillOnActive: true, tourId: "nav-sharing" },
+  { name: "Help", href: "/help", icon: HelpCircle, fillOnActive: false, tourId: "nav-help" },
 ];
 
 export function Sidebar() {
@@ -112,6 +112,8 @@ export function Sidebar() {
               <Link
                 key={item.name}
                 to={item.href}
+                data-tour-id={item.tourId}
+                data-tour-padding="0"
                 className={cn(
                   "relative group flex items-center px-4 py-3 text-[15px] font-sans font-medium rounded-xl transition-all duration-200 overflow-hidden",
                   isActive
