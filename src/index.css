@@ -44,3 +44,13 @@
     @apply bg-white/60 backdrop-blur-sm border border-white/30 shadow-sm rounded-xl transition-all duration-300 hover:shadow-md hover:bg-white/80;
   }
 }
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

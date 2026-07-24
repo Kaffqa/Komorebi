@@ -16,21 +16,23 @@ import Logo from "../../assets/logo.svg";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { supabase } from "../../services/supabase";
 import { getLocalDateString } from "../../utils/date";
-
-const navItems = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutGrid, fillOnActive: true, tourId: "nav-dashboard" },
-  { name: "Reflection", href: "/journaling", icon: BookOpenText, showStreak: true, fillOnActive: false, tourId: "nav-reflection" },
-  { name: "Diagnose", href: "/expert", icon: Search, fillOnActive: false, tourId: "nav-diagnose" },
-  { name: "Chat with Komi", href: "/chat", icon: MessageCircleMore, fillOnActive: false, tourId: "nav-chat" },
-  { name: "Sharing", href: "/forum", icon: UsersRound, fillOnActive: true, tourId: "nav-sharing" },
-  { name: "Help", href: "/help", icon: HelpCircle, fillOnActive: false, tourId: "nav-help" },
-];
+import { useTranslation } from "react-i18next";
 
 export function Sidebar() {
   const location = useLocation();
   const { user } = useAuthStore();
   const [streak, setStreak] = useState(1);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { t } = useTranslation();
+
+  const navItems = [
+    { name: t("sidebar.dashboard"), href: "/dashboard", icon: LayoutGrid, fillOnActive: true, tourId: "nav-dashboard" },
+    { name: t("sidebar.reflection"), href: "/journaling", icon: BookOpenText, showStreak: true, fillOnActive: false, tourId: "nav-reflection" },
+    { name: t("sidebar.diagnose"), href: "/expert", icon: Search, fillOnActive: false, tourId: "nav-diagnose" },
+    { name: t("sidebar.chat"), href: "/chat", icon: MessageCircleMore, fillOnActive: false, tourId: "nav-chat" },
+    { name: t("sidebar.sharing"), href: "/forum", icon: UsersRound, fillOnActive: true, tourId: "nav-sharing" },
+    { name: t("sidebar.help"), href: "/help", icon: HelpCircle, fillOnActive: false, tourId: "nav-help" },
+  ];
 
   useEffect(() => {
     async function calculateStreak() {
@@ -105,7 +107,7 @@ export function Sidebar() {
         </button>
       </div>
       
-      <div className="flex flex-1 flex-col overflow-y-auto pt-6 px-4">
+      <div className="flex flex-1 flex-col overflow-y-auto scrollbar-hide pt-6 px-4">
         <nav className="flex-1 space-y-3">
           {navItems.map((item) => {
             const isActive = location.pathname.startsWith(item.href);

@@ -1,0 +1,170 @@
+{
+  "sidebar": {
+    "dashboard": "Beranda",
+    "reflection": "Refleksi",
+    "diagnose": "Diagnosa",
+    "chat": "Ngobrol sama Komi",
+    "sharing": "Berbagi",
+    "help": "Bantuan"
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "tabs": {
+      "profile": "Profil",
+      "preferences": "Preferensi",
+      "account": "Akun"
+    },
+    "profile": {
+      "title": "Edit Profil",
+      "subtitle": "Perbarui informasi pribadi dan avatar Anda.",
+      "picture": "Foto Profil",
+      "change_picture": "Ubah Foto",
+      "picture_hint": "JPG, GIF, atau PNG. Ukuran maksimal 2MB.",
+      "display_name": "Nama Tampilan",
+      "display_name_placeholder": "Kami harus memanggilmu apa?",
+      "username": "Nama Pengguna",
+      "username_placeholder": "@namapengguna",
+      "save_changes": "Simpan Perubahan",
+      "saving": "Menyimpan...",
+      "saved": "Berhasil Disimpan"
+    },
+    "preferences": {
+      "title": "Preferensi",
+      "subtitle": "Atur notifikasi dan tampilan aplikasi Anda.",
+      "daily_reminders": "Pengingat Harian",
+      "daily_reminders_desc": "Dapatkan notifikasi untuk mencatat mood dan jurnal.",
+      "dark_mode": "Mode Malam",
+      "dark_mode_desc": "Beralih ke tema gelap untuk malam hari.",
+      "language": "Bahasa",
+      "language_desc": "Pilih bahasa utama aplikasi.",
+      "tour_title": "Tur Platform 🍃",
+      "tour_desc": "Tampilkan ulang tur pengenalan fitur platform oleh Komi.",
+      "tour_button": "Ulangi Tur Komi"
+    },
+    "account": {
+      "title": "Akun & Keamanan",
+      "subtitle": "Kelola kredensial dan data akun Anda.",
+      "email": "Alamat Email",
+      "change_password": "Ubah Kata Sandi",
+      "export_data": "Ekspor Data Saya",
+      "sign_out": "Keluar"
+    }
+  },
+  "topbar": {
+    "greeting": {
+      "morning": "Selamat Pagi",
+      "afternoon": "Selamat Siang",
+      "evening": "Selamat Malam"
+    },
+    "notifications": {
+      "title": "Notifikasi",
+      "mark_read": "Tandai sudah dibaca",
+      "caught_up": "Semua sudah dibaca!",
+      "no_new": "Tidak ada notifikasi baru",
+      "time": {
+        "just_now": "Baru saja",
+        "m_ago": "{{count}}m yang lalu",
+        "h_ago": "{{count}}j yang lalu",
+        "d_ago": "1h yang lalu"
+      },
+      "reminder_title": "Waktunya Jurnal Harian! 📖",
+      "reminder_content": "Luangkan waktu 5 menit untuk mencatat perasaan dan pengalamanmu hari ini."
+    },
+    "new_story": "Cerita Baru",
+    "admin_panel": "Panel Admin"
+  },
+  "dashboard": {
+    "mood_input": {
+      "title": "Bagaimana Perasaanmu Hari Ini?",
+      "subtitle": "Membagikan suasana hati Anda memberi kami gambaran yang lebih jelas tentang kesejahteraan Anda sehingga kami dapat menyesuaikan perawatan Anda",
+      "labels": ["Buruk", "Lumayan", "Netral", "Baik", "Sangat Baik"],
+      "placeholder": "Apa yang sedang Anda pikirkan hari ini?",
+      "send": "Kirim",
+      "sending": "Mengirim...",
+      "success": "Berhasil Disimpan!"
+    },
+    "mood_summary": {
+      "title": "Riwayat Suasana Hati",
+      "empty": "Belum ada data suasana hati.\nMulai catat perasaanmu!",
+      "weekly": "Mingguan",
+      "monthly": "Bulanan"
+    },
+    "assessment_history": {
+      "title": "Riwayat Asesmen",
+      "see_more": "Lihat Semua",
+      "subtitle": "Tinjau riwayat pemeriksaan kesehatan dan wawasan sistem masa lalu Anda.",
+      "loading": "Memuat riwayat asesmen terbaru Anda...",
+      "failed": "Gagal memuat riwayat asesmen.",
+      "empty": "Anda belum pernah melakukan asesmen. Coba selesaikan satu untuk mendapatkan wawasan!",
+      "summary": "Pada {{name}} terakhir Anda di tanggal {{date}}, skor Anda adalah {{score}} dari {{max}}. Hasil Anda menunjukkan tingkat keparahan \"{{severity}}\".",
+      "see_full": "Lihat Rekap Penuh"
+    },
+    "activity_suggestion": {
+      "title": "Disarankan Untuk Anda",
+      "see_more": "Lihat Semua",
+      "modal_title": "Rekomendasi Aktivitas",
+      "start_activity": "Mulai Aktivitas",
+      "reason_calming": "Berdasarkan riwayat emosi Anda yang sedang menurun, berikut adalah aktivitas menenangkan untuk memulihkan energi.",
+      "reason_productive": "Anda sedang bersemangat! Berikut adalah aktivitas produktif untuk memaksimalkan potensi Anda hari ini.",
+      "reason_balanced": "Kondisi Anda cukup seimbang. Berikut adalah rutinitas ringan untuk menjaga kestabilan pikiran Anda."
+    }
+  },
+  "journaling": {
+    "streak": {
+      "title": "Rentetan Jurnal"
+    },
+    "current_stress": {
+      "title": "Tingkat Stres Saat Ini",
+      "labels": ["Sangat Rendah", "Rendah", "Netral", "Tinggi", "Sangat Tinggi"]
+    },
+    "current_mood": {
+      "title": "Suasana Hati Saat Ini"
+    },
+    "daily_journal": {
+      "title": "Jurnal Harian",
+      "save": "Simpan",
+      "saving": "Menyimpan...",
+      "saved": "Tersimpan!",
+      "see_all": "Lihat Semua Jurnal",
+      "placeholder": "Apa yang sedang Anda pikirkan hari ini?",
+      "add_tag": "Tambah Tag",
+      "tag_placeholder": "Ketik tag...",
+      "modal_title": "Semua Jurnal",
+      "loading": "Memuat jurnal...",
+      "empty": "Belum ada entri jurnal.",
+      "no_data": "Tidak ada data"
+    },
+    "activity_history": {
+      "title": "Riwayat Aktivitas Kalender",
+      "less": "Kurang",
+      "more": "Lebih",
+      "journal_logged": "Jurnal dicatat"
+    },
+    "insights": {
+      "title": "Ringkasan Wawasan",
+      "weekly": "Mingguan",
+      "average_mood": "Rata-rata Suasana Hati",
+      "log_consistency": "Konsistensi Pencatatan",
+      "mood_progress": "Kemajuan Suasana Hati",
+      "journal_completion": "Penyelesaian Jurnal",
+      "new": "Baru"
+    }
+  },
+  "diagnose": {
+    "title": "Cek Kondisi Pikiran",
+    "subtitle": "Asesmen yang dipandu oleh ahli untuk membantu Anda memahami perasaan saat ini dan mendeteksi tanda-tanda awal masalah kesehatan mental.",
+    "begin_button": "Mulai Cek Pikiran",
+    "no_results": {
+      "title": "Belum ada asesmen",
+      "desc": "Mulai Cek Kondisi Pikiran pertama Anda untuk mendapatkan wawasan berharga tentang kesejahteraan mental Anda. Hanya butuh beberapa menit."
+    },
+    "check_full_result": "[Cek hasil selengkapnya]",
+    "severity_desc": {
+      "normal": "Anda berada dalam kondisi mental yang sehat. Tetap jaga kesejahteraan dan rutinitas perawatan diri Anda.",
+      "mild": "Anda merasa lelah secara emosional. Pastikan untuk banyak istirahat. Ini adalah ruang aman bagi Anda untuk beristirahat sejenak.",
+      "moderate": "Anda mengalami tekanan emosional sedang. Pertimbangkan untuk menghubungi seseorang yang Anda percayai.",
+      "severe": "Anda sedang menghadapi tantangan emosional yang signifikan. Kami sangat menyarankan Anda berkonsultasi dengan profesional.",
+      "extremely_severe": "Anda mengalami tingkat tekanan yang sangat tinggi. Harap segera cari bantuan profesional."
+    }
+  }
+}

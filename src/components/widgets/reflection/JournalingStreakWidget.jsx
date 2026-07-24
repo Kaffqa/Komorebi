@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { supabase } from '../../../services/supabase';
 import { getLocalDateString } from '../../../utils/date';
+import { useTranslation } from 'react-i18next';
 
 export function JournalingStreakWidget() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const [streak, setStreak] = useState(1);
 
@@ -75,7 +77,7 @@ export function JournalingStreakWidget() {
         <span className="text-[48px] font-sans font-semibold text-black dark:text-white leading-none tracking-tight transition-colors duration-300">{streak}</span>
         <span className="text-[40px] leading-none">🔥</span>
       </div>
-      <p className="text-[15px] font-sans text-gray-400 dark:text-komorebi-dark-muted font-medium transition-colors duration-300">Journaling Streak</p>
+      <p className="text-[15px] font-sans text-gray-400 dark:text-komorebi-dark-muted font-medium transition-colors duration-300">{t('journaling.streak.title')}</p>
     </div>
   );
 }

@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MoodStressSlider } from './MoodStressSlider';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { supabase } from '../../../services/supabase';
+import { useTranslation } from 'react-i18next';
 
 export function CurrentStressWidget() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const [stressScore, setStressScore] = useState(3);
   const debounceRef = useRef(null);
@@ -14,7 +16,7 @@ export function CurrentStressWidget() {
     <img key="4" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f615.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="High" />,
     <img key="5" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f61e.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Very High" />
   ];
-  const stressLabelsForSlider = ["Very Low", "Low", "Neutral", "High", "Very High"];
+  const stressLabelsForSlider = t('journaling.current_stress.labels', { returnObjects: true });
 
   // Load today's stress from journal_entries
   useEffect(() => {
@@ -65,7 +67,7 @@ export function CurrentStressWidget() {
 
   return (
     <MoodStressSlider 
-      title="Current Stress" 
+      title={t('journaling.current_stress.title')} 
       value={stressScore}
       onValueChange={handleStressChange}
       icons={stressIcons}

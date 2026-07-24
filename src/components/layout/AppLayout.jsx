@@ -10,8 +10,10 @@ import { supabase } from "../../services/supabase";
 import { KomiCompanion } from "../widgets/KomiCompanion";
 import { KomiOnboardingTour } from "../widgets/KomiOnboardingTour";
 import Logo from "../../assets/logo.svg";
+import { useTranslation } from "react-i18next";
 
 export function AppLayout() {
+  const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { profile } = useAuthStore();
@@ -70,9 +72,9 @@ export function AppLayout() {
     const hour = new Date().getHours();
     const iconClass = "p-1.5 bg-[#7DA085]/10 border border-[#7DA085]/20 rounded-xl text-[#5D8B66] shadow-sm";
     
-    if (hour < 12) return { text: "Good Morning", icon: <div className={iconClass}><Sun className="w-5 h-5" /></div> };
-    if (hour < 18) return { text: "Good Afternoon", icon: <div className={iconClass}><CloudSun className="w-5 h-5" /></div> };
-    return { text: "Good Evening", icon: <div className={iconClass}><MoonStar className="w-5 h-5" /></div> };
+    if (hour < 12) return { text: t('topbar.greeting.morning'), icon: <div className={iconClass}><Sun className="w-5 h-5" /></div> };
+    if (hour < 18) return { text: t('topbar.greeting.afternoon'), icon: <div className={iconClass}><CloudSun className="w-5 h-5" /></div> };
+    return { text: t('topbar.greeting.evening'), icon: <div className={iconClass}><MoonStar className="w-5 h-5" /></div> };
   };
   const greeting = getGreeting();
 
@@ -103,8 +105,8 @@ export function AppLayout() {
         const { error: insertError } = await supabase.from('notifications').insert({
           user_id: profile.id,
           type: 'reminder',
-          title: 'Waktunya Jurnal Harian! 📖',
-          content: 'Luangkan waktu 5 menit untuk mencatat perasaan dan pengalamanmu hari ini.',
+          title: t('topbar.notifications.reminder_title'),
+          content: t('topbar.notifications.reminder_content'),
         });
         if (insertError) console.error("Error creating daily reminder:", insertError);
       }
@@ -193,10 +195,10 @@ export function AppLayout() {
     const diffMin = Math.floor(diffSec / 60);
     const diffHours = Math.floor(diffMin / 60);
     
-    if (diffSec < 60) return 'Just now';
-    if (diffMin < 60) return `${diffMin}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    return '1d ago';
+    if (diffSec < 60) return t('topbar.notifications.time.just_now');
+    if (diffMin < 60) return t('topbar.notifications.time.m_ago', { count: diffMin });
+    if (diffHours < 24) return t('topbar.notifications.time.h_ago', { count: diffHours });
+    return t('topbar.notifications.time.d_ago');
   };
 
   const getNotifIcon = (type) => {
@@ -265,7 +267,7 @@ export function AppLayout() {
                   className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white rounded-[10px] text-sm font-medium transition-all duration-300 font-sans mr-2"
                 >
                   <Plus className="w-4 h-4" />
-                  New Story
+                  {t('topbar.new_story')}
                 </button>
               )}
               <div className="relative" ref={notificationRef}>
@@ -298,14 +300,14 @@ export function AppLayout() {
                     >
                       <div className="p-5 border-b border-gray-50 dark:border-komorebi-dark-border flex justify-between items-center bg-gray-50/50 dark:bg-black/20">
                         <h3 className="font-bold font-sans text-gray-900 dark:text-white text-lg flex items-center gap-2">
-                          Notifications
+                          {t('topbar.notifications.title')}
                           {unreadCount > 0 && (
                             <span className="bg-[#5D8B66] text-white text-[10px] px-2 py-0.5 rounded-full">{unreadCount}</span>
                           )}
                         </h3>
                         {unreadCount > 0 && (
                           <button onClick={markAllAsRead} className="text-xs text-[#5D8B66] font-bold cursor-pointer hover:bg-[#5D8B66]/10 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
-                            <CheckCircle2 className="w-3.5 h-3.5" /> Mark all read
+                            <CheckCircle2 className="w-3.5 h-3.5" /> {t('topbar.notifications.mark_read')}
                           </button>
                         )}
                       </div>
@@ -315,8 +317,8 @@ export function AppLayout() {
                             <div className="w-16 h-16 bg-gray-50 dark:bg-white/5 rounded-full flex items-center justify-center mb-3">
                               <Bell className="w-6 h-6 text-gray-300 dark:text-gray-600" />
                             </div>
-                            <p className="text-gray-500 dark:text-gray-400 font-sans text-sm font-medium">You're all caught up!</p>
-                            <p className="text-gray-400 dark:text-gray-500 font-sans text-xs mt-1">No new notifications</p>
+                            <p className="text-gray-500 dark:text-gray-400 font-sans text-sm font-medium">{t('topbar.notifications.caught_up')}</p>
+                            <p className="text-gray-400 dark:text-gray-500 font-sans text-xs mt-1">{t('topbar.notifications.no_new')}</p>
                           </div>
                         ) : (
                           notifications.map((notif, idx) => (
@@ -353,7 +355,7 @@ export function AppLayout() {
                   to="/admin"
                   className="hidden sm:flex items-center gap-2 px-3 py-2 bg-[#5D8B66] text-white rounded-lg hover:bg-[#43674F] transition-colors shadow-sm border border-[#43674F]/20 text-[13px] font-bold"
                 >
-                  Admin Panel
+                  {t('topbar.admin_panel')}
                 </Link>
               )}
 
@@ -374,7 +376,7 @@ export function AppLayout() {
         </div>
 
         {/* Page content */}
-        <main ref={mainContentRef} className="flex-1 overflow-y-auto p-4 md:p-8 relative">
+        <main ref={mainContentRef} className="flex-1 overflow-y-auto scrollbar-hide p-4 md:p-8 relative">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

@@ -2,8 +2,10 @@ import { useState, useEffect, useCallback } from "react";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { supabase } from "../../services/supabase";
 import { dispatchMoodUpdate } from "../../hooks/useMoodEvent";
+import { useTranslation } from "react-i18next";
 
 export function MoodInputWidget() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const [moodScore, setMoodScore] = useState(4);
   const [notes, setNotes] = useState("");
@@ -17,7 +19,9 @@ export function MoodInputWidget() {
     <img key="4" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f642.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Good" />,
     <img key="5" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f604.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Very Good" />
   ];
+  // Internal labels for DB
   const labels = ["Bad", "Not Bad", "Neutral", "Good", "Very Good"];
+  const uiLabels = t('dashboard.mood_input.labels', { returnObjects: true });
 
   // Load today's mood if it exists
   useEffect(() => {
@@ -95,9 +99,9 @@ export function MoodInputWidget() {
 
   return (
     <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col h-full transition-colors duration-300" data-tour-id="mood-input">
-      <h3 className="text-[20px] font-sans font-semibold text-black dark:text-white mb-1 transition-colors duration-300">How Are You Feeling Today?</h3>
+      <h3 className="text-[20px] font-sans font-semibold text-black dark:text-white mb-1 transition-colors duration-300">{t('dashboard.mood_input.title')}</h3>
       <p className="text-[14px] text-gray-400 dark:text-komorebi-dark-muted font-sans mb-12 transition-colors duration-300">
-        Sharing your mood gives us a clearer picture of your well being so we can tailor your care
+        {t('dashboard.mood_input.subtitle')}
       </p>
 
       {/* Custom Slider */}
@@ -124,9 +128,9 @@ export function MoodInputWidget() {
             </div>
             
             <div className="absolute top-full mt-4 w-full h-6">
-               {labels.map((label, idx) => (
+               {uiLabels.map((label, idx) => (
                   <button 
-                    key={label} 
+                    key={idx} 
                     onClick={() => setMoodScore(idx + 1)}
                     className={`absolute -translate-x-1/2 whitespace-nowrap text-[13px] font-sans font-medium transition-colors z-30 ${moodScore === idx + 1 ? "text-[#5D8B66]" : "text-[#5D8B66]/70 hover:text-[#5D8B66]"}`}
                     style={{ left: `${(idx / 4) * 100}%` }}
@@ -142,7 +146,7 @@ export function MoodInputWidget() {
       {/* Input area */}
       <div className="flex-1 mb-6 flex flex-col">
         <textarea 
-          placeholder="What's on your mind today?"
+          placeholder={t('dashboard.mood_input.placeholder')}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           className="w-full flex-1 min-h-[140px] resize-none border border-gray-200 dark:border-[#32473D] rounded-[20px] p-5 font-sans text-[15px] outline-none focus:ring-2 focus:ring-[#7DA085]/30 focus:border-[#7DA085] placeholder:text-gray-300 dark:placeholder:text-gray-600 text-gray-700 dark:text-white bg-transparent transition-colors duration-300"
@@ -160,7 +164,7 @@ export function MoodInputWidget() {
               : "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px]"
         }`}
       >
-        {isLoading ? "Sending..." : isSuccess ? "Saved Successfully!" : "Send"}
+        {isLoading ? t('dashboard.mood_input.sending') : isSuccess ? t('dashboard.mood_input.success') : t('dashboard.mood_input.send')}
       </button>
     </div>
   );

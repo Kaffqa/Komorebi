@@ -1,0 +1,170 @@
+{
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "reflection": "Reflection",
+    "diagnose": "Diagnose",
+    "chat": "Chat with Komi",
+    "sharing": "Sharing",
+    "help": "Help"
+  },
+  "settings": {
+    "title": "Settings",
+    "tabs": {
+      "profile": "Profile",
+      "preferences": "Preferences",
+      "account": "Account"
+    },
+    "profile": {
+      "title": "Edit Profile",
+      "subtitle": "Update your personal information and avatar.",
+      "picture": "Profile Picture",
+      "change_picture": "Change Picture",
+      "picture_hint": "JPG, GIF or PNG. Max size of 2MB.",
+      "display_name": "Display Name",
+      "display_name_placeholder": "What should we call you?",
+      "username": "Username",
+      "username_placeholder": "@username",
+      "save_changes": "Save Changes",
+      "saving": "Saving...",
+      "saved": "Saved Successfully"
+    },
+    "preferences": {
+      "title": "Preferences",
+      "subtitle": "Manage your notifications and app appearance.",
+      "daily_reminders": "Daily Reminders",
+      "daily_reminders_desc": "Get notified to log your mood and journal.",
+      "dark_mode": "Dark Mode",
+      "dark_mode_desc": "Switch to a darker theme for night time.",
+      "language": "Language",
+      "language_desc": "Choose your preferred language.",
+      "tour_title": "Tour Platform 🍃",
+      "tour_desc": "Replay the platform feature tour by Komi.",
+      "tour_button": "Restart Komi Tour"
+    },
+    "account": {
+      "title": "Account & Security",
+      "subtitle": "Manage your account credentials and data.",
+      "email": "Email Address",
+      "change_password": "Change Password",
+      "export_data": "Export My Data",
+      "sign_out": "Sign Out"
+    }
+  },
+  "topbar": {
+    "greeting": {
+      "morning": "Good Morning",
+      "afternoon": "Good Afternoon",
+      "evening": "Good Evening"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "mark_read": "Mark all read",
+      "caught_up": "You're all caught up!",
+      "no_new": "No new notifications",
+      "time": {
+        "just_now": "Just now",
+        "m_ago": "{{count}}m ago",
+        "h_ago": "{{count}}h ago",
+        "d_ago": "1d ago"
+      },
+      "reminder_title": "Daily Journal Time! 📖",
+      "reminder_content": "Take 5 minutes to log your feelings and experiences today."
+    },
+    "new_story": "New Story",
+    "admin_panel": "Admin Panel"
+  },
+  "dashboard": {
+    "mood_input": {
+      "title": "How Are You Feeling Today?",
+      "subtitle": "Sharing your mood gives us a clearer picture of your well being so we can tailor your care",
+      "labels": ["Bad", "Not Bad", "Neutral", "Good", "Very Good"],
+      "placeholder": "What's on your mind today?",
+      "send": "Send",
+      "sending": "Sending...",
+      "success": "Saved Successfully!"
+    },
+    "mood_summary": {
+      "title": "Mood History",
+      "empty": "No mood data yet.\nStart logging your mood!",
+      "weekly": "Weekly",
+      "monthly": "Monthly"
+    },
+    "assessment_history": {
+      "title": "Assessment History",
+      "see_more": "See More",
+      "subtitle": "Review your past health screenings and system insights.",
+      "loading": "Loading your latest assessment history...",
+      "failed": "Failed to load assessment history.",
+      "empty": "You haven't taken any assessments yet. Try completing one to gain insights!",
+      "summary": "In your last {{name}} on {{date}}, you scored {{score}} out of {{max}}. Your result indicated a severity level of \"{{severity}}\".",
+      "see_full": "See Full Recap"
+    },
+    "activity_suggestion": {
+      "title": "Suggested For You",
+      "see_more": "See More",
+      "modal_title": "Activity Recommendations",
+      "start_activity": "Start Activity",
+      "reason_calming": "Based on your declining emotional history, here are some calming activities to restore your energy.",
+      "reason_productive": "You're full of energy! Here are productive activities to maximize your potential today.",
+      "reason_balanced": "Your condition is quite balanced. Here are light routines to maintain your mental stability."
+    }
+  },
+  "journaling": {
+    "streak": {
+      "title": "Journaling Streak"
+    },
+    "current_stress": {
+      "title": "Current Stress",
+      "labels": ["Very Low", "Low", "Neutral", "High", "Very High"]
+    },
+    "current_mood": {
+      "title": "Current Mood"
+    },
+    "daily_journal": {
+      "title": "Daily Journal",
+      "save": "Save",
+      "saving": "Saving...",
+      "saved": "Saved!",
+      "see_all": "See All Journal",
+      "placeholder": "What's on your mind today?",
+      "add_tag": "Add Tag",
+      "tag_placeholder": "Type a tag...",
+      "modal_title": "All Journals",
+      "loading": "Loading journals...",
+      "empty": "No journal entries yet.",
+      "no_data": "No data"
+    },
+    "activity_history": {
+      "title": "Calender Activity History",
+      "less": "Less",
+      "more": "More",
+      "journal_logged": "Journal logged"
+    },
+    "insights": {
+      "title": "Insights Overview",
+      "weekly": "Weekly",
+      "average_mood": "Average Mood",
+      "log_consistency": "Log Consistency",
+      "mood_progress": "Mood Progress",
+      "journal_completion": "Journaling Completion",
+      "new": "New"
+    }
+  },
+  "diagnose": {
+    "title": "Mind Check-In",
+    "subtitle": "A supportive, expert-guided assessment to help you understand your current feelings and detect early signs of mental health distress.",
+    "begin_button": "Begin Mind Check",
+    "no_results": {
+      "title": "No assessments yet",
+      "desc": "Start your first Mind Check-In to gain valuable insights about your mental well-being. It only takes a few minutes."
+    },
+    "check_full_result": "[Check for the full result]",
+    "severity_desc": {
+      "normal": "You're in a healthy mental state. Keep maintaining your well-being and self-care routines.",
+      "mild": "You're feeling emotionally drained. Make sure to get plenty of rest. This is a safe space for you to take a short break.",
+      "moderate": "You're experiencing moderate emotional distress. Consider reaching out to someone you trust.",
+      "severe": "You're going through significant emotional challenges. We strongly recommend consulting a professional.",
+      "extremely_severe": "You're experiencing very high levels of distress. Please seek professional help immediately."
+    }
+  }
+}

@@ -3,10 +3,12 @@ import { ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { supabase } from "../../services/supabase";
+import { useTranslation } from "react-i18next";
 
 export function MoodSummaryWidget() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
-  const [view, setView] = useState("Weekly");
+  const [view, setView] = useState(t('dashboard.mood_summary.weekly'));
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -34,7 +36,7 @@ export function MoodSummaryWidget() {
   const fetchMoodData = useCallback(async () => {
     if (!user) return;
     
-    const days = view === "Weekly" ? 7 : 30;
+    const days = view === t('dashboard.mood_summary.weekly') ? 7 : 30;
     const dateLimit = new Date();
     dateLimit.setDate(dateLimit.getDate() - days);
 
@@ -62,15 +64,16 @@ export function MoodSummaryWidget() {
     });
 
     const total = entries.length;
+    const uiLabels = t('dashboard.mood_input.labels', { returnObjects: true });
     
     setData([
-      { label: "Neutral", percentage: Math.round((counts[3] / total) * 100), color: "#678D73" },
-      { label: "Not Bad", percentage: Math.round((counts[2] / total) * 100), color: "#8AAFA0" },
-      { label: "Bad", percentage: Math.round((counts[1] / total) * 100), color: "#C9DBCF" },
-      { label: "Very Good", percentage: Math.round((counts[5] / total) * 100), color: "#274230" },
-      { label: "Good", percentage: Math.round((counts[4] / total) * 100), color: "#486E53" },
+      { label: uiLabels[2], percentage: Math.round((counts[3] / total) * 100), color: "#678D73" },
+      { label: uiLabels[1], percentage: Math.round((counts[2] / total) * 100), color: "#8AAFA0" },
+      { label: uiLabels[0], percentage: Math.round((counts[1] / total) * 100), color: "#C9DBCF" },
+      { label: uiLabels[4], percentage: Math.round((counts[5] / total) * 100), color: "#274230" },
+      { label: uiLabels[3], percentage: Math.round((counts[4] / total) * 100), color: "#486E53" },
     ]);
-  }, [user, view]);
+  }, [user, view, t]);
 
   useEffect(() => {
     fetchMoodData();
@@ -115,18 +118,19 @@ export function MoodSummaryWidget() {
       return sliceData;
     });
 
+  const uiLabels = t('dashboard.mood_input.labels', { returnObjects: true });
   const legendData = [
-    { label: "Bad", color: "#C9DBCF" },
-    { label: "Not Bad", color: "#8AAFA0" },
-    { label: "Neutral", color: "#678D73" },
-    { label: "Good", color: "#486E53" },
-    { label: "Very Good", color: "#274230" },
+    { label: uiLabels[0], color: "#C9DBCF" },
+    { label: uiLabels[1], color: "#8AAFA0" },
+    { label: uiLabels[2], color: "#678D73" },
+    { label: uiLabels[3], color: "#486E53" },
+    { label: uiLabels[4], color: "#274230" },
   ];
 
   return (
     <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-komorebi-dark-border h-full flex flex-col transition-colors duration-300" data-tour-id="mood-summary">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-[20px] font-sans font-semibold text-black dark:text-white transition-colors duration-300">Mood History</h3>
+        <h3 className="text-[20px] font-sans font-semibold text-black dark:text-white transition-colors duration-300">{t('dashboard.mood_summary.title')}</h3>
         <div className="relative" ref={dropdownRef}>
           <button 
             onClick={() => setShowDropdown(!showDropdown)}
@@ -143,8 +147,8 @@ export function MoodSummaryWidget() {
                   exit={{ opacity: 0, y: 10 }}
                   className="absolute top-full right-0 mt-2 bg-white dark:bg-[#1c2620] rounded-xl shadow-lg border border-gray-100 dark:border-[#32473D] py-2 z-50 min-w-[120px]"
                 >
-                  <button onClick={() => {setView("Weekly"); setShowDropdown(false);}} className="w-full text-left px-4 py-2 hover:bg-gray-50 dark:hover:bg-black/20 text-[13px] font-light transition-colors text-gray-700 dark:text-gray-300">Weekly</button>
-                  <button onClick={() => {setView("Monthly"); setShowDropdown(false);}} className="w-full text-left px-4 py-2 hover:bg-gray-50 dark:hover:bg-black/20 text-[13px] font-light transition-colors text-gray-700 dark:text-gray-300">Monthly</button>
+                  <button onClick={() => {setView(t('dashboard.mood_summary.weekly')); setShowDropdown(false);}} className="w-full text-left px-4 py-2 hover:bg-gray-50 dark:hover:bg-black/20 text-[13px] font-light transition-colors text-gray-700 dark:text-gray-300">{t('dashboard.mood_summary.weekly')}</button>
+                  <button onClick={() => {setView(t('dashboard.mood_summary.monthly')); setShowDropdown(false);}} className="w-full text-left px-4 py-2 hover:bg-gray-50 dark:hover:bg-black/20 text-[13px] font-light transition-colors text-gray-700 dark:text-gray-300">{t('dashboard.mood_summary.monthly')}</button>
                 </motion.div>
             )}
           </AnimatePresence>
@@ -154,7 +158,7 @@ export function MoodSummaryWidget() {
       <div className="flex-1 flex flex-col justify-center items-center relative min-h-[250px] w-full max-w-[320px] mx-auto">
         {!hasData && (
           <div className="absolute inset-0 flex items-center justify-center z-20">
-            <p className="text-gray-400 dark:text-komorebi-dark-muted text-[14px] font-sans text-center">No mood data yet.<br/>Start logging your mood!</p>
+            <p className="text-gray-400 dark:text-komorebi-dark-muted text-[14px] font-sans text-center whitespace-pre-line">{t('dashboard.mood_summary.empty')}</p>
           </div>
         )}
         {/* Floating Labels & Chart Wrapper */}

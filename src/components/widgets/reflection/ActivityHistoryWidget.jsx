@@ -3,8 +3,11 @@ import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { supabase } from '../../../services/supabase';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n';
 
 export function ActivityHistoryWidget() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const [hoveredCell, setHoveredCell] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -13,7 +16,7 @@ export function ActivityHistoryWidget() {
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
-  const monthName = currentDate.toLocaleString('default', { month: 'long' });
+  const monthName = currentDate.toLocaleString(i18n.language === 'id' ? 'id-ID' : 'en-US', { month: 'long' });
 
   const colorMap = {
     0: 'bg-[#F2F4F2] dark:bg-[#1A231D]',
@@ -118,12 +121,14 @@ export function ActivityHistoryWidget() {
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
 
-  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const months = i18n.language === 'id' 
+    ? ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
+    : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   return (
     <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col h-full relative z-0 transition-colors duration-300">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-[20px] font-sans font-semibold text-black dark:text-white transition-colors duration-300">Calender Activity History</h3>
+        <h3 className="text-[20px] font-sans font-semibold text-black dark:text-white transition-colors duration-300">{t('journaling.activity_history.title')}</h3>
         <div className="flex items-center gap-2">
           <button onClick={prevMonth} className="p-1 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg transition-colors">
             <ChevronLeft className="w-4 h-4 text-gray-400" />
@@ -209,10 +214,10 @@ export function ActivityHistoryWidget() {
                             <>
                               <p className="text-gray-300">Mood: {dayData.mood || moodLabels[dayData.moodScore] || "—"}</p>
                               <p className="text-gray-300">Stress: {dayData.stressLevel || stressLabels[dayData.stressScore] || "—"}</p>
-                              {dayData.hasJournal && <p className="text-green-300 mt-0.5">📝 Journal logged</p>}
+                              {dayData.hasJournal && <p className="text-green-300 mt-0.5">📝 {t('journaling.activity_history.journal_logged')}</p>}
                             </>
                           ) : (
-                            <p className="text-gray-400">No data</p>
+                            <p className="text-gray-400">{t('journaling.daily_journal.no_data')}</p>
                           )}
                           <div className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-gray-900" />
                         </motion.div>
@@ -227,7 +232,7 @@ export function ActivityHistoryWidget() {
       </div>
 
       <div className="mt-6 flex items-center gap-2 text-[12px] font-medium text-gray-400">
-        <span>Less</span>
+        <span>{t('journaling.activity_history.less')}</span>
         <div className="flex gap-1">
           <div className="w-3.5 h-3.5 rounded-sm bg-[#F2F4F2] dark:bg-[#1A231D]" />
           <div className="w-3.5 h-3.5 rounded-sm bg-[#C9DBCF] dark:bg-[#2C3F33]" />
@@ -235,7 +240,7 @@ export function ActivityHistoryWidget() {
           <div className="w-3.5 h-3.5 rounded-sm bg-[#678D73] dark:bg-[#52795D]" />
           <div className="w-3.5 h-3.5 rounded-sm bg-[#486E53] dark:bg-[#678D73]" />
         </div>
-        <span>More</span>
+        <span>{t('journaling.activity_history.more')}</span>
       </div>
     </div>
   );

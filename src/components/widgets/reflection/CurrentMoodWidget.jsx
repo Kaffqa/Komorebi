@@ -3,8 +3,10 @@ import { MoodStressSlider } from './MoodStressSlider';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { supabase } from '../../../services/supabase';
 import { dispatchMoodUpdate } from '../../../hooks/useMoodEvent';
+import { useTranslation } from 'react-i18next';
 
 export function CurrentMoodWidget() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const [moodScore, setMoodScore] = useState(4);
   const debounceRef = useRef(null);
@@ -72,9 +74,10 @@ export function CurrentMoodWidget() {
 
   return (
     <MoodStressSlider 
-      title="Current Mood" 
+      title={t('journaling.current_mood.title')} 
       value={moodScore}
       onValueChange={handleMoodChange}
+      labels={t('dashboard.mood_input.labels', { returnObjects: true })}
     />
   );
 }

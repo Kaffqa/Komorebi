@@ -12,7 +12,9 @@ import {
   Share2,
   X,
   Send,
-  ArrowLeft
+  ArrowLeft,
+  AlertTriangle,
+  CheckCircle2
 } from "lucide-react";
 
 export default function ForumPage() {
@@ -24,6 +26,14 @@ export default function ForumPage() {
   const [activeFilter, setActiveFilter] = useState("All Feed");
   const [searchQuery, setSearchQuery] = useState("");
   const [likedPosts, setLikedPosts] = useState(new Set());
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [postToDelete, setPostToDelete] = useState(null);
+  const [toastMessage, setToastMessage] = useState(null); // { type: 'success' | 'error', text: '' }
+
+  const showToast = (text, type = 'success') => {
+    setToastMessage({ text, type });
+    setTimeout(() => setToastMessage(null), 3000);
+  };
   
   // Modal for comments
   const [selectedPost, setSelectedPost] = useState(null);
@@ -56,7 +66,7 @@ export default function ForumPage() {
       let query = supabase
         .from("forum_posts")
         .select(`
-          id, title, content, image_url, tags, created_at, likes_count, replies_count,
+          id, title, content, image_url, tags, created_at, likes_count, replies_count, user_id,
           profiles:user_id ( id, display_name, avatar_url )
         `)
         .order("created_at", { ascending: false });
@@ -185,6 +195,41 @@ export default function ForumPage() {
     return date.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
   };
 
+  const handleShare = async (post) => {
+    const shareUrl = `${window.location.origin}/forum`; 
+    const text = `Lihat postingan dari ${post.profiles?.display_name || "Anonymous"} di Komorebi: "${post.title || post.content.substring(0, 50)}..."\n\n${shareUrl}`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: post.title || "Komorebi Forum Post",
+          text: text,
+        });
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      navigator.clipboard.writeText(text);
+      showToast("Tautan disalin ke clipboard!");
+    }
+  };
+
+  const confirmDeletePost = async () => {
+    if (!postToDelete) return;
+    try {
+      const { error } = await supabase.from("forum_posts").delete().eq("id", postToDelete).eq("user_id", user.id);
+      if (error) throw error;
+      setPosts(prev => prev.filter(p => p.id !== postToDelete));
+      setActiveDropdown(null);
+      showToast("Postingan berhasil dihapus");
+    } catch (err) {
+      console.error("Error deleting post:", err);
+      showToast("Gagal menghapus postingan.", "error");
+    } finally {
+      setPostToDelete(null);
+    }
+  };
+
   return (
     <div className="w-full pb-20">
       
@@ -268,9 +313,38 @@ export default function ForumPage() {
                     <span className="text-[15px] text-gray-400 font-sans">{formatDate(post.created_at)}</span>
                   </div>
                 </div>
-                <button className="text-gray-400 hover:text-gray-600 p-2">
-                  <MoreHorizontal className="w-5 h-5" />
-                </button>
+                <div className="relative">
+                  <button 
+                    onClick={() => setActiveDropdown(activeDropdown === post.id ? null : post.id)} 
+                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-2 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-white/10"
+                  >
+                    <MoreHorizontal className="w-5 h-5" />
+                  </button>
+                  <AnimatePresence>
+                    {activeDropdown === post.id && (
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 mt-2 w-48 bg-white dark:bg-komorebi-dark-card border border-gray-100 dark:border-komorebi-dark-border rounded-xl shadow-lg z-10 py-1"
+                      >
+                        {post.user_id === user?.id ? (
+                          <button 
+                            onClick={() => { setPostToDelete(post.id); setActiveDropdown(null); }}
+                            className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                          >
+                            Hapus Postingan
+                          </button>
+                        ) : (
+                          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            Laporkan Postingan
+                          </button>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
 
               {/* Content */}
@@ -316,7 +390,10 @@ export default function ForumPage() {
                   <MessageCircle className="w-5 h-5" />
                   <span className="text-sm font-medium font-sans">{post.replies_count || 0}</span>
                 </button>
-                <button className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors">
+                <button 
+                  onClick={() => handleShare(post)}
+                  className="flex items-center gap-2 text-gray-500 hover:text-[#7DA085] transition-colors"
+                >
                   <Share2 className="w-5 h-5" />
                 </button>
               </div>
@@ -397,9 +474,9 @@ export default function ForumPage() {
                         <Heart className="w-5 h-5" />
                         <span className="text-[14px] font-medium">{selectedPost.likes_count || 0}</span>
                      </div>
-                     <div className="flex items-center gap-2">
+                     <button onClick={() => handleShare(selectedPost)} className="flex items-center gap-2 hover:text-[#7DA085] transition-colors">
                         <Share2 className="w-5 h-5" />
-                     </div>
+                     </button>
                   </div>
                 </div>
 
@@ -454,6 +531,74 @@ export default function ForumPage() {
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {postToDelete && (
+          <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm"
+              onClick={() => setPostToDelete(null)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-white dark:bg-komorebi-dark-card rounded-[24px] w-full max-w-sm overflow-hidden shadow-2xl relative z-10 p-6 flex flex-col items-center text-center transition-colors duration-300"
+            >
+              <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4">
+                <AlertTriangle className="w-8 h-8 text-red-500" />
+              </div>
+              <h3 className="text-xl font-bold font-sans text-gray-900 dark:text-white mb-2 transition-colors duration-300">Hapus Postingan?</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 font-sans mb-6 transition-colors duration-300">
+                Apakah Anda yakin ingin menghapus postingan ini? Tindakan ini tidak dapat dibatalkan.
+              </p>
+              
+              <div className="flex w-full gap-3">
+                <button 
+                  onClick={() => setPostToDelete(null)}
+                  className="flex-1 px-4 py-2.5 rounded-full border border-gray-200 dark:border-komorebi-dark-border text-gray-700 dark:text-gray-300 font-medium font-sans hover:bg-gray-50 dark:hover:bg-white/5 transition-colors duration-300"
+                >
+                  Batal
+                </button>
+                <button 
+                  onClick={confirmDeletePost}
+                  className="flex-1 px-4 py-2.5 rounded-full bg-red-500 hover:bg-red-600 text-white font-medium font-sans shadow-sm transition-colors duration-300"
+                >
+                  Ya, Hapus
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 40, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[1001] px-5 py-3 bg-white dark:bg-komorebi-dark-card border border-gray-100 dark:border-[#32473D] rounded-full shadow-2xl flex items-center gap-3 text-[14px] font-medium font-sans text-gray-800 dark:text-gray-200 transition-colors duration-300"
+          >
+            {toastMessage.type === 'error' ? (
+              <div className="w-6 h-6 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-3.5 h-3.5 text-red-500" />
+              </div>
+            ) : (
+              <div className="w-6 h-6 rounded-full bg-[#5D8B66]/10 dark:bg-[#7DA085]/20 flex items-center justify-center shrink-0">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#5D8B66] dark:text-[#7DA085]" />
+              </div>
+            )}
+            {toastMessage.text}
+          </motion.div>
         )}
       </AnimatePresence>
 

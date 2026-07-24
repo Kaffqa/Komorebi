@@ -4,8 +4,10 @@ import { X, Activity } from "lucide-react";
 import { useNavigate } from "react-router";
 import { supabase } from "../../services/supabase";
 import { useAuthStore } from "../../stores/useAuthStore";
+import { useTranslation } from "react-i18next";
 
 export function ActivitySuggestionWidget() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const [activities, setActivities] = useState([]);
@@ -94,12 +96,12 @@ export function ActivitySuggestionWidget() {
   return (
     <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-komorebi-dark-border h-full flex flex-col transition-colors duration-300" data-tour-id="activity-suggestion">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-[20px] font-sans font-semibold text-black dark:text-white transition-colors duration-300">Suggested For You</h3>
+        <h3 className="text-[20px] font-sans font-semibold text-black dark:text-white transition-colors duration-300">{t('dashboard.activity_suggestion.title')}</h3>
         <button 
           onClick={() => setIsModalOpen(true)}
           className="flex items-center justify-center text-[13px] font-medium px-4 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg text-black dark:text-white hover:bg-gray-50 dark:hover:bg-black/20 transition-colors"
         >
-          See More
+          {t('dashboard.activity_suggestion.see_more')}
         </button>
       </div>
       
@@ -140,12 +142,12 @@ export function ActivitySuggestionWidget() {
                 <div>
                   <h2 className="text-2xl font-medium font-sans text-gray-900 dark:text-white mb-2 flex items-center gap-2 transition-colors duration-300">
                     <Activity className="w-6 h-6 text-[#7DA085]" />
-                    Rekomendasi Aktivitas
+                    {t('dashboard.activity_suggestion.modal_title')}
                   </h2>
                   <p className="text-sm font-light text-gray-500 dark:text-komorebi-dark-muted max-w-lg transition-colors duration-300">
-                    {moodLevel === "calming" && "Berdasarkan riwayat emosi Anda yang sedang menurun, berikut adalah aktivitas menenangkan untuk memulihkan energi."}
-                    {moodLevel === "productive" && "Anda sedang bersemangat! Berikut adalah aktivitas produktif untuk memaksimalkan potensi Anda hari ini."}
-                    {moodLevel === "balanced" && "Kondisi Anda cukup seimbang. Berikut adalah rutinitas ringan untuk menjaga kestabilan pikiran Anda."}
+                    {moodLevel === "calming" && t('dashboard.activity_suggestion.reason_calming')}
+                    {moodLevel === "productive" && t('dashboard.activity_suggestion.reason_productive')}
+                    {moodLevel === "balanced" && t('dashboard.activity_suggestion.reason_balanced')}
                   </p>
                 </div>
                 <button 
@@ -170,7 +172,7 @@ export function ActivitySuggestionWidget() {
                         onClick={() => handleStartActivity(activity)}
                         className="mt-4 self-start px-6 py-2 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white font-medium text-sm rounded-full transition-all duration-300"
                       >
-                        Mulai Aktivitas
+                        {t('dashboard.activity_suggestion.start_activity')}
                       </button>
                     </div>
                   </div>

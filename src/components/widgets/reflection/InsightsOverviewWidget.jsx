@@ -3,14 +3,16 @@ import { ChevronDown, Smile, CalendarCheck, TrendingUp, BookText } from 'lucide-
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { supabase } from '../../../services/supabase';
+import { useTranslation } from 'react-i18next';
 
 export function InsightsOverviewWidget() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const [insights, setInsights] = useState([
-    { label: "Average Mood", value: "—", icon: Smile },
-    { label: "Log Consistency", value: "—", icon: CalendarCheck },
-    { label: "Mood Progress", value: "—", icon: TrendingUp },
-    { label: "Journaling Completion", value: "—", icon: BookText },
+    { label: t('journaling.insights.average_mood'), value: "—", icon: Smile },
+    { label: t('journaling.insights.log_consistency'), value: "—", icon: CalendarCheck },
+    { label: t('journaling.insights.mood_progress'), value: "—", icon: TrendingUp },
+    { label: t('journaling.insights.journal_completion'), value: "—", icon: BookText },
   ]);
 
   const fetchInsights = useCallback(async () => {
@@ -72,7 +74,7 @@ export function InsightsOverviewWidget() {
       const progressPercent = Math.round(((currentAvg - prevAvg) / prevAvg) * 100);
       moodProgress = (progressPercent >= 0 ? "+" : "") + progressPercent + "%";
     } else if (currentMoods && currentMoods.length > 0) {
-      moodProgress = "New";
+      moodProgress = t('journaling.insights.new');
     }
 
     // Calculate Journaling Completion
@@ -83,12 +85,12 @@ export function InsightsOverviewWidget() {
     }
 
     setInsights([
-      { label: "Average Mood", value: avgMood, icon: Smile },
-      { label: "Log Consistency", value: logConsistency, icon: CalendarCheck },
-      { label: "Mood Progress", value: moodProgress, icon: TrendingUp },
-      { label: "Journaling Completion", value: journalCompletion, icon: BookText },
+      { label: t('journaling.insights.average_mood'), value: avgMood, icon: Smile },
+      { label: t('journaling.insights.log_consistency'), value: logConsistency, icon: CalendarCheck },
+      { label: t('journaling.insights.mood_progress'), value: moodProgress, icon: TrendingUp },
+      { label: t('journaling.insights.journal_completion'), value: journalCompletion, icon: BookText },
     ]);
-  }, [user]);
+  }, [user, t]);
 
   useEffect(() => {
     fetchInsights();
@@ -106,9 +108,9 @@ export function InsightsOverviewWidget() {
   return (
     <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-7 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] border border-gray-100 dark:border-komorebi-dark-border flex flex-col h-fit transition-colors duration-300">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-[20px] font-sans font-medium text-black dark:text-white tracking-tight transition-colors duration-300">Insights Overview</h3>
+        <h3 className="text-[20px] font-sans font-medium text-black dark:text-white tracking-tight transition-colors duration-300">{t('journaling.insights.title')}</h3>
           <div className="flex items-center justify-center text-[13px] font-medium text-gray-700 dark:text-gray-300 border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg px-4 py-1.5 rounded-full cursor-default transition-colors">
-            Weekly
+            {t('journaling.insights.weekly')}
           </div>
       </div>
 

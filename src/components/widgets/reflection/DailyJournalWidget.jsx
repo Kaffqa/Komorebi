@@ -6,10 +6,12 @@ import { useAuthStore } from '../../../stores/useAuthStore';
 import { supabase } from '../../../services/supabase';
 import { dispatchJournalUpdate } from '../../../hooks/useMoodEvent';
 import { getLocalDateString } from '../../../utils/date';
+import { useTranslation } from 'react-i18next';
 
 const TAG_SUGGESTIONS = ["Anxiety", "Work", "Family", "Health", "Social", "Self-Care", "Stress", "Gratitude", "Sleep", "Exercise"];
 
 export function DailyJournalWidget() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const [content, setContent] = useState("");
   const [tags, setTags] = useState([]);
@@ -162,7 +164,7 @@ export function DailyJournalWidget() {
     <>
       <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col w-full transition-colors duration-300">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-          <h3 className="text-[20px] font-sans font-medium text-black dark:text-white transition-colors duration-300">Daily Journal</h3>
+          <h3 className="text-[20px] font-sans font-medium text-black dark:text-white transition-colors duration-300">{t('journaling.daily_journal.title')}</h3>
           <div className="flex items-center gap-3">
             <button 
               onClick={handleSave}
@@ -175,13 +177,13 @@ export function DailyJournalWidget() {
                     : "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px]"
               }`}
             >
-              {isSaving ? "Saving..." : isSaved ? "Saved!" : "Save"}
+              {isSaving ? t('journaling.daily_journal.saving') : isSaved ? t('journaling.daily_journal.saved') : t('journaling.daily_journal.save')}
             </button>
               <button 
                 onClick={loadPastJournals}
                 className="w-[140px] flex justify-center items-center border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg text-black dark:text-white hover:bg-gray-50 dark:hover:bg-black/20 py-1.5 rounded-full text-[13px] font-medium transition-colors"
               >
-                See All Journal
+                {t('journaling.daily_journal.see_all')}
               </button>
           </div>
         </div>
@@ -189,7 +191,7 @@ export function DailyJournalWidget() {
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="What's on your mind today?"
+          placeholder={t('journaling.daily_journal.placeholder')}
           className="w-full h-[180px] sm:h-[220px] resize-none border border-gray-200 dark:border-[#32473D] rounded-[20px] p-5 font-sans text-[15px] outline-none focus:ring-2 focus:ring-[#7DA085]/30 focus:border-[#7DA085] placeholder:text-gray-300 dark:placeholder:text-gray-600 text-gray-700 dark:text-white bg-transparent mb-4 transition-colors duration-300"
         />
 
@@ -220,7 +222,7 @@ export function DailyJournalWidget() {
                   }}
                   onBlur={() => setTimeout(() => setShowTagInput(false), 200)}
                   autoFocus
-                  placeholder="Type a tag..."
+                  placeholder={t('journaling.daily_journal.tag_placeholder')}
                   className="w-32 px-4 py-2 rounded-xl border border-gray-200 dark:border-[#32473D] text-[13px] outline-none focus:ring-1 focus:ring-[#7DA085] bg-transparent dark:text-white transition-colors"
                 />
                 {filteredSuggestions.length > 0 && (
@@ -247,7 +249,7 @@ export function DailyJournalWidget() {
                 className="flex items-center gap-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 border border-gray-200 dark:border-[#32473D] hover:bg-gray-50 dark:hover:bg-black/20 px-4 py-2 rounded-xl text-[13px] font-medium transition-colors"
               >
                 <Plus className="w-4 h-4" />
-                Add Tag
+                {t('journaling.daily_journal.add_tag')}
               </button>
             )}
           </div>
@@ -272,7 +274,7 @@ export function DailyJournalWidget() {
               className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl transition-colors duration-300"
             >
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-[22px] font-sans font-semibold text-black dark:text-white transition-colors duration-300">All Journals</h3>
+                <h3 className="text-[22px] font-sans font-semibold text-black dark:text-white transition-colors duration-300">{t('journaling.daily_journal.modal_title')}</h3>
                 <button onClick={() => setShowAllJournals(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-xl transition-colors">
                   <X className="w-5 h-5 text-gray-500" />
                 </button>
@@ -280,11 +282,11 @@ export function DailyJournalWidget() {
 
               <div className="flex-1 overflow-y-auto space-y-4 pr-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {loadingJournals ? (
-                  <p className="text-center text-gray-400 py-10">Loading journals...</p>
+                  <p className="text-center text-gray-400 py-10">{t('journaling.daily_journal.loading')}</p>
                 ) : pastJournals.length === 0 ? (
                   <div className="text-center py-16">
                     <BookOpen className="w-12 h-12 text-gray-200 mx-auto mb-3" />
-                    <p className="text-gray-400">No journal entries yet.</p>
+                    <p className="text-gray-400">{t('journaling.daily_journal.empty')}</p>
                   </div>
                 ) : (
                   pastJournals.map((journal) => (
