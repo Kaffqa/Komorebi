@@ -369,7 +369,7 @@ export function AppLayout() {
                  {profile?.avatar_url ? (
                    <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
                  ) : (
-                   <img src="https://i.pravatar.cc/150?img=11" alt="Profile" className="w-full h-full object-cover" />
+                   <img src={`https://api.dicebear.com/9.x/notionists/svg?seed=${profile?.username || 'Komorebi'}`} alt="Profile" className="w-full h-full object-cover bg-[#5D8B66]/10" />
                  )}
               </div>
            </div>

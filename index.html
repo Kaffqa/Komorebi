@@ -6,45 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Komorebi</title>
   </head>
-  <body style="margin: 0; background-color: #ffffff;">
-    <div id="root">
-      <!-- Pre-render Skeleton for initial load -->
-      <div style="display: flex; flex-direction: column; min-height: 100vh; overflow: hidden; font-family: system-ui, sans-serif;">
-        <!-- Navbar Skeleton -->
-        <header style="height: 80px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f3f4f6;">
-          <div style="width: 120px; height: 32px; background-color: #f3f4f6; border-radius: 8px; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;"></div>
-          <div style="display: flex; gap: 24px;">
-            <div style="width: 80px; height: 20px; background-color: #f3f4f6; border-radius: 4px; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;"></div>
-            <div style="width: 80px; height: 20px; background-color: #f3f4f6; border-radius: 4px; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;"></div>
-            <div style="width: 100px; height: 36px; background-color: #f3f4f6; border-radius: 18px; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;"></div>
-          </div>
-        </header>
-        
-        <!-- Hero Skeleton -->
-        <main style="flex: 1; padding: 64px 32px; max-width: 1650px; margin: 0 auto; width: 100%; box-sizing: border-box;">
-          <div style="width: 100%; height: 50vh; background-color: #f3f4f6; border-radius: 24px; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;"></div>
-          <div style="margin-top: 48px; display: flex; flex-direction: column; gap: 16px;">
-            <div style="width: 60%; height: 64px; background-color: #f3f4f6; border-radius: 12px; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;"></div>
-            <div style="width: 40%; height: 64px; background-color: #f3f4f6; border-radius: 12px; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;"></div>
-          </div>
-        </main>
-      </div>
-
-      <style>
-        @keyframes pulse {
-          0%, 100% { opacity: 1; background-color: #f3f4f6; }
-          50% { opacity: .5; background-color: #e5e7eb; }
-        }
-        @media (prefers-color-scheme: dark) {
-          body { background-color: #0A0D14 !important; }
-          .pulse-dark { background-color: #1a1f2e !important; }
-          @keyframes pulse {
-            0%, 100% { opacity: 1; background-color: #1a1f2e; }
-            50% { opacity: .5; background-color: #2a3142; }
-          }
-        }
-      </style>
-    </div>
+  <body>
+    <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
