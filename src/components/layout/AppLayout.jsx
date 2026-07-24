@@ -9,6 +9,7 @@ import { useAuthStore } from "../../stores/useAuthStore";
 import { supabase } from "../../services/supabase";
 import { KomiCompanion } from "../widgets/KomiCompanion";
 import { KomiOnboardingTour } from "../widgets/KomiOnboardingTour";
+import Logo from "../../assets/logo.svg";
 
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -18,6 +19,11 @@ export function AppLayout() {
   const navigate = useNavigate();
   const currentOutlet = useOutlet();
   const [showOnboarding, setShowOnboarding] = useState(false);
+
+  // Close sidebar on mobile when navigating
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
 
   // Check if user has completed onboarding
   useEffect(() => {
@@ -228,15 +234,23 @@ export function AppLayout() {
       <div className="flex flex-1 flex-col overflow-hidden w-full">
         {/* Mobile header */}
         <div className="md:hidden flex h-16 shrink-0 items-center justify-between px-4 bg-white border-b border-gray-100">
-          <span className="text-xl font-heading font-bold text-[#5D8B66] uppercase tracking-widest">
-            Komorebi
-          </span>
-          <button 
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 -mr-2 text-gray-700 focus:outline-none"
-          >
-            <Menu className="h-6 w-6" />
-          </button>
+          <img src={Logo} alt="Komorebi" className="h-6 object-contain" />
+          <div className="flex items-center gap-2">
+            {location.pathname === "/forum" && (
+              <button 
+                onClick={() => navigate("/forum/new")}
+                className="flex items-center justify-center w-8 h-8 bg-gradient-to-b from-[#5F916F] to-[#94B59F] text-white rounded-lg shadow-sm"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            )}
+            <button 
+              onClick={() => setSidebarOpen(true)}
+              className="p-2 -mr-2 text-gray-700 focus:outline-none"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+          </div>
         </div>
 
         {/* Desktop Topbar */}

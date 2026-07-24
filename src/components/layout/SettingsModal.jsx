@@ -112,7 +112,7 @@ export function SettingsModal({ isOpen, onClose }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+          className="absolute inset-0 bg-black/40 backdrop-blur-md"
           onClick={onClose}
         />
         
@@ -120,12 +120,14 @@ export function SettingsModal({ isOpen, onClose }) {
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="bg-white rounded-3xl w-full max-w-3xl overflow-hidden shadow-2xl relative z-10 flex flex-col sm:flex-row h-[600px] max-h-[85vh]"
+          className="bg-white/95 backdrop-blur-2xl border border-white/60 rounded-[32px] w-full max-w-4xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(93,139,102,0.15)] relative z-10 flex flex-col sm:flex-row h-[600px] max-h-[85vh]"
         >
           {/* Sidebar Tabs */}
-          <div className="w-full sm:w-64 bg-gray-50 border-r border-gray-100 p-6 flex flex-col">
-            <h2 className="text-xl font-bold font-sans text-gray-900 mb-6">Settings</h2>
-            <nav className="flex-1 space-y-2">
+          <div className="w-full sm:w-[280px] bg-gradient-to-b from-[#F9FBF9] to-[#F1F6F3] border-r border-[#E5EBE7] p-8 flex flex-col relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#7DA085]/10 to-transparent rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none" />
+            
+            <h2 className="text-2xl font-bold font-sans text-gray-900 mb-8 tracking-tight">Settings</h2>
+            <nav className="flex-1 space-y-2 relative z-10">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -133,10 +135,10 @@ export function SettingsModal({ isOpen, onClose }) {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-sans text-[14px] font-medium ${
+                    className={`w-full flex items-center gap-3.5 px-5 py-3.5 rounded-2xl transition-all duration-300 font-sans text-[15px] font-medium ${
                       isActive 
-                        ? 'bg-[#7DA085] text-white shadow-sm' 
-                        : 'text-gray-600 hover:bg-white hover:shadow-sm'
+                        ? 'bg-gradient-to-r from-[#5D8B66] to-[#7DA085] text-white shadow-md shadow-[#5D8B66]/20 border border-[#5D8B66]' 
+                        : 'text-gray-500 hover:bg-white/60 hover:text-gray-900 border border-transparent hover:shadow-sm'
                     }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -148,32 +150,48 @@ export function SettingsModal({ isOpen, onClose }) {
           </div>
 
           {/* Content Area */}
-          <div className="flex-1 p-6 sm:p-8 overflow-y-auto relative">
+          <div className="flex-1 p-8 sm:p-10 overflow-y-auto bg-white/50 relative">
             <button 
               onClick={onClose}
-              className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+              className="absolute top-6 right-6 p-2.5 rounded-full hover:bg-gray-100/80 text-gray-400 hover:text-gray-600 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
 
             {/* Profile Tab */}
             {activeTab === 'profile' && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-md mt-4">
-                <h3 className="text-lg font-bold font-sans text-gray-900 mb-1">Public Profile</h3>
-                <p className="text-gray-500 text-sm mb-6">Update your display name and how others see you.</p>
-
-                <form onSubmit={handleSaveProfile} className="space-y-5">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-20 h-20 rounded-2xl bg-[#E5EBE7] border-2 border-white shadow-md flex items-center justify-center overflow-hidden">
-                      {isUploading ? (
-                        <Loader2 className="w-6 h-6 animate-spin text-[#7DA085]" />
-                      ) : avatarUrl ? (
-                        <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
-                      ) : (
-                         <span className="text-2xl">👤</span>
-                      )}
-                    </div>
-                    <div>
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="max-w-md mt-2">
+                <h3 className="text-[22px] font-bold font-sans text-gray-900 mb-1.5 tracking-tight">Edit Profile</h3>
+                <p className="text-gray-500 text-[15px] mb-8 font-light">Update your personal information and avatar.</p>
+                
+                <form onSubmit={handleSaveProfile} className="space-y-6">
+                  {/* Avatar Upload */}
+                  <div className="flex flex-col gap-3">
+                    <label className="text-[14px] font-medium text-gray-700">Profile Picture</label>
+                    <div className="flex items-center gap-5">
+                      <div className="w-20 h-20 rounded-full border-[3px] border-white shadow-md bg-gradient-to-br from-[#F5F8F6] to-[#E9F0EC] overflow-hidden flex items-center justify-center flex-shrink-0 relative group">
+                        {avatarUrl ? (
+                          <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                        ) : (
+                          <User className="w-8 h-8 text-[#A8D8B6]" />
+                        )}
+                        {isUploading && (
+                          <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
+                            <Loader2 className="w-5 h-5 text-[#5D8B66] animate-spin" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <button 
+                          type="button" 
+                          disabled={isUploading}
+                          onClick={() => fileInputRef.current?.click()}
+                          className="px-5 py-2.5 rounded-xl border border-[#D3E1D7] text-[13px] font-medium text-gray-700 hover:bg-[#F9FBF9] hover:border-[#A8D8B6] transition-all bg-white shadow-sm disabled:opacity-50"
+                        >
+                          Change Picture
+                        </button>
+                        <p className="text-[12px] text-gray-400 font-light">JPG, GIF or PNG. Max size of 2MB.</p>
+                      </div>
                       <input 
                         type="file" 
                         ref={fileInputRef} 
@@ -181,62 +199,68 @@ export function SettingsModal({ isOpen, onClose }) {
                         accept="image/*" 
                         className="hidden" 
                       />
-                      <button 
-                        type="button" 
-                        onClick={() => fileInputRef.current?.click()}
-                        disabled={isUploading}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-50"
-                      >
-                        {isUploading ? "Uploading..." : "Change Avatar"}
-                      </button>
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Display Name</label>
-                    <input 
-                      type="text"
-                      value={displayName}
-                      onChange={(e) => setDisplayName(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#7DA085] focus:ring-2 focus:ring-[#7DA085]/20 outline-none transition-all text-[15px]"
-                      placeholder="Your name"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
-                    <input 
-                      type="text"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#7DA085] focus:ring-2 focus:ring-[#7DA085]/20 outline-none transition-all text-[15px]"
-                      placeholder="@username"
-                    />
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-[14px] font-medium text-gray-700 mb-2">Display Name</label>
+                      <input 
+                        type="text" 
+                        value={displayName}
+                        onChange={(e) => setDisplayName(e.target.value)}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#7DA085]/20 focus:border-[#7DA085] transition-all font-sans text-[15px] text-gray-800"
+                        placeholder="What should we call you?"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[14px] font-medium text-gray-700 mb-2">Username</label>
+                      <input 
+                        type="text" 
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#7DA085]/20 focus:border-[#7DA085] transition-all font-sans text-[15px] text-gray-800"
+                        placeholder="@username"
+                      />
+                    </div>
                   </div>
 
-                  <button 
-                    type="submit"
-                    disabled={isSaving}
-                    className="mt-4 flex items-center justify-center gap-2 px-6 py-2.5 bg-[#7DA085] hover:bg-[#688A70] text-white rounded-xl font-medium transition-colors disabled:opacity-70"
-                  >
-                    {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : (isSaved ? <Check className="w-4 h-4" /> : null)}
-                    {isSaving ? "Saving..." : (isSaved ? "Saved Successfully" : "Save Changes")}
-                  </button>
+                  <div className="pt-4">
+                    <button 
+                      type="submit"
+                      disabled={isSaving}
+                      className={`w-full py-3.5 rounded-2xl font-body font-light transition-all duration-300 text-[15px] text-white flex items-center justify-center gap-2 ${
+                        isSaved
+                          ? "bg-gradient-to-r from-[#5D8B66] to-[#7DA085] shadow-sm"
+                          : isSaving
+                            ? "bg-gray-300 cursor-not-allowed shadow-sm"
+                            : "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110"
+                      }`}
+                    >
+                      {isSaving ? (
+                        <><Loader2 className="w-5 h-5 animate-spin" /> Saving...</>
+                      ) : isSaved ? (
+                        <><Check className="w-5 h-5" /> Saved Successfully</>
+                      ) : (
+                        'Save Changes'
+                      )}
+                    </button>
+                  </div>
                 </form>
               </motion.div>
             )}
 
             {/* Preferences Tab */}
             {activeTab === 'preferences' && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-md mt-4">
-                <h3 className="text-lg font-bold font-sans text-gray-900 mb-1">Preferences</h3>
-                <p className="text-gray-500 text-sm mb-6">Manage your notifications and app appearance.</p>
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="max-w-md mt-2">
+                <h3 className="text-[22px] font-bold font-sans text-gray-900 mb-1.5 tracking-tight">Preferences</h3>
+                <p className="text-gray-500 text-[15px] mb-8 font-light">Manage your notifications and app appearance.</p>
 
                 <div className="space-y-6">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                     <div>
-                      <p className="font-medium text-gray-900 text-sm">Daily Reminders</p>
-                      <p className="text-sm text-gray-500">Get notified to log your mood and journal.</p>
+                      <p className="font-medium text-gray-900 text-[15px]">Daily Reminders</p>
+                      <p className="text-[13px] text-gray-500 mt-1">Get notified to log your mood and journal.</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" className="sr-only peer" defaultChecked />
@@ -244,30 +268,21 @@ export function SettingsModal({ isOpen, onClose }) {
                     </label>
                   </div>
                   
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-900 text-sm">Dark Mode</p>
-                      <p className="text-sm text-gray-500">Switch to a darker theme for night time.</p>
+                  <div className="p-5 mt-2 rounded-2xl bg-gradient-to-r from-[#F5F8F6] to-[#E9F0EC] border border-[#D3E1D7]/50 relative overflow-hidden">
+                    <div className="relative z-10">
+                      <p className="font-semibold text-gray-900 text-[15px] mb-1">Tour Platform 🍃</p>
+                      <p className="text-[13px] text-gray-600 mb-4 leading-relaxed max-w-[280px]">Tampilkan ulang tur pengenalan fitur platform oleh Komi.</p>
+                      <button
+                        onClick={() => {
+                          onClose();
+                          window.dispatchEvent(new Event('restart-tour'));
+                        }}
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#5D8B66] shadow-sm hover:shadow-md font-medium text-[14px] transition-all border border-[#D3E1D7] hover:border-[#A8D8B6]"
+                      >
+                        <RotateCcw className="w-4 h-4" />
+                        Ulangi Tour Komi
+                      </button>
                     </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" className="sr-only peer" />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#7DA085]"></div>
-                    </label>
-                  </div>
-
-                  <div className="pt-4 mt-4 border-t border-gray-100">
-                    <p className="font-medium text-gray-900 text-sm mb-1">Tour Platform</p>
-                    <p className="text-sm text-gray-500 mb-3">Tampilkan ulang tur pengenalan fitur platform oleh Komi.</p>
-                    <button
-                      onClick={() => {
-                        onClose();
-                        window.dispatchEvent(new Event('restart-tour'));
-                      }}
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#5D8B66]/10 text-[#5D8B66] hover:bg-[#5D8B66]/20 font-medium text-sm transition-colors"
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                      Ulangi Tour Komi
-                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -275,31 +290,36 @@ export function SettingsModal({ isOpen, onClose }) {
 
             {/* Account Tab */}
             {activeTab === 'account' && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-md mt-4">
-                <h3 className="text-lg font-bold font-sans text-gray-900 mb-1">Account & Security</h3>
-                <p className="text-gray-500 text-sm mb-6">Manage your account credentials and data.</p>
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="max-w-md mt-2">
+                <h3 className="text-[22px] font-bold font-sans text-gray-900 mb-1.5 tracking-tight">Account & Security</h3>
+                <p className="text-gray-500 text-[15px] mb-8 font-light">Manage your account credentials and data.</p>
 
                 <div className="space-y-4">
-                  <div className="p-4 border border-gray-100 rounded-2xl bg-gray-50">
-                    <p className="text-sm text-gray-500 mb-1">Email Address</p>
-                    <p className="font-medium text-gray-900">{user?.email}</p>
+                  <div className="p-5 border border-gray-100 rounded-2xl bg-white shadow-sm flex items-center justify-between">
+                    <div>
+                      <p className="text-[13px] text-gray-500 mb-0.5">Email Address</p>
+                      <p className="font-medium text-[15px] text-gray-900">{user?.email}</p>
+                    </div>
+                    <div className="h-10 w-10 rounded-full bg-[#F5F8F6] flex items-center justify-center text-[#5D8B66]">
+                      <Shield className="w-5 h-5" />
+                    </div>
                   </div>
 
-                  <button className="w-full text-left px-4 py-3 rounded-xl border border-gray-200 hover:bg-gray-50 font-medium text-sm text-gray-700 transition-colors">
+                  <button className="w-full text-left px-5 py-4 rounded-2xl border border-gray-200 bg-white hover:border-[#D3E1D7] hover:bg-[#F9FBF9] hover:text-[#5D8B66] font-medium text-[15px] text-gray-700 transition-all shadow-sm">
                     Change Password
                   </button>
 
-                  <button className="w-full text-left px-4 py-3 rounded-xl border border-gray-200 hover:bg-gray-50 font-medium text-sm text-gray-700 transition-colors">
+                  <button className="w-full text-left px-5 py-4 rounded-2xl border border-gray-200 bg-white hover:border-[#D3E1D7] hover:bg-[#F9FBF9] hover:text-[#5D8B66] font-medium text-[15px] text-gray-700 transition-all shadow-sm">
                     Export My Data
                   </button>
 
-                  <div className="pt-6 mt-6 border-t border-gray-100">
+                  <div className="pt-6 mt-6">
                     <button 
                       onClick={handleLogout}
-                      className="flex items-center gap-2 px-4 py-3 w-full rounded-xl bg-red-50 text-red-600 hover:bg-red-100 font-medium text-sm transition-colors"
+                      className="flex items-center justify-center gap-2 px-5 py-4 w-full rounded-2xl bg-red-50 text-red-600 hover:bg-red-500 hover:text-white font-medium text-[15px] transition-all shadow-sm border border-red-100 hover:border-red-500"
                     >
-                      <LogOut className="w-4 h-4" />
-                      Log Out
+                      <LogOut className="w-5 h-5" />
+                      Sign Out
                     </button>
                   </div>
                 </div>

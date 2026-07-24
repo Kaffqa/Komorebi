@@ -211,7 +211,7 @@ export default function ForumPage() {
                 <button
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
-                  className={`relative whitespace-nowrap px-6 py-2 rounded-full border text-sm font-medium transition-colors font-sans overflow-hidden ${
+                  className={`relative shrink-0 whitespace-nowrap px-6 py-2 rounded-full border text-sm font-medium transition-colors font-sans overflow-hidden ${
                     isActive 
                       ? "text-white border-transparent" 
                       : "bg-white border-[#B5CCBD] text-gray-700 hover:bg-gray-50"

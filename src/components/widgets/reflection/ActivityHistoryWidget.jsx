@@ -187,6 +187,13 @@ export function ActivityHistoryWidget() {
                     key={cIdx}
                     onMouseEnter={() => setHoveredCell({ rIdx, cIdx, day })}
                     onMouseLeave={() => setHoveredCell(null)}
+                    onClick={() => {
+                      if (hoveredCell?.rIdx === rIdx && hoveredCell?.cIdx === cIdx) {
+                        setHoveredCell(null);
+                      } else {
+                        setHoveredCell({ rIdx, cIdx, day });
+                      }
+                    }}
                     className={`w-full aspect-[4/3] rounded-[10px] transition-all cursor-pointer relative ${colorMap[intensity]} ${isToday ? 'ring-2 ring-[#7DA085] ring-offset-1' : ''}`}
                   >
                     <AnimatePresence>

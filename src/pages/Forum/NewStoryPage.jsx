@@ -14,6 +14,7 @@ import {
   Plus,
   X,
   Loader2,
+  ArrowLeft,
 } from "lucide-react";
 
 export default function NewStoryPage() {
@@ -119,6 +120,14 @@ export default function NewStoryPage() {
       animate={{ opacity: 1, y: 0 }}
       className="w-full pb-20"
     >
+      <button 
+        onClick={() => navigate("/forum")} 
+        className="flex items-center gap-2 text-gray-500 hover:text-gray-900 font-sans font-medium mb-6 transition-colors w-fit"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back to Forum
+      </button>
+
       <div className="bg-white rounded-[24px] p-6 lg:p-10 shadow-sm border border-gray-100 flex flex-col min-h-[80vh]">
         
         {/* Title Input */}
