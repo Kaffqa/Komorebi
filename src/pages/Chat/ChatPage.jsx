@@ -287,15 +287,15 @@ export default function ChatPage() {
 
   return (
     <div className="w-full max-w-7xl mx-auto h-[calc(100vh-120px)] animate-in fade-in duration-500">
-      <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
+      <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col h-full overflow-hidden transition-colors duration-300">
         {/* Chat Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-komorebi-dark-border shrink-0 transition-colors duration-300">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#F7FAF8] flex items-center justify-center border border-gray-100">
+            <div className="w-10 h-10 rounded-full bg-[#F7FAF8] dark:bg-komorebi-dark-bg flex items-center justify-center border border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300">
               <img src={Logo} alt="Komi" className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-[15px] font-medium text-black font-sans">
+              <h2 className="text-[15px] font-medium text-black dark:text-white font-sans transition-colors duration-300">
                 Komi: Your Daily Companion
               </h2>
               <div className="flex items-center gap-1.5">
@@ -311,7 +311,7 @@ export default function ChatPage() {
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="p-2 hover:bg-gray-50 rounded-full transition-colors"
+              className="p-2 hover:bg-gray-50 dark:hover:bg-white/10 rounded-full transition-colors"
             >
               <MoreVertical className="w-5 h-5 text-gray-400" />
             </button>
@@ -321,11 +321,11 @@ export default function ChatPage() {
                   initial={{ opacity: 0, scale: 0.95, y: -5 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: -5 }}
-                  className="absolute right-0 top-full mt-2 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50 min-w-[180px]"
+                  className="absolute right-0 top-full mt-2 bg-white dark:bg-komorebi-dark-card rounded-xl shadow-lg border border-gray-100 dark:border-[#32473D] py-1 z-50 min-w-[180px] transition-colors duration-300"
                 >
                   <button
                     onClick={handleClearChat}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 text-[13px] font-medium text-red-500 hover:bg-red-50 transition-colors"
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-[13px] font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                     Clear Conversation
@@ -357,7 +357,7 @@ export default function ChatPage() {
                     key={`date-${idx}`}
                     className="flex justify-center py-3"
                   >
-                    <span className="text-[11px] text-gray-400 font-sans font-medium bg-white/80 px-4 py-1.5 rounded-full border border-gray-100 shadow-sm">
+                    <span className="text-[11px] text-gray-400 font-sans font-medium bg-white/80 dark:bg-komorebi-dark-bg/80 px-4 py-1.5 rounded-full border border-gray-100 dark:border-[#32473D] shadow-sm transition-colors duration-300">
                       {item.date}
                     </span>
                   </div>
@@ -373,12 +373,12 @@ export default function ChatPage() {
               {/* Streaming / Typing indicator */}
               {isTyping && (
                 <div className="flex items-start py-1">
-                  <div className="bg-white rounded-[16px] px-5 py-4 max-w-[75%] border border-gray-100 shadow-sm flex gap-3">
+                  <div className="bg-white dark:bg-komorebi-dark-bg rounded-[16px] px-5 py-4 max-w-[75%] border border-gray-100 dark:border-[#32473D] shadow-sm flex gap-3 transition-colors duration-300">
                     <div className="shrink-0 pt-0.5">
                       <img src={Logo} alt="Komi" className="w-6 h-6 opacity-50" />
                     </div>
                     {streamingText ? (
-                      <p className="text-[14px] text-black font-sans leading-relaxed whitespace-pre-wrap">
+                      <p className="text-[14px] text-black dark:text-white font-sans leading-relaxed whitespace-pre-wrap transition-colors duration-300">
                         {streamingText}
                         <span className="inline-block w-1.5 h-4 bg-[#5D8B66] ml-0.5 animate-pulse rounded-sm" />
                       </p>
@@ -430,7 +430,7 @@ export default function ChatPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
               onClick={() => scrollToBottom()}
-              className="absolute bottom-24 right-10 w-9 h-9 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
+              className="absolute bottom-24 right-10 w-9 h-9 bg-white dark:bg-komorebi-dark-card border border-gray-200 dark:border-[#32473D] rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 dark:hover:bg-white/10 transition-colors z-10"
             >
               <ArrowDown className="w-4 h-4 text-gray-500" />
             </motion.button>
@@ -438,7 +438,7 @@ export default function ChatPage() {
         </AnimatePresence>
 
         {/* Input Area */}
-        <div className="px-6 py-4 border-t border-gray-100 shrink-0 bg-white">
+        <div className="px-6 py-4 border-t border-gray-100 dark:border-komorebi-dark-border shrink-0 bg-white dark:bg-komorebi-dark-card transition-colors duration-300">
           <div className="flex items-end gap-3">
             <div className="flex-1 relative">
               <textarea
@@ -460,7 +460,7 @@ export default function ChatPage() {
                 placeholder="Ketik pesan untuk Komi..."
                 rows={1}
                 disabled={isTyping}
-                className="w-full px-4 py-3 bg-[#F7FAF8] border border-gray-100 rounded-[16px] text-[14px] font-sans text-black placeholder-gray-400 outline-none focus:ring-2 focus:ring-[#5D8B66]/20 focus:border-[#5D8B66]/30 transition-all resize-none overflow-hidden disabled:opacity-60"
+                className="w-full px-4 py-3 bg-[#F7FAF8] dark:bg-komorebi-dark-bg border border-gray-100 dark:border-[#32473D] rounded-[16px] text-[14px] font-sans text-black dark:text-white placeholder-gray-400 dark:placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#5D8B66]/20 focus:border-[#5D8B66]/30 transition-all resize-none overflow-hidden disabled:opacity-60"
               />
             </div>
             <button
@@ -469,7 +469,7 @@ export default function ChatPage() {
               className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 ${
                 input.trim() && !isTyping
                   ? "bg-[#5D8B66] hover:bg-[#4A7A55] text-white shadow-sm"
-                  : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-gray-100 dark:bg-komorebi-dark-hover text-gray-400 dark:text-gray-500 cursor-not-allowed"
               }`}
             >
               <Send className="w-5 h-5" />
@@ -511,10 +511,10 @@ function MessageBubble({ message, formatTime }) {
     >
       {/* Bubble */}
       <div
-        className={`max-w-[75%] ${isCustomCard ? "p-0 bg-transparent" : "px-5 py-4"} text-[14px] font-sans leading-relaxed relative flex gap-3 ${
+        className={`max-w-[75%] ${isCustomCard ? "p-0 bg-transparent" : "px-5 py-4"} text-[14px] font-sans leading-relaxed relative flex gap-3 transition-colors duration-300 ${
           isUser && !isCustomCard
             ? "bg-[#5D8B66] text-white rounded-[16px] rounded-br-[4px]"
-            : !isCustomCard ? "bg-white text-black rounded-[16px] border border-gray-100 shadow-sm" : ""
+            : !isCustomCard ? "bg-white dark:bg-komorebi-dark-bg text-black dark:text-white rounded-[16px] border border-gray-100 dark:border-[#32473D] shadow-sm" : ""
         }`}
       >
         {/* Komi avatar inside bubble */}
@@ -526,8 +526,8 @@ function MessageBubble({ message, formatTime }) {
 
         <div className="flex flex-col flex-1">
           {isDiagnosisCard ? (
-            <div className="bg-[#F7FAF8] border border-[#5D8B66]/20 rounded-[16px] p-4 text-[#2D4A34] shadow-sm">
-              <div className="flex items-center gap-2 mb-3 font-semibold border-b border-[#5D8B66]/10 pb-3">
+            <div className="bg-[#F7FAF8] dark:bg-komorebi-dark-bg border border-[#5D8B66]/20 rounded-[16px] p-4 text-[#2D4A34] dark:text-[#E8F1E9] shadow-sm transition-colors duration-300">
+              <div className="flex items-center gap-2 mb-3 font-semibold border-b border-[#5D8B66]/10 dark:border-[#5D8B66]/30 pb-3 transition-colors duration-300">
                 <Brain className="w-5 h-5 text-[#5D8B66]" />
                 Hasil Mind Check-In
               </div>
@@ -537,8 +537,8 @@ function MessageBubble({ message, formatTime }) {
               </p>
             </div>
           ) : isActivityCard ? (
-            <div className="bg-[#FFF8EE] border border-[#EACCA4] rounded-[16px] p-4 text-[#8C5D2C] shadow-sm">
-              <div className="flex items-center gap-2 mb-3 font-semibold border-b border-[#EACCA4]/30 pb-3">
+            <div className="bg-[#FFF8EE] dark:bg-[#2A241A] border border-[#EACCA4] dark:border-[#8C5D2C] rounded-[16px] p-4 text-[#8C5D2C] dark:text-[#EACCA4] shadow-sm transition-colors duration-300">
+              <div className="flex items-center gap-2 mb-3 font-semibold border-b border-[#EACCA4]/30 dark:border-[#8C5D2C]/50 pb-3 transition-colors duration-300">
                 <Activity className="w-5 h-5 text-[#C48943]" />
                 Mulai Aktivitas
               </div>
@@ -551,8 +551,8 @@ function MessageBubble({ message, formatTime }) {
             <>
               <p className="whitespace-pre-wrap break-words">{message.content}</p>
               <p
-                className={`text-[10px] mt-1.5 text-right ${
-                  isUser ? "text-white/60" : "text-gray-400"
+                className={`text-[10px] mt-1.5 text-right transition-colors duration-300 ${
+                  isUser ? "text-white/60" : "text-gray-400 dark:text-gray-500"
                 }`}
               >
                 {formatTime(message.created_at)}

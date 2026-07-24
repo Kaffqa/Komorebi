@@ -122,14 +122,14 @@ export default function DiagnoseResultPage() {
         Back to Mind Check-In
       </button>
 
-      <div className="bg-white rounded-[24px] p-6 lg:p-10 shadow-sm border border-gray-100">
+      <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-10 shadow-sm border border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300">
         {/* Title */}
         <div className="mb-8">
-          <h1 className="text-[24px] lg:text-[28px] font-medium text-black font-sans">
+          <h1 className="text-[24px] lg:text-[28px] font-medium text-black dark:text-white font-sans transition-colors duration-300">
             {getSeverityLabel(severity)}{" "}
             <span className="text-[28px]">{getSeverityEmoji(severity)}</span>
           </h1>
-          <p className="text-[14px] lg:text-[15px] text-gray-500 font-sans leading-relaxed mt-2 max-w-2xl">
+          <p className="text-[14px] lg:text-[15px] text-gray-500 dark:text-gray-400 font-sans leading-relaxed mt-2 max-w-2xl transition-colors duration-300">
             {SEVERITY_DESCRIPTIONS[severity] || SEVERITY_DESCRIPTIONS["Mild"]}
           </p>
         </div>
@@ -138,8 +138,8 @@ export default function DiagnoseResultPage() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left: Breakdown */}
           <div className="flex-1">
-            <div className="border border-gray-100 rounded-[20px] p-6 lg:p-8">
-              <h2 className="text-[18px] font-bold text-black font-sans mb-6">
+            <div className="border border-gray-100 dark:border-komorebi-dark-border rounded-[20px] p-6 lg:p-8 transition-colors duration-300">
+              <h2 className="text-[18px] font-bold text-black dark:text-white font-sans mb-6 transition-colors duration-300">
                 Understanding Your Health
               </h2>
 
@@ -152,15 +152,15 @@ export default function DiagnoseResultPage() {
                     transition={{ delay: 0.2 + idx * 0.1 }}
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[14px] font-semibold text-black font-sans">
+                      <span className="text-[14px] font-semibold text-black dark:text-white font-sans transition-colors duration-300">
                         {item.name}
                       </span>
-                      <span className="text-[14px] font-bold text-black font-sans">
+                      <span className="text-[14px] font-bold text-black dark:text-white font-sans transition-colors duration-300">
                         {item.percentage}%
                       </span>
                     </div>
                     {/* Progress bar */}
-                    <div className="relative w-full h-3 bg-[#E5EBE7] rounded-full overflow-hidden mb-2">
+                    <div className="relative w-full h-3 bg-[#E5EBE7] dark:bg-komorebi-dark-bg rounded-full overflow-hidden mb-2 transition-colors duration-300">
                       <motion.div
                         className="absolute left-0 top-0 h-full bg-[#5D8B66] rounded-full"
                         initial={{ width: 0 }}
@@ -168,7 +168,7 @@ export default function DiagnoseResultPage() {
                         transition={{ duration: 1, delay: 0.3 + idx * 0.1, ease: "easeOut" }}
                       />
                     </div>
-                    <p className="text-[13px] text-gray-500 font-sans leading-relaxed">
+                    <p className="text-[13px] text-gray-500 dark:text-gray-400 font-sans leading-relaxed transition-colors duration-300">
                       {item.description}
                     </p>
                   </motion.div>
@@ -194,7 +194,7 @@ export default function DiagnoseResultPage() {
                     cy="100"
                     r={donutRadius}
                     fill="none"
-                    stroke="#EEF3F0"
+                    stroke="var(--tw-colors-komorebi-dark-bg, #EEF3F0)"
                     strokeWidth={24}
                     strokeLinecap="round"
                     strokeDasharray={`${L2} ${donutCircumference}`}
@@ -202,6 +202,7 @@ export default function DiagnoseResultPage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5, delay: 0.8 }}
+                    className="stroke-[#EEF3F0] dark:stroke-komorebi-dark-bg transition-colors duration-300"
                   />
                 )}
                 {/* Filled circle segment */}
@@ -227,7 +228,7 @@ export default function DiagnoseResultPage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1 }}
-                  className="text-[36px] font-medium text-black font-sans leading-none"
+                  className="text-[36px] font-medium text-black dark:text-white font-sans leading-none transition-colors duration-300"
                 >
                   {healthPct}%
                 </motion.span>
@@ -235,7 +236,7 @@ export default function DiagnoseResultPage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1.2 }}
-                  className="text-[14px] text-gray-500 font-medium font-sans mt-1"
+                  className="text-[14px] text-gray-500 dark:text-gray-400 font-medium font-sans mt-1 transition-colors duration-300"
                 >
                   Accuracy
                 </motion.span>
@@ -243,7 +244,7 @@ export default function DiagnoseResultPage() {
             </motion.div>
 
             {/* Disclaimer */}
-            <p className="text-[11px] text-gray-400 text-center font-light font-sans leading-relaxed mb-6 max-w-[260px]">
+            <p className="text-[11px] text-gray-400 dark:text-gray-500 text-center font-light font-sans leading-relaxed mb-6 max-w-[260px] transition-colors duration-300">
               These results are for informational purposes only. Please consult
               a professional if your symptoms persist.
             </p>
@@ -290,10 +291,10 @@ Bisakah kita bahas hasil ini?`;
                     }
                   });
                 }}
-                className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 hover:bg-[#7DA085]/10 hover:border-[#7DA085]/30 transition-colors group"
+                className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg hover:bg-[#7DA085]/10 dark:hover:bg-white/10 hover:border-[#7DA085]/30 dark:hover:border-[#5D8B66] transition-colors group"
                 title="Share to Forum"
               >
-                <Share2 className="w-4 h-4 text-gray-500 group-hover:text-[#5D8B66]" />
+                <Share2 className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-[#5D8B66] dark:group-hover:text-[#7DA085]" />
               </button>
               <button
                 onClick={async () => {
@@ -351,13 +352,13 @@ Bisakah kita bahas hasil ini?`;
                   }
                 }}
                 disabled={isSaving}
-                className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 hover:bg-[#7DA085]/10 hover:border-[#7DA085]/30 transition-colors group disabled:opacity-50"
+                className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg hover:bg-[#7DA085]/10 dark:hover:bg-white/10 hover:border-[#7DA085]/30 dark:hover:border-[#5D8B66] transition-colors group disabled:opacity-50"
                 title="Save to Journal"
               >
                 {isSaving ? (
                   <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />
                 ) : (
-                  <BookOpen className="w-4 h-4 text-gray-500 group-hover:text-[#5D8B66]" />
+                  <BookOpen className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-[#5D8B66] dark:group-hover:text-[#7DA085]" />
                 )}
               </button>
             </div>

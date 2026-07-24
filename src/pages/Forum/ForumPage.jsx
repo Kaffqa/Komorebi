@@ -189,7 +189,7 @@ export default function ForumPage() {
     <div className="w-full pb-20">
       
       {/* Search Bar */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-2 mb-6 flex items-center shadow-sm">
+      <div className="bg-white dark:bg-komorebi-dark-card rounded-2xl border border-gray-100 dark:border-komorebi-dark-border p-2 mb-6 flex items-center shadow-sm transition-colors duration-300">
         <div className="pl-4 pr-2">
           <Search className="w-5 h-5 text-gray-400" />
         </div>
@@ -198,7 +198,7 @@ export default function ForumPage() {
           placeholder="How can we help you today?"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-transparent border-none outline-none text-gray-700 py-3 font-sans"
+          className="w-full bg-transparent border-none outline-none text-gray-700 dark:text-gray-300 dark:placeholder-gray-500 py-3 font-sans transition-colors duration-300"
         />
       </div>
 
@@ -214,7 +214,7 @@ export default function ForumPage() {
                   className={`relative shrink-0 whitespace-nowrap px-6 py-2 rounded-full border text-sm font-medium transition-colors font-sans overflow-hidden ${
                     isActive 
                       ? "text-white border-transparent" 
-                      : "bg-white border-[#B5CCBD] text-gray-700 hover:bg-gray-50"
+                      : "bg-white dark:bg-komorebi-dark-bg border-[#B5CCBD] dark:border-[#32473D] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-black/20"
                   }`}
                 >
                   {isActive && (
@@ -231,7 +231,7 @@ export default function ForumPage() {
           })}
         </div>
         
-        <button className="flex items-center gap-2 px-5 py-2 rounded-full border border-[#B5CCBD] bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 whitespace-nowrap">
+        <button className="flex items-center gap-2 px-5 py-2 rounded-full border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-black/20 whitespace-nowrap transition-colors duration-300">
           Most Recent
           <ChevronDown className="w-4 h-4" />
         </button>
@@ -242,7 +242,7 @@ export default function ForumPage() {
         {loading ? (
           <div className="text-center py-10 text-gray-500">Loading posts...</div>
         ) : posts.length === 0 ? (
-          <div className="text-center py-10 text-gray-500 bg-white rounded-2xl border border-gray-100">
+          <div className="text-center py-10 text-gray-500 bg-white dark:bg-komorebi-dark-card rounded-2xl border border-gray-100 dark:border-[#32473D] transition-colors duration-300">
             No posts found. Be the first to share a story!
           </div>
         ) : (
@@ -251,20 +251,20 @@ export default function ForumPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               key={post.id} 
-              className="bg-white rounded-[24px] p-6 lg:p-8 border border-gray-100 shadow-sm"
+              className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 border border-gray-100 dark:border-komorebi-dark-border shadow-sm transition-colors duration-300"
             >
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-[48px] h-[48px] rounded-2xl bg-gray-200 overflow-hidden shrink-0">
+                  <div className="w-[48px] h-[48px] rounded-2xl bg-gray-200 dark:bg-[#32473D] overflow-hidden shrink-0 transition-colors duration-300">
                     {post.profiles?.avatar_url ? (
                       <img src={post.profiles.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-500 text-xl">👤</div>
+                      <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 text-xl">👤</div>
                     )}
                   </div>
                   <div className="flex items-center gap-3">
-                    <h4 className="text-[20px] text-gray-900 font-sans">{post.profiles?.display_name || "Anonymous"}</h4>
+                    <h4 className="text-[20px] text-gray-900 dark:text-white font-sans transition-colors duration-300">{post.profiles?.display_name || "Anonymous"}</h4>
                     <span className="text-[15px] text-gray-400 font-sans">{formatDate(post.created_at)}</span>
                   </div>
                 </div>
@@ -275,13 +275,13 @@ export default function ForumPage() {
 
               {/* Content */}
               <div className="mb-4">
-                {post.title && <h3 className="text-xl font-bold text-gray-900 mb-3 font-sans">{post.title}</h3>}
-                <p className="text-[15px] text-gray-700 font-sans leading-relaxed line-clamp-3 mb-4">
+                {post.title && <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 font-sans transition-colors duration-300">{post.title}</h3>}
+                <p className="text-[15px] text-gray-700 dark:text-gray-300 font-sans leading-relaxed line-clamp-3 mb-4 transition-colors duration-300">
                   {post.content}
                 </p>
                 
                 {post.image_url && (
-                  <div className="rounded-2xl overflow-hidden mb-4 border border-gray-100 max-h-[400px]">
+                  <div className="rounded-2xl overflow-hidden mb-4 border border-gray-100 dark:border-transparent max-h-[400px]">
                     <img src={post.image_url} alt="Post attachment" className="w-full h-full object-cover" />
                   </div>
                 )}
@@ -290,7 +290,7 @@ export default function ForumPage() {
                 {post.tags && post.tags.length > 0 && (
                   <div className="flex items-center gap-2 mb-4 flex-wrap">
                     {post.tags.map(tag => (
-                      <span key={tag} className="px-4 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-xs font-medium text-gray-600 font-sans">
+                      <span key={tag} className="px-4 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#43674F] bg-white dark:bg-[#32473D] text-xs font-medium text-gray-600 dark:text-gray-300 font-sans transition-colors duration-300">
                         {tag}
                       </span>
                     ))}
@@ -333,54 +333,54 @@ export default function ForumPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm"
               onClick={() => setSelectedPost(null)}
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white rounded-[24px] w-full max-w-3xl overflow-hidden shadow-2xl relative z-10 flex flex-col h-[92vh]"
+              className="bg-white dark:bg-komorebi-dark-card rounded-[24px] w-full max-w-3xl overflow-hidden shadow-2xl relative z-10 flex flex-col h-[92vh] transition-colors duration-300"
             >
               {/* Header */}
-              <div className="p-4 sm:p-6 border-b border-gray-100 flex items-center gap-4 sticky top-0 bg-white/80 backdrop-blur-md z-20">
-                <button onClick={() => setSelectedPost(null)} className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors">
+              <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-komorebi-dark-border flex items-center gap-4 sticky top-0 bg-white/80 dark:bg-komorebi-dark-card/80 backdrop-blur-md z-20 transition-colors duration-300">
+                <button onClick={() => setSelectedPost(null)} className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors">
                   <ArrowLeft className="w-5 h-5" />
                 </button>
-                <h3 className="text-xl font-bold font-sans text-gray-900">Post</h3>
+                <h3 className="text-xl font-bold font-sans text-gray-900 dark:text-white transition-colors duration-300">Post</h3>
               </div>
               
               <div className="flex-1 overflow-y-auto flex flex-col [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {/* Original Post */}
-                <div className="p-4 sm:p-6 bg-white border-b border-gray-100">
+                <div className="p-4 sm:p-6 bg-white dark:bg-komorebi-dark-card border-b border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300">
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="w-[48px] h-[48px] rounded-2xl bg-gray-200 overflow-hidden shrink-0">
+                    <div className="w-[48px] h-[48px] rounded-2xl bg-gray-200 dark:bg-[#32473D] overflow-hidden shrink-0 transition-colors duration-300">
                       {selectedPost.profiles?.avatar_url ? (
                         <img src={selectedPost.profiles.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-500 text-xl">👤</div>
+                        <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 text-xl">👤</div>
                       )}
                     </div>
                     <div className="flex flex-col">
-                      <h4 className="text-[18px] text-gray-900 font-sans font-bold">{selectedPost.profiles?.display_name || "Anonymous"}</h4>
+                      <h4 className="text-[18px] text-gray-900 dark:text-white font-sans font-bold transition-colors duration-300">{selectedPost.profiles?.display_name || "Anonymous"}</h4>
                       <span className="text-[14px] text-gray-500 font-sans">{formatDate(selectedPost.created_at)}</span>
                     </div>
                   </div>
                   
                   <div className="mb-4">
-                    {selectedPost.title && <h3 className="text-xl font-bold text-gray-900 mb-3 font-sans">{selectedPost.title}</h3>}
-                    <p className="text-[16px] text-gray-800 font-sans leading-relaxed mb-4 whitespace-pre-wrap">
+                    {selectedPost.title && <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 font-sans transition-colors duration-300">{selectedPost.title}</h3>}
+                    <p className="text-[16px] text-gray-800 dark:text-gray-300 font-sans leading-relaxed mb-4 whitespace-pre-wrap transition-colors duration-300">
                       {selectedPost.content}
                     </p>
                     {selectedPost.image_url && (
-                      <div className="w-full rounded-2xl overflow-hidden bg-gray-100 mb-4 border border-gray-100">
+                      <div className="w-full rounded-2xl overflow-hidden bg-gray-100 dark:bg-[#32473D] mb-4 border border-gray-100 dark:border-transparent">
                         <img src={selectedPost.image_url} alt="Post image" className="w-full h-auto object-cover" />
                       </div>
                     )}
                     {selectedPost.tags && selectedPost.tags.length > 0 && (
                       <div className="flex items-center gap-2 mb-4 flex-wrap">
                         {selectedPost.tags.map(tag => (
-                          <span key={tag} className="px-4 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-xs font-medium text-gray-600 font-sans">
+                          <span key={tag} className="px-4 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#43674F] bg-white dark:bg-[#32473D] text-xs font-medium text-gray-600 dark:text-gray-300 font-sans transition-colors duration-300">
                             {tag}
                           </span>
                         ))}
@@ -388,7 +388,7 @@ export default function ForumPage() {
                     )}
                   </div>
                   
-                  <div className="flex items-center gap-6 py-4 border-t border-gray-100 text-gray-500">
+                  <div className="flex items-center gap-6 py-4 border-t border-gray-100 dark:border-komorebi-dark-border text-gray-500 transition-colors duration-300">
                      <div className="flex items-center gap-2">
                         <MessageCircle className="w-5 h-5" />
                         <span className="text-[14px] font-medium">{selectedPost.replies_count || 0}</span>
@@ -404,7 +404,7 @@ export default function ForumPage() {
                 </div>
 
                 {/* Comment List */}
-                <div className="p-4 sm:p-6 space-y-6 bg-gray-50/30 flex-1">
+                <div className="p-4 sm:p-6 space-y-6 bg-gray-50/30 dark:bg-komorebi-dark-bg/30 flex-1 transition-colors duration-300">
                 {loadingComments ? (
                   <div className="text-center py-10 text-gray-500">Loading comments...</div>
                 ) : comments.length === 0 ? (
@@ -412,19 +412,19 @@ export default function ForumPage() {
                 ) : (
                   comments.map(c => (
                     <div key={c.id} className="flex gap-4">
-                      <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden shrink-0 mt-1">
+                      <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-[#32473D] overflow-hidden shrink-0 mt-1 transition-colors duration-300">
                         {c.profiles?.avatar_url ? (
                           <img src={c.profiles.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-xs">👤</div>
+                          <div className="w-full h-full flex items-center justify-center text-xs text-gray-500 dark:text-gray-400">👤</div>
                         )}
                       </div>
-                      <div className="flex-1 bg-white border border-gray-100 p-4 rounded-2xl rounded-tl-none shadow-sm">
+                      <div className="flex-1 bg-white dark:bg-[#32473D] border border-gray-100 dark:border-[#43674F] p-4 rounded-2xl rounded-tl-none shadow-sm transition-colors duration-300">
                         <div className="flex justify-between items-start mb-2">
-                          <h5 className="font-semibold text-sm font-sans">{c.profiles?.display_name || "Anonymous"}</h5>
+                          <h5 className="font-semibold text-sm font-sans text-gray-900 dark:text-white transition-colors duration-300">{c.profiles?.display_name || "Anonymous"}</h5>
                           <span className="text-[10px] text-gray-400">{formatDate(c.created_at)}</span>
                         </div>
-                        <p className="text-[14px] text-gray-700 font-sans leading-relaxed">{c.content}</p>
+                        <p className="text-[14px] text-gray-700 dark:text-gray-300 font-sans leading-relaxed transition-colors duration-300">{c.content}</p>
                       </div>
                     </div>
                   ))
@@ -433,7 +433,7 @@ export default function ForumPage() {
               </div>
 
               {/* Comment Input */}
-              <div className="p-6 border-t border-gray-100 bg-white">
+              <div className="p-6 border-t border-gray-100 dark:border-komorebi-dark-border bg-white dark:bg-komorebi-dark-card transition-colors duration-300">
                 <div className="flex gap-3 items-center">
                   <input 
                     type="text" 
@@ -441,7 +441,7 @@ export default function ForumPage() {
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && submitComment()}
-                    className="flex-1 bg-gray-50 border border-gray-200 rounded-full px-5 py-3 text-sm outline-none focus:border-[#7DA085] transition-colors"
+                    className="flex-1 bg-gray-50 dark:bg-komorebi-dark-bg border border-gray-200 dark:border-[#32473D] rounded-full px-5 py-3 text-sm outline-none focus:border-[#7DA085] text-gray-900 dark:text-white dark:placeholder-gray-500 transition-colors"
                   />
                   <button 
                     onClick={submitComment}

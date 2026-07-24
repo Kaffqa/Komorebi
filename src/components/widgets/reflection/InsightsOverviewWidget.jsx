@@ -104,24 +104,24 @@ export function InsightsOverviewWidget() {
   }, [user, fetchInsights]);
 
   return (
-    <div className="bg-white rounded-[24px] p-6 lg:p-7 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col h-fit">
+    <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-7 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] border border-gray-100 dark:border-komorebi-dark-border flex flex-col h-fit transition-colors duration-300">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-[20px] font-sans font-medium text-black tracking-tight">Insights Overview</h3>
-          <div className="flex items-center justify-center text-[13px] font-medium text-gray-700 border border-[#B5CCBD] bg-white px-4 py-1.5 rounded-full cursor-default">
+        <h3 className="text-[20px] font-sans font-medium text-black dark:text-white tracking-tight transition-colors duration-300">Insights Overview</h3>
+          <div className="flex items-center justify-center text-[13px] font-medium text-gray-700 dark:text-gray-300 border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg px-4 py-1.5 rounded-full cursor-default transition-colors">
             Weekly
           </div>
       </div>
 
       <div className="flex flex-col gap-3">
         {insights.map((item, idx) => (
-          <div key={idx} className="flex items-center justify-between border border-gray-200/80 rounded-xl p-3 bg-white hover:border-gray-300 transition-colors">
+          <div key={idx} className="flex items-center justify-between border border-gray-200/80 dark:border-[#32473D] rounded-xl p-3 bg-white dark:bg-komorebi-dark-bg hover:border-gray-300 dark:hover:border-[#5D8B66]/50 transition-colors duration-300">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-[10px] border border-[#5D8B66]/40 bg-transparent flex items-center justify-center text-[#5D8B66]">
+              <div className="w-10 h-10 rounded-[10px] border border-[#5D8B66]/40 bg-transparent flex items-center justify-center text-[#5D8B66] dark:text-[#7DA085]">
                 <item.icon className="w-5 h-5" strokeWidth={1.5} />
               </div>
-              <span className="font-sans font-medium text-[15px] text-gray-900">{item.label}</span>
+              <span className="font-sans font-medium text-[15px] text-gray-900 dark:text-white">{item.label}</span>
             </div>
-            <span className="font-sans font-medium text-[17px] text-[#5D8B66]">{item.value}</span>
+            <span className="font-sans font-medium text-[17px] text-[#5D8B66] dark:text-[#7DA085]">{item.value}</span>
           </div>
         ))}
       </div>

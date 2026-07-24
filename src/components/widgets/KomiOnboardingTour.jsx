@@ -325,9 +325,9 @@ export function KomiOnboardingTour({ onComplete }) {
           className="z-[10003]"
           style={{ ...getBubbleStyle(), pointerEvents: 'auto' }}
         >
-          <div className="bg-white rounded-[24px] shadow-2xl border border-gray-100 overflow-hidden relative">
+          <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] shadow-2xl border border-gray-100 dark:border-transparent overflow-hidden relative transition-colors duration-300">
             {/* Progress bar (Absolute to guarantee perfect clipping by parent) */}
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gray-100">
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gray-100 dark:bg-komorebi-dark-bg transition-colors duration-300">
               <motion.div 
                 className="h-full bg-gradient-to-r from-[#5D8B66] to-[#A8D8B6]"
                 initial={{ width: 0 }}
@@ -351,8 +351,8 @@ export function KomiOnboardingTour({ onComplete }) {
                 )}
               </div>
 
-              <h3 className="text-lg font-bold text-gray-900 mb-2 font-sans">{step.title}</h3>
-              <p className="text-sm text-gray-600 leading-relaxed mb-5 font-sans">{step.message}</p>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 font-sans transition-colors duration-300">{step.title}</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-5 font-sans transition-colors duration-300">{step.message}</p>
 
               <button
                 onClick={handleNext}
@@ -367,8 +367,8 @@ export function KomiOnboardingTour({ onComplete }) {
           {/* Thought cloud tail */}
           {!isCenter && (
             <>
-              <div className="absolute -left-4 top-12 w-5 h-5 bg-white rounded-full border border-gray-100 shadow-sm"></div>
-              <div className="absolute -left-8 top-6 w-3 h-3 bg-white rounded-full border border-gray-100 shadow-sm"></div>
+              <div className="absolute -left-4 top-12 w-5 h-5 bg-white dark:bg-komorebi-dark-card rounded-full border border-gray-100 dark:border-transparent shadow-sm transition-colors duration-300"></div>
+              <div className="absolute -left-8 top-6 w-3 h-3 bg-white dark:bg-komorebi-dark-card rounded-full border border-gray-100 dark:border-transparent shadow-sm transition-colors duration-300"></div>
             </>
           )}
         </motion.div>

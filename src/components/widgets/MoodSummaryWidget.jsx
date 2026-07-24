@@ -124,28 +124,28 @@ export function MoodSummaryWidget() {
   ];
 
   return (
-    <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 h-full flex flex-col" data-tour-id="mood-summary">
+    <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-komorebi-dark-border h-full flex flex-col transition-colors duration-300" data-tour-id="mood-summary">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-[20px] font-sans font-semibold text-black">Mood History</h3>
+        <h3 className="text-[20px] font-sans font-semibold text-black dark:text-white transition-colors duration-300">Mood History</h3>
         <div className="relative" ref={dropdownRef}>
           <button 
             onClick={() => setShowDropdown(!showDropdown)}
-            className="flex items-center gap-2 text-[13px] font-medium px-4 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-black hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-2 text-[13px] font-medium px-4 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg text-black dark:text-white hover:bg-gray-50 dark:hover:bg-black/20 transition-colors"
           >
             {view}
-            <ChevronDown className="w-4 h-4 text-gray-400" />
+            <ChevronDown className="w-4 h-4 text-gray-400 dark:text-gray-500" />
           </button>
           <AnimatePresence>
             {showDropdown && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                className="absolute top-full right-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50 min-w-[120px]"
-              >
-                <button onClick={() => {setView("Weekly"); setShowDropdown(false);}} className="w-full text-left px-4 py-2 hover:bg-gray-50 text-[13px] font-light transition-colors text-gray-700">Weekly</button>
-                <button onClick={() => {setView("Monthly"); setShowDropdown(false);}} className="w-full text-left px-4 py-2 hover:bg-gray-50 text-[13px] font-light transition-colors text-gray-700">Monthly</button>
-              </motion.div>
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute top-full right-0 mt-2 bg-white dark:bg-[#1c2620] rounded-xl shadow-lg border border-gray-100 dark:border-[#32473D] py-2 z-50 min-w-[120px]"
+                >
+                  <button onClick={() => {setView("Weekly"); setShowDropdown(false);}} className="w-full text-left px-4 py-2 hover:bg-gray-50 dark:hover:bg-black/20 text-[13px] font-light transition-colors text-gray-700 dark:text-gray-300">Weekly</button>
+                  <button onClick={() => {setView("Monthly"); setShowDropdown(false);}} className="w-full text-left px-4 py-2 hover:bg-gray-50 dark:hover:bg-black/20 text-[13px] font-light transition-colors text-gray-700 dark:text-gray-300">Monthly</button>
+                </motion.div>
             )}
           </AnimatePresence>
         </div>
@@ -154,7 +154,7 @@ export function MoodSummaryWidget() {
       <div className="flex-1 flex flex-col justify-center items-center relative min-h-[250px] w-full max-w-[320px] mx-auto">
         {!hasData && (
           <div className="absolute inset-0 flex items-center justify-center z-20">
-            <p className="text-gray-400 text-[14px] font-sans text-center">No mood data yet.<br/>Start logging your mood!</p>
+            <p className="text-gray-400 dark:text-komorebi-dark-muted text-[14px] font-sans text-center">No mood data yet.<br/>Start logging your mood!</p>
           </div>
         )}
         {/* Floating Labels & Chart Wrapper */}
@@ -229,7 +229,7 @@ export function MoodSummaryWidget() {
         {legendData.map((item) => (
           <div key={item.label} className="flex items-center gap-1.5 shrink-0">
             <span className="w-[18px] h-[18px] rounded-full shrink-0" style={{ backgroundColor: item.color }}></span>
-            <span className="text-[12px] lg:text-[13px] font-sans font-medium text-black whitespace-nowrap">{item.label}</span>
+            <span className="text-[12px] lg:text-[13px] font-sans font-medium text-black dark:text-gray-200 whitespace-nowrap transition-colors duration-300">{item.label}</span>
           </div>
         ))}
       </div>

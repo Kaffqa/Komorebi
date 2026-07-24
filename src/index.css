@@ -1,7 +1,7 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 @import url('https://api.fontshare.com/v2/css?f[]=general-sans@200,300,400,500,600,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
-
 @theme {
   --color-komorebi-dark: #202e25;
   --color-komorebi-green: #3d5a45;
@@ -12,13 +12,22 @@
   --color-komorebi-alert: #ef5350;
   --color-komorebi-attention: #ff9800;
 
+  /* Premium Dark Mode Colors */
+  --color-komorebi-dark-bg: #141c17;
+  --color-komorebi-dark-card: #1c2620;
+  --color-komorebi-dark-border: #2c3a32;
+  --color-komorebi-dark-hover: #233028;
+  --color-komorebi-dark-text: #e2e8e4;
+  --color-komorebi-dark-muted: #8b9d93;
+
   --font-heading: "Bosca", "Playfair Display", serif;
   --font-body: "General Sans", "Inter", sans-serif;
 }
 
 @layer base {
   html, body {
-    @apply bg-komorebi-cream text-komorebi-dark font-body antialiased;
+    @apply bg-komorebi-cream text-komorebi-dark font-body antialiased transition-colors duration-300;
+    @apply dark:bg-komorebi-dark-bg dark:text-komorebi-dark-text;
     scroll-behavior: smooth;
   }
   

@@ -171,14 +171,14 @@ export default function HelpPage() {
     <div className="w-full pb-20 animate-in fade-in duration-500">
       
       {/* Search Bar */}
-      <div className="bg-white rounded-2xl p-4 mb-6 flex items-center shadow-sm border border-gray-100/50">
+      <div className="bg-white dark:bg-komorebi-dark-card rounded-2xl p-4 mb-6 flex items-center shadow-sm border border-gray-100/50 dark:border-komorebi-dark-border transition-colors duration-300">
         <Search className="w-5 h-5 text-gray-400 mr-3" />
         <input
           type="text"
           placeholder="Search Doctor"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-transparent border-none outline-none text-gray-700 font-sans text-[15px] placeholder:text-gray-400"
+          className="w-full bg-transparent border-none outline-none text-gray-700 dark:text-gray-300 font-sans text-[15px] placeholder:text-gray-400 transition-colors duration-300"
         />
       </div>
 
@@ -194,7 +194,7 @@ export default function HelpPage() {
                 className={`relative whitespace-nowrap px-6 py-2 rounded-full border text-[13px] font-medium transition-colors font-sans overflow-hidden shrink-0 ${
                   isActive
                     ? "text-white border-transparent"
-                    : "bg-white border-[#B5CCBD] text-gray-600 hover:bg-gray-50"
+                    : "bg-white dark:bg-komorebi-dark-bg border-[#B5CCBD] dark:border-[#32473D] text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-black/20"
                 }`}
               >
                 {isActive && (
@@ -214,7 +214,7 @@ export default function HelpPage() {
         <div className="relative shrink-0 pb-2">
           <button 
             onClick={() => setShowSortMenu(!showSortMenu)}
-            className="w-9 h-9 flex items-center justify-center rounded-full border border-[#B5CCBD] bg-white hover:bg-gray-50 transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-full border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg hover:bg-gray-50 dark:hover:bg-black/20 transition-colors"
           >
             <SlidersHorizontal className="w-4 h-4 text-gray-500" />
           </button>
@@ -227,9 +227,9 @@ export default function HelpPage() {
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 top-full mt-0 w-48 bg-white border border-gray-100 rounded-xl shadow-lg z-50 py-2"
+                  className="absolute right-0 top-full mt-0 w-48 bg-white dark:bg-komorebi-dark-card border border-gray-100 dark:border-komorebi-dark-border rounded-xl shadow-lg z-50 py-2 transition-colors duration-300"
                 >
-                  <div className="px-4 py-2 text-[11px] font-bold text-gray-400 uppercase tracking-wider font-sans border-b border-gray-50 mb-1">
+                  <div className="px-4 py-2 text-[11px] font-bold text-gray-400 uppercase tracking-wider font-sans border-b border-gray-50 dark:border-komorebi-dark-border mb-1 transition-colors duration-300">
                     Sort By
                   </div>
                   {["Default", "Highest Rating", "Most Experienced", "Lowest Price"].map((sortOption) => (
@@ -240,7 +240,7 @@ export default function HelpPage() {
                         setShowSortMenu(false);
                       }}
                       className={`w-full text-left px-4 py-2 text-[13px] font-medium transition-colors font-sans ${
-                        activeSort === sortOption ? "text-[#5D8B66] bg-[#7DA085]/10" : "text-gray-600 hover:bg-gray-50"
+                        activeSort === sortOption ? "text-[#5D8B66] dark:text-[#7DA085] bg-[#7DA085]/10" : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/10"
                       }`}
                     >
                       {sortOption}
@@ -260,8 +260,8 @@ export default function HelpPage() {
             <div className="w-10 h-10 border-4 border-[#7DA085]/30 border-t-[#7DA085] rounded-full animate-spin mx-auto"></div>
           </div>
         ) : filteredSpecialists.length === 0 ? (
-          <div className="col-span-full text-center py-16 bg-white rounded-2xl border border-gray-100">
-            <Search className="w-10 h-10 text-gray-200 mx-auto mb-3" />
+          <div className="col-span-full text-center py-16 bg-white dark:bg-komorebi-dark-card rounded-2xl border border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300">
+            <Search className="w-10 h-10 text-gray-200 dark:text-gray-600 mx-auto mb-3" />
             <p className="text-gray-400 font-sans">No specialists found.</p>
           </div>
         ) : (
@@ -272,10 +272,10 @@ export default function HelpPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.05 }}
               onClick={() => setSelectedSpecialist(specialist)}
-              className="bg-white rounded-[20px] p-4 border border-gray-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:shadow-md transition-all cursor-pointer group flex flex-col"
+              className="bg-white dark:bg-komorebi-dark-card rounded-[20px] p-4 border border-gray-100 dark:border-komorebi-dark-border shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:shadow-md transition-all cursor-pointer group flex flex-col duration-300"
             >
               {/* Image */}
-              <div className="w-full aspect-[4/3] rounded-xl overflow-hidden bg-gray-100 mb-4 shrink-0">
+              <div className="w-full aspect-[4/3] rounded-xl overflow-hidden bg-gray-100 dark:bg-komorebi-dark-bg mb-4 shrink-0 transition-colors duration-300">
                 <img
                   src={specialist.avatar_url || `https://api.dicebear.com/9.x/notionists/svg?seed=${specialist.name}`}
                   alt={specialist.name}
@@ -285,21 +285,21 @@ export default function HelpPage() {
 
               {/* Info */}
               <div className="flex flex-col flex-1 px-1">
-                <h3 className="text-[17px] font-bold text-gray-900 font-sans leading-tight mb-1">
+                <h3 className="text-[17px] font-bold text-gray-900 dark:text-white font-sans leading-tight mb-1 transition-colors duration-300">
                   {specialist.name}
                 </h3>
-                <p className="text-[13px] text-gray-500 font-sans mb-5">
+                <p className="text-[13px] text-gray-500 dark:text-gray-400 font-sans mb-5 transition-colors duration-300">
                   {specialist.title}
                 </p>
 
                 {/* Meta row */}
                 <div className="flex items-center justify-between mt-auto">
                   <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-[11px] font-medium text-gray-600 font-sans">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#43674F] bg-white dark:bg-[#32473D] text-[11px] font-medium text-gray-600 dark:text-gray-300 font-sans transition-colors duration-300">
                       <ThumbsUp className="w-3.5 h-3.5" />
                       {specialist.rating}
                     </div>
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-[11px] font-medium text-gray-600 font-sans">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#43674F] bg-white dark:bg-[#32473D] text-[11px] font-medium text-gray-600 dark:text-gray-300 font-sans transition-colors duration-300">
                       <Briefcase className="w-3.5 h-3.5" />
                       {specialist.experience}
                     </div>
@@ -323,7 +323,7 @@ export default function HelpPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/30 dark:bg-black/60 backdrop-blur-sm"
               onClick={() => setSelectedSpecialist(null)}
             />
             
@@ -332,7 +332,7 @@ export default function HelpPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-[24px] w-full max-w-[450px] p-5 shadow-2xl relative z-10 flex flex-col max-h-[90vh]"
+              className="bg-white dark:bg-komorebi-dark-card rounded-[24px] w-full max-w-[450px] p-5 shadow-2xl relative z-10 flex flex-col max-h-[90vh] transition-colors duration-300"
             >
               {/* Close Button */}
               <button 
@@ -344,7 +344,7 @@ export default function HelpPage() {
 
               <div className="overflow-y-auto pr-2 pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {/* Image */}
-                <div className="w-full h-[220px] rounded-2xl overflow-hidden bg-gray-100 mb-5 relative shrink-0">
+                <div className="w-full h-[220px] rounded-2xl overflow-hidden bg-gray-100 dark:bg-komorebi-dark-bg mb-5 relative shrink-0 transition-colors duration-300">
                   <img
                     src={selectedSpecialist.avatar_url || `https://api.dicebear.com/9.x/notionists/svg?seed=${selectedSpecialist.name}`}
                     alt={selectedSpecialist.name}
@@ -354,26 +354,26 @@ export default function HelpPage() {
 
                 {/* Header: Name & Price */}
                 <div className="flex justify-between items-start mb-1">
-                  <h2 className="text-[18px] font-bold text-gray-900 font-sans leading-tight pr-4">
+                  <h2 className="text-[18px] font-bold text-gray-900 dark:text-white font-sans leading-tight pr-4 transition-colors duration-300">
                     {selectedSpecialist.name}
                   </h2>
-                  <span className="text-[13px] font-semibold text-[#5D8B66] font-sans pt-1 shrink-0">
+                  <span className="text-[13px] font-semibold text-[#5D8B66] dark:text-[#7DA085] font-sans pt-1 shrink-0 transition-colors duration-300">
                     {selectedSpecialist.price}
                   </span>
                 </div>
                 
-                <p className="text-[13px] text-gray-500 font-sans mb-4">
+                <p className="text-[13px] text-gray-500 dark:text-gray-400 font-sans mb-4 transition-colors duration-300">
                   {selectedSpecialist.title}
                 </p>
 
                 {/* Meta row */}
                 <div className="flex items-center justify-between mb-5">
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-[11px] font-medium text-gray-600 font-sans">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#43674F] bg-white dark:bg-[#32473D] text-[11px] font-medium text-gray-600 dark:text-gray-300 font-sans transition-colors duration-300">
                       <ThumbsUp className="w-3.5 h-3.5" />
                       {selectedSpecialist.rating}
                     </div>
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-[11px] font-medium text-gray-600 font-sans">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#43674F] bg-white dark:bg-[#32473D] text-[11px] font-medium text-gray-600 dark:text-gray-300 font-sans transition-colors duration-300">
                       <Briefcase className="w-3.5 h-3.5" />
                       {selectedSpecialist.experience}
                     </div>
@@ -386,36 +386,36 @@ export default function HelpPage() {
 
                 {/* Bio & Details (From previous implementation) */}
                 <div className="mb-5 space-y-4">
-                  <p className="text-[13px] text-gray-600 font-sans leading-relaxed">
+                  <p className="text-[13px] text-gray-600 dark:text-gray-300 font-sans leading-relaxed transition-colors duration-300">
                     {selectedSpecialist.bio}
                   </p>
                   
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                    <div className="bg-gray-50 dark:bg-komorebi-dark-bg rounded-xl p-3 border border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300">
                       <div className="flex items-center gap-2 mb-1">
                         <MapPin className="w-3.5 h-3.5 text-gray-400" />
                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide font-sans">Lokasi</span>
                       </div>
-                      <p className="text-[12px] font-semibold text-gray-800 font-sans">{selectedSpecialist.location}</p>
+                      <p className="text-[12px] font-semibold text-gray-800 dark:text-gray-200 font-sans transition-colors duration-300">{selectedSpecialist.location}</p>
                     </div>
-                    <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                    <div className="bg-gray-50 dark:bg-komorebi-dark-bg rounded-xl p-3 border border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300">
                       <div className="flex items-center gap-2 mb-1">
                         <Shield className="w-3.5 h-3.5 text-gray-400" />
                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide font-sans">Klinik/RS</span>
                       </div>
-                      <p className="text-[12px] font-semibold text-gray-800 font-sans truncate">{selectedSpecialist.hospital}</p>
+                      <p className="text-[12px] font-semibold text-gray-800 dark:text-gray-200 font-sans truncate transition-colors duration-300">{selectedSpecialist.hospital}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Area of Expertise */}
                 <div className="mb-6">
-                  <p className="text-[13px] text-gray-700 font-bold font-sans mb-3">
+                  <p className="text-[13px] text-gray-700 dark:text-gray-300 font-bold font-sans mb-3 transition-colors duration-300">
                     Area of Expertise
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {selectedSpecialist.expertise.map((exp) => (
-                      <span key={exp} className="px-3 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-[11px] font-medium text-gray-600 font-sans">
+                      <span key={exp} className="px-3 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#43674F] bg-white dark:bg-[#32473D] text-[11px] font-medium text-gray-600 dark:text-gray-300 font-sans transition-colors duration-300">
                         {exp}
                       </span>
                     ))}
@@ -434,7 +434,7 @@ export default function HelpPage() {
                   <div className="flex gap-2.5">
                     <a
                       href={`mailto:${selectedSpecialist.email}`}
-                      className="flex-1 py-3 border border-[#B5CCBD] bg-white hover:bg-gray-50 text-gray-700 rounded-full text-[13px] font-semibold transition-colors font-sans flex items-center justify-center gap-2"
+                      className="flex-1 py-3 border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg hover:bg-gray-50 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 rounded-full text-[13px] font-semibold transition-colors font-sans flex items-center justify-center gap-2"
                     >
                       <Mail className="w-4 h-4" />
                       Email
@@ -443,7 +443,7 @@ export default function HelpPage() {
                       href={`https://wa.me/${selectedSpecialist.phone.replace(/[^0-9]/g, '')}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 py-3 border border-[#B5CCBD] bg-white hover:bg-gray-50 text-gray-700 rounded-full text-[13px] font-semibold transition-colors font-sans flex items-center justify-center gap-2"
+                      className="flex-1 py-3 border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg hover:bg-gray-50 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 rounded-full text-[13px] font-semibold transition-colors font-sans flex items-center justify-center gap-2"
                     >
                       <ExternalLink className="w-4 h-4" />
                       WhatsApp

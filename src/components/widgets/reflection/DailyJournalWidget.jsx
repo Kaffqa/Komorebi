@@ -160,9 +160,9 @@ export function DailyJournalWidget() {
 
   return (
     <>
-      <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col w-full">
+      <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col w-full transition-colors duration-300">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-          <h3 className="text-[20px] font-sans font-medium text-black">Daily Journal</h3>
+          <h3 className="text-[20px] font-sans font-medium text-black dark:text-white transition-colors duration-300">Daily Journal</h3>
           <div className="flex items-center gap-3">
             <button 
               onClick={handleSave}
@@ -179,7 +179,7 @@ export function DailyJournalWidget() {
             </button>
               <button 
                 onClick={loadPastJournals}
-                className="w-[140px] flex justify-center items-center border border-[#B5CCBD] bg-white text-black hover:bg-gray-50 py-1.5 rounded-full text-[13px] font-medium transition-colors"
+                className="w-[140px] flex justify-center items-center border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg text-black dark:text-white hover:bg-gray-50 dark:hover:bg-black/20 py-1.5 rounded-full text-[13px] font-medium transition-colors"
               >
                 See All Journal
               </button>
@@ -190,7 +190,7 @@ export function DailyJournalWidget() {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="What's on your mind today?"
-          className="w-full h-[180px] sm:h-[220px] resize-none border border-gray-200 rounded-[20px] p-5 font-sans text-[15px] outline-none focus:ring-2 focus:ring-[#7DA085]/30 focus:border-[#7DA085] placeholder:text-gray-300 text-gray-700 mb-4"
+          className="w-full h-[180px] sm:h-[220px] resize-none border border-gray-200 dark:border-[#32473D] rounded-[20px] p-5 font-sans text-[15px] outline-none focus:ring-2 focus:ring-[#7DA085]/30 focus:border-[#7DA085] placeholder:text-gray-300 dark:placeholder:text-gray-600 text-gray-700 dark:text-white bg-transparent mb-4 transition-colors duration-300"
         />
 
         {/* Tags display */}
@@ -221,16 +221,16 @@ export function DailyJournalWidget() {
                   onBlur={() => setTimeout(() => setShowTagInput(false), 200)}
                   autoFocus
                   placeholder="Type a tag..."
-                  className="w-32 px-4 py-2 rounded-xl border border-gray-200 text-[13px] outline-none focus:ring-1 focus:ring-[#7DA085]"
+                  className="w-32 px-4 py-2 rounded-xl border border-gray-200 dark:border-[#32473D] text-[13px] outline-none focus:ring-1 focus:ring-[#7DA085] bg-transparent dark:text-white transition-colors"
                 />
                 {filteredSuggestions.length > 0 && (
-                  <div className="absolute top-full mt-1 left-0 bg-white border border-gray-100 rounded-xl shadow-lg py-1 z-50 min-w-[150px]">
+                  <div className="absolute top-full mt-1 left-0 bg-white dark:bg-komorebi-dark-bg border border-gray-100 dark:border-komorebi-dark-border rounded-xl shadow-lg py-1 z-50 min-w-[150px] transition-colors">
                     {filteredSuggestions.slice(0, 5).map((s) => (
                       <button
                         key={s}
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => addTag(s)}
-                        className="w-full text-left px-4 py-2 text-[13px] font-medium hover:bg-gray-50 text-gray-600 transition-colors"
+                        className="w-full text-left px-4 py-2 text-[13px] font-medium hover:bg-gray-50 dark:hover:bg-black/20 text-gray-600 dark:text-gray-300 transition-colors"
                       >
                         #{s}
                       </button>
@@ -244,7 +244,7 @@ export function DailyJournalWidget() {
                   setShowTagInput(true);
                   setFilteredSuggestions(TAG_SUGGESTIONS.filter(s => !tags.includes(s)));
                 }}
-                className="flex items-center gap-2 text-gray-400 hover:text-gray-600 border border-gray-200 hover:bg-gray-50 px-4 py-2 rounded-xl text-[13px] font-medium transition-colors"
+                className="flex items-center gap-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 border border-gray-200 dark:border-[#32473D] hover:bg-gray-50 dark:hover:bg-black/20 px-4 py-2 rounded-xl text-[13px] font-medium transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 Add Tag
@@ -269,11 +269,11 @@ export function DailyJournalWidget() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 30, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-[24px] p-6 lg:p-8 w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl"
+              className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl transition-colors duration-300"
             >
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-[22px] font-sans font-semibold text-black">All Journals</h3>
-                <button onClick={() => setShowAllJournals(false)} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
+                <h3 className="text-[22px] font-sans font-semibold text-black dark:text-white transition-colors duration-300">All Journals</h3>
+                <button onClick={() => setShowAllJournals(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-xl transition-colors">
                   <X className="w-5 h-5 text-gray-500" />
                 </button>
               </div>
@@ -291,10 +291,10 @@ export function DailyJournalWidget() {
                     <div 
                       key={journal.id} 
                       onClick={() => setSelectedJournal(journal)}
-                      className="border border-gray-100 rounded-2xl p-5 hover:border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+                      className="border border-gray-100 dark:border-[#32473D] rounded-2xl p-5 hover:border-gray-200 dark:hover:border-[#5D8B66]/50 hover:bg-gray-50 dark:hover:bg-black/20 transition-colors cursor-pointer"
                     >
                       <div className="flex items-center justify-between mb-3">
-                        <span className="text-[13px] font-medium text-gray-500">
+                        <span className="text-[13px] font-medium text-gray-500 dark:text-gray-400">
                           {new Date(journal.entry_date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                         </span>
                         <div className="flex items-center gap-2">
@@ -302,7 +302,7 @@ export function DailyJournalWidget() {
                           <span className="text-[12px] font-medium text-[#5D8B66] bg-[#7DA085]/10 px-2 py-0.5 rounded-lg">{journal.mood}</span>
                         </div>
                       </div>
-                      <p className="text-[14px] text-gray-700 leading-relaxed whitespace-pre-wrap line-clamp-4">{journal.content}</p>
+                      <p className="text-[14px] text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap line-clamp-4">{journal.content}</p>
                     </div>
                   ))
                 )}
@@ -327,11 +327,11 @@ export function DailyJournalWidget() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 30, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-[24px] p-6 lg:p-8 w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl"
+              className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl transition-colors duration-300"
             >
               <div className="flex justify-between items-start mb-6">
                 <div>
-                  <h3 className="text-[20px] font-sans font-semibold text-black">
+                  <h3 className="text-[20px] font-sans font-semibold text-black dark:text-white transition-colors duration-300">
                     {new Date(selectedJournal.entry_date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                   </h3>
                   <div className="flex items-center gap-2 mt-2">
@@ -339,13 +339,13 @@ export function DailyJournalWidget() {
                     <span className="text-[13px] font-medium text-[#5D8B66] bg-[#7DA085]/10 px-3 py-1 rounded-lg">{selectedJournal.mood}</span>
                   </div>
                 </div>
-                <button onClick={() => setSelectedJournal(null)} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
+                <button onClick={() => setSelectedJournal(null)} className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-xl transition-colors">
                   <X className="w-5 h-5 text-gray-500" />
                 </button>
               </div>
 
               <div className="flex-1 overflow-y-auto pr-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                <p className="text-[15px] text-gray-700 leading-relaxed whitespace-pre-wrap">
+                <p className="text-[15px] text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap transition-colors duration-300">
                   {selectedJournal.content}
                 </p>
               </div>

@@ -16,12 +16,12 @@ export function ActivityHistoryWidget() {
   const monthName = currentDate.toLocaleString('default', { month: 'long' });
 
   const colorMap = {
-    0: 'bg-[#F2F4F2]',
-    1: 'bg-[#C9DBCF]',
-    2: 'bg-[#8AAFA0]',
-    3: 'bg-[#678D73]',
-    4: 'bg-[#486E53]',
-    5: 'bg-[#274230]',
+    0: 'bg-[#F2F4F2] dark:bg-[#1A231D]',
+    1: 'bg-[#C9DBCF] dark:bg-[#2C3F33]',
+    2: 'bg-[#8AAFA0] dark:bg-[#3D5A45]',
+    3: 'bg-[#678D73] dark:bg-[#52795D]',
+    4: 'bg-[#486E53] dark:bg-[#678D73]',
+    5: 'bg-[#274230] dark:bg-[#8AAFA0]',
   };
 
   const moodLabels = { 1: "Bad", 2: "Not Bad", 3: "Neutral", 4: "Good", 5: "Very Good" };
@@ -121,17 +121,17 @@ export function ActivityHistoryWidget() {
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   return (
-    <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col h-full relative z-0">
+    <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col h-full relative z-0 transition-colors duration-300">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-[20px] font-sans font-semibold text-black">Calender Activity History</h3>
+        <h3 className="text-[20px] font-sans font-semibold text-black dark:text-white transition-colors duration-300">Calender Activity History</h3>
         <div className="flex items-center gap-2">
-          <button onClick={prevMonth} className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
+          <button onClick={prevMonth} className="p-1 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg transition-colors">
             <ChevronLeft className="w-4 h-4 text-gray-400" />
           </button>
           <div className="relative">
               <button 
                 onClick={() => setShowMonthPicker(!showMonthPicker)}
-                className="flex items-center gap-2 text-[13px] font-medium px-4 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-2 text-[13px] font-medium px-4 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-black/20 transition-colors"
               >
                 {monthName} {year}
                 <ChevronDown className="w-4 h-4 text-gray-400" />
@@ -142,29 +142,29 @@ export function ActivityHistoryWidget() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-full right-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50 max-h-[200px] overflow-y-auto min-w-[140px]"
+                  className="absolute top-full right-0 mt-2 bg-white dark:bg-komorebi-dark-bg rounded-xl shadow-lg border border-gray-100 dark:border-[#32473D] py-2 z-50 max-h-[200px] overflow-y-auto min-w-[140px] transition-colors duration-300"
                 >
                   {months.map((m, idx) => (
                     <button
                       key={m}
                       onClick={() => { setCurrentDate(new Date(year, idx, 1)); setShowMonthPicker(false); }}
                       className={`w-full text-left px-4 py-1.5 text-[13px] font-medium transition-colors ${
-                        idx === month ? "bg-[#7DA085]/10 text-[#5D8B66]" : "text-gray-700 hover:bg-gray-50"
+                        idx === month ? "bg-[#7DA085]/10 text-[#5D8B66]" : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-black/20"
                       }`}
                     >
                       {m} {year}
                     </button>
                   ))}
-                  <hr className="my-1 border-gray-100" />
+                  <hr className="my-1 border-gray-100 dark:border-[#32473D]" />
                   <div className="flex justify-center gap-2 px-3 py-1">
-                    <button onClick={() => { setCurrentDate(new Date(year - 1, month, 1)); }} className="text-[12px] text-gray-400 hover:text-gray-600">← {year - 1}</button>
-                    <button onClick={() => { setCurrentDate(new Date(year + 1, month, 1)); }} className="text-[12px] text-gray-400 hover:text-gray-600">{year + 1} →</button>
+                    <button onClick={() => { setCurrentDate(new Date(year - 1, month, 1)); }} className="text-[12px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">← {year - 1}</button>
+                    <button onClick={() => { setCurrentDate(new Date(year + 1, month, 1)); }} className="text-[12px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">{year + 1} →</button>
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
-          <button onClick={nextMonth} className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
+          <button onClick={nextMonth} className="p-1 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg transition-colors">
             <ChevronRight className="w-4 h-4 text-gray-400" />
           </button>
         </div>
@@ -229,11 +229,11 @@ export function ActivityHistoryWidget() {
       <div className="mt-6 flex items-center gap-2 text-[12px] font-medium text-gray-400">
         <span>Less</span>
         <div className="flex gap-1">
-          <div className="w-3.5 h-3.5 rounded-sm bg-[#F2F4F2]" />
-          <div className="w-3.5 h-3.5 rounded-sm bg-[#C9DBCF]" />
-          <div className="w-3.5 h-3.5 rounded-sm bg-[#8AAFA0]" />
-          <div className="w-3.5 h-3.5 rounded-sm bg-[#678D73]" />
-          <div className="w-3.5 h-3.5 rounded-sm bg-[#486E53]" />
+          <div className="w-3.5 h-3.5 rounded-sm bg-[#F2F4F2] dark:bg-[#1A231D]" />
+          <div className="w-3.5 h-3.5 rounded-sm bg-[#C9DBCF] dark:bg-[#2C3F33]" />
+          <div className="w-3.5 h-3.5 rounded-sm bg-[#8AAFA0] dark:bg-[#3D5A45]" />
+          <div className="w-3.5 h-3.5 rounded-sm bg-[#678D73] dark:bg-[#52795D]" />
+          <div className="w-3.5 h-3.5 rounded-sm bg-[#486E53] dark:bg-[#678D73]" />
         </div>
         <span>More</span>
       </div>

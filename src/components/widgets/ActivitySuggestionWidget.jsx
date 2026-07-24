@@ -92,12 +92,12 @@ export function ActivitySuggestionWidget() {
   };
 
   return (
-    <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 h-full flex flex-col" data-tour-id="activity-suggestion">
+    <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-komorebi-dark-border h-full flex flex-col transition-colors duration-300" data-tour-id="activity-suggestion">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-[20px] font-sans font-semibold text-black">Suggested For You</h3>
+        <h3 className="text-[20px] font-sans font-semibold text-black dark:text-white transition-colors duration-300">Suggested For You</h3>
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center justify-center text-[13px] font-medium px-4 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-black hover:bg-gray-50 transition-colors"
+          className="flex items-center justify-center text-[13px] font-medium px-4 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg text-black dark:text-white hover:bg-gray-50 dark:hover:bg-black/20 transition-colors"
         >
           See More
         </button>
@@ -107,14 +107,14 @@ export function ActivitySuggestionWidget() {
         {activities.slice(0, 3).map((activity) => (
           <div 
             key={activity.id} 
-            className="flex items-center p-3 rounded-[16px] border border-gray-100 hover:border-gray-200 hover:bg-gray-50 transition-all cursor-pointer group"
+            className="flex items-center p-3 rounded-[16px] border border-gray-100 dark:border-transparent hover:border-gray-200 dark:hover:border-[#32473D] hover:bg-gray-50 dark:hover:bg-black/20 transition-all cursor-pointer group"
           >
             <div className="w-[60px] h-[60px] rounded-[12px] overflow-hidden flex-shrink-0">
               <img src={activity.image} alt={activity.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
             </div>
             <div className="ml-4 flex-1">
-              <h4 className="font-semibold text-black text-[14px] font-sans leading-tight mb-1">{activity.title}</h4>
-              <p className="text-[12px] text-gray-400 font-sans leading-[1.4] line-clamp-2">{activity.desc}</p>
+              <h4 className="font-semibold text-black dark:text-gray-200 text-[14px] font-sans leading-tight mb-1 transition-colors duration-300">{activity.title}</h4>
+              <p className="text-[12px] text-gray-400 dark:text-komorebi-dark-muted font-sans leading-[1.4] line-clamp-2 transition-colors duration-300">{activity.desc}</p>
             </div>
           </div>
         ))}
@@ -134,15 +134,15 @@ export function ActivitySuggestionWidget() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl relative z-10 max-h-[85vh] flex flex-col"
+              className="bg-white dark:bg-komorebi-dark-card rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl relative z-10 max-h-[85vh] flex flex-col transition-colors duration-300"
             >
-              <div className="p-6 sm:p-8 border-b border-gray-100 flex items-start justify-between bg-gray-50/50">
+              <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-komorebi-dark-border flex items-start justify-between bg-gray-50/50 dark:bg-black/20 transition-colors duration-300">
                 <div>
-                  <h2 className="text-2xl font-medium font-sans text-gray-900 mb-2 flex items-center gap-2">
+                  <h2 className="text-2xl font-medium font-sans text-gray-900 dark:text-white mb-2 flex items-center gap-2 transition-colors duration-300">
                     <Activity className="w-6 h-6 text-[#7DA085]" />
                     Rekomendasi Aktivitas
                   </h2>
-                  <p className="text-sm font-light text-gray-500 max-w-lg">
+                  <p className="text-sm font-light text-gray-500 dark:text-komorebi-dark-muted max-w-lg transition-colors duration-300">
                     {moodLevel === "calming" && "Berdasarkan riwayat emosi Anda yang sedang menurun, berikut adalah aktivitas menenangkan untuk memulihkan energi."}
                     {moodLevel === "productive" && "Anda sedang bersemangat! Berikut adalah aktivitas produktif untuk memaksimalkan potensi Anda hari ini."}
                     {moodLevel === "balanced" && "Kondisi Anda cukup seimbang. Berikut adalah rutinitas ringan untuk menjaga kestabilan pikiran Anda."}
@@ -150,7 +150,7 @@ export function ActivitySuggestionWidget() {
                 </div>
                 <button 
                   onClick={() => setIsModalOpen(false)}
-                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -158,13 +158,13 @@ export function ActivitySuggestionWidget() {
 
               <div className="p-6 sm:p-8 overflow-y-auto space-y-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {activities.map((activity) => (
-                  <div key={activity.id} className="flex flex-col sm:flex-row gap-6 p-4 rounded-2xl bg-white border border-gray-100 hover:shadow-md transition-shadow">
+                  <div key={activity.id} className="flex flex-col sm:flex-row gap-6 p-4 rounded-2xl bg-white dark:bg-komorebi-dark-bg border border-gray-100 dark:border-transparent hover:shadow-md transition-shadow">
                     <div className="w-full sm:w-[120px] h-[160px] sm:h-[120px] rounded-xl overflow-hidden flex-shrink-0">
                       <img src={activity.image} alt={activity.title} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 flex flex-col justify-center">
-                      <h4 className="text-lg font-medium text-gray-900 font-sans mb-2">{activity.title}</h4>
-                      <p className="text-sm text-gray-600 font-sans leading-relaxed">{activity.desc}</p>
+                      <h4 className="text-lg font-medium text-gray-900 dark:text-gray-200 font-sans mb-2 transition-colors duration-300">{activity.title}</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 font-sans leading-relaxed transition-colors duration-300">{activity.desc}</p>
                       
                       <button 
                         onClick={() => handleStartActivity(activity)}

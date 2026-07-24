@@ -55,13 +55,13 @@ export default function DiagnosePage() {
   return (
     <div className="w-full max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500 pb-10">
       {/* Header */}
-      <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100">
+      <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-[24px] lg:text-[28px] font-sans font-bold text-black">
+            <h1 className="text-[24px] lg:text-[28px] font-sans font-bold text-black dark:text-white transition-colors duration-300">
               Mind Check-In
             </h1>
-            <p className="text-[14px] lg:text-[15px] text-gray-500 mt-1 max-w-lg font-sans leading-relaxed">
+            <p className="text-[14px] lg:text-[15px] text-gray-500 dark:text-gray-300 mt-1 max-w-lg font-sans leading-relaxed transition-colors duration-300">
               A supportive, expert-guided assessment to help you understand your
               current feelings and detect early signs of mental health distress.
             </p>
@@ -81,14 +81,14 @@ export default function DiagnosePage() {
           <div className="w-8 h-8 border-3 border-[#5D8B66] border-t-transparent rounded-full animate-spin" />
         </div>
       ) : results.length === 0 ? (
-        <div className="bg-white rounded-[24px] p-12 shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
+        <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-12 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col items-center justify-center text-center transition-colors duration-300">
           <div className="w-16 h-16 bg-[#5D8B66]/10 rounded-full flex items-center justify-center mb-4">
             <Search className="w-7 h-7 text-[#5D8B66]" />
           </div>
-          <h3 className="text-[18px] font-semibold text-black mb-2 font-sans">
+          <h3 className="text-[18px] font-semibold text-black dark:text-white mb-2 font-sans transition-colors duration-300">
             No assessments yet
           </h3>
-          <p className="text-[14px] text-gray-400 max-w-md font-sans leading-relaxed">
+          <p className="text-[14px] text-gray-400 dark:text-gray-500 max-w-md font-sans leading-relaxed">
             Start your first Mind Check-In to gain valuable insights about your
             mental well-being. It only takes a few minutes.
           </p>
@@ -102,18 +102,18 @@ export default function DiagnosePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.05 }}
               onClick={() => navigate(`/expert/result/${result.id}`)}
-              className="bg-white rounded-[20px] p-6 shadow-sm border border-gray-100 cursor-pointer hover:shadow-md hover:border-gray-200 transition-all duration-200 group flex flex-col"
+              className="bg-white dark:bg-komorebi-dark-card rounded-[20px] p-6 shadow-sm border border-gray-100 dark:border-komorebi-dark-border cursor-pointer hover:shadow-md hover:border-gray-200 dark:hover:border-komorebi-dark-hover transition-all duration-300 group flex flex-col"
             >
               <p className="text-[12px] text-gray-400 font-sans mb-3">
                 {formatDate(result.created_at)}
               </p>
-              <h3 className="text-[16px] font-bold text-black font-sans mb-2">
+              <h3 className="text-[16px] font-bold text-black dark:text-white font-sans mb-2 transition-colors duration-300">
                 {getSeverityLabel(result.severity_level)}{" "}
                 <span className="text-[18px]">
                   {getSeverityEmoji(result.severity_level)}
                 </span>
               </h3>
-              <p className="text-[13px] text-gray-500 font-sans leading-relaxed mb-4 flex-1">
+              <p className="text-[13px] text-gray-500 dark:text-gray-300 font-sans leading-relaxed mb-4 flex-1 transition-colors duration-300">
                 {getShortDescription(result.severity_level)}
               </p>
               <button

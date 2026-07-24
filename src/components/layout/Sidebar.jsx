@@ -83,11 +83,11 @@ export function Sidebar() {
 
   return (
     <div className={cn(
-      "flex h-full flex-col bg-white border-r border-gray-100 transition-all duration-300 ease-in-out",
+      "flex h-full flex-col bg-white dark:bg-komorebi-dark-card border-r border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300 ease-in-out",
       isCollapsed ? "w-64 md:w-20" : "w-64"
     )}>
       <div className={cn(
-        "flex h-20 shrink-0 items-center border-b border-gray-100 transition-all duration-300 px-6",
+        "flex h-20 shrink-0 items-center border-b border-gray-100 dark:border-komorebi-dark-border transition-all duration-300 px-6",
         isCollapsed ? "md:justify-center md:px-0" : "justify-between"
       )}>
         <Link to="/dashboard" className={cn(
@@ -95,11 +95,11 @@ export function Sidebar() {
           isCollapsed ? "md:w-0 md:opacity-0 md:pointer-events-none" : "w-auto opacity-100"
         )}>
           <img src={Logo} alt="Komorebi Logo" className="w-7 h-7 flex-shrink-0" />
-          <span className="text-xl font-bold font-sans text-[#5D8B66] whitespace-nowrap">Komorebi</span>
+          <span className="text-xl font-bold font-sans text-[#5D8B66] dark:text-[#7DA085] whitespace-nowrap">Komorebi</span>
         </Link>
         <button 
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="hidden md:flex p-1.5 rounded-lg border border-[#7DA085]/60 text-[#5D8B66] hover:bg-[#7DA085]/10 transition-colors flex-shrink-0"
+          className="hidden md:flex p-1.5 rounded-lg border border-[#7DA085]/60 text-[#5D8B66] dark:text-[#7DA085] hover:bg-[#7DA085]/10 transition-colors flex-shrink-0"
         >
           {isCollapsed ? <PanelLeftOpen className="w-5 h-5" /> : <PanelLeftClose className="w-5 h-5" />}
         </button>
@@ -119,7 +119,7 @@ export function Sidebar() {
                   "relative group flex items-center px-4 py-3 text-[15px] font-sans font-medium rounded-xl transition-all duration-200 overflow-hidden",
                   isActive
                     ? "text-white"
-                    : "text-gray-700 hover:bg-gray-50 border border-transparent",
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 border border-transparent",
                   isCollapsed ? "md:justify-center justify-between" : "justify-between"
                 )}
                 title={isCollapsed ? item.name : undefined}
@@ -137,7 +137,7 @@ export function Sidebar() {
                     className={cn(
                       "flex-shrink-0 h-[20px] w-[20px] transition-colors",
                       isCollapsed ? "md:mr-0 mr-3" : "mr-3",
-                      isActive ? "text-white" : "text-gray-500 group-hover:text-gray-700"
+                      isActive ? "text-white" : "text-gray-500 dark:text-komorebi-dark-muted group-hover:text-gray-700 dark:group-hover:text-gray-200"
                     )}
                     strokeWidth={isActive ? 2.5 : 2}
                     fill={isActive && item.fillOnActive ? "currentColor" : "none"}
@@ -150,7 +150,7 @@ export function Sidebar() {
                 </div>
                 {item.showStreak && !isActive && streak > 0 && (
                   <span className={cn(
-                    "text-[13px] font-medium px-2.5 py-1 rounded-lg border bg-white text-black border-[#7DA085]/60 shadow-sm flex-shrink-0 relative z-10",
+                    "text-[13px] font-medium px-2.5 py-1 rounded-lg border bg-white dark:bg-komorebi-dark-bg text-black dark:text-white border-[#7DA085]/60 dark:border-[#7DA085]/30 shadow-sm flex-shrink-0 relative z-10 transition-colors duration-300",
                     isCollapsed ? "md:hidden block" : "block"
                   )}>
                     {streak} 🔥

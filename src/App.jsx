@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Routes, Route } from 'react-router'
 import { useAuthStore } from './stores/useAuthStore'
+import { useThemeStore } from './stores/useThemeStore'
 import { ProtectedRoute, AdminRoute } from './components/auth/ProtectedRoute'
 import { AppLayout } from './components/layout/AppLayout'
 import { AdminLayout } from './components/layout/AdminLayout'
@@ -24,10 +25,20 @@ import SpecialistManagement from './pages/Admin/SpecialistManagement'
 
 function App() {
   const { initialize } = useAuthStore()
+  const { isDarkMode } = useThemeStore()
 
   useEffect(() => {
     initialize()
   }, [initialize])
+
+  // Sync theme with DOM
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   return (
     <Routes>

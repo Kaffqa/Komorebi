@@ -43,24 +43,24 @@ export function AssessmentHistoryWidget() {
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col h-full"
+      className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col h-full transition-colors duration-300"
       data-tour-id="assessment-history"
     >
       <div className="flex justify-between items-center mb-2">
-        <h3 className="text-[20px] font-sans font-semibold text-black">Assessment History</h3>
+        <h3 className="text-[20px] font-sans font-semibold text-black dark:text-white transition-colors duration-300">Assessment History</h3>
         <button 
           onClick={() => navigate("/expert")}
-          className="flex items-center justify-center text-[13px] font-medium px-4 py-1.5 rounded-full border border-[#B5CCBD] bg-white text-black hover:bg-gray-50 transition-colors"
+          className="flex items-center justify-center text-[13px] font-medium px-4 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg text-black dark:text-white hover:bg-gray-50 dark:hover:bg-black/20 transition-colors"
         >
           See More
         </button>
       </div>
-      <p className="text-[14px] text-gray-400 mb-6 font-sans">
+      <p className="text-[14px] text-gray-400 dark:text-komorebi-dark-muted mb-6 font-sans transition-colors duration-300">
         Review your past health screenings and system insights.
       </p>
 
-      <div className="flex-1 flex flex-col border border-gray-200 rounded-[20px] p-6">
-        <p className="text-[15px] leading-[1.6] text-black font-medium font-sans mb-6 overflow-y-auto max-h-[120px] pr-2">
+      <div className="flex-1 flex flex-col border border-gray-200 dark:border-[#32473D] bg-white dark:bg-black/20 rounded-[20px] p-6 transition-colors duration-300">
+        <p className="text-[15px] leading-[1.6] text-black dark:text-gray-200 font-medium font-sans mb-6 overflow-y-auto max-h-[120px] pr-2 transition-colors duration-300">
           {summary}
         </p>
         <div className="mt-auto">

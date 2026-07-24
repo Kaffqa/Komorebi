@@ -16,11 +16,11 @@ export function MoodStressSlider({ title, value, onValueChange, icons, labels })
   };
 
   return (
-    <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col h-full">
-      <h3 className="text-[18px] font-sans font-semibold text-black mb-8">{title}</h3>
+    <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col h-full transition-colors duration-300">
+      <h3 className="text-[18px] font-sans font-semibold text-black dark:text-white mb-8 transition-colors duration-300">{title}</h3>
 
       <div className="mb-12 relative w-full">
-        <div className="relative w-full h-3 bg-[#E5EBE7] rounded-full">
+        <div className="relative w-full h-3 bg-[#E5EBE7] dark:bg-komorebi-dark-bg rounded-full transition-colors duration-300">
           <div className="absolute inset-y-0 left-[10%] right-[10%]">
             {/* Invisible native slider */}
             <input 
@@ -35,7 +35,7 @@ export function MoodStressSlider({ title, value, onValueChange, icons, labels })
 
             {/* Floating Icon Thumb */}
             <div 
-              className="absolute top-1/2 -translate-y-1/2 -ml-[18px] w-9 h-9 bg-white border border-gray-100 rounded-full shadow-sm flex items-center justify-center transition-all duration-300 ease-out z-10 pointer-events-none"
+              className="absolute top-1/2 -translate-y-1/2 -ml-[18px] w-9 h-9 bg-white dark:bg-komorebi-dark-hover border border-gray-100 dark:border-[#32473D] rounded-full shadow-sm flex items-center justify-center transition-all duration-300 ease-out z-10 pointer-events-none"
               style={{ left: `${((value - 1) / 4) * 100}%` }}
             >
               {displayIcons[value - 1]}

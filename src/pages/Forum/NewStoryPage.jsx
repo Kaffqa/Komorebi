@@ -122,13 +122,13 @@ export default function NewStoryPage() {
     >
       <button 
         onClick={() => navigate("/forum")} 
-        className="flex items-center gap-2 text-gray-500 hover:text-gray-900 font-sans font-medium mb-6 transition-colors w-fit"
+        className="flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-sans font-medium mb-6 transition-colors w-fit"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Forum
       </button>
 
-      <div className="bg-white rounded-[24px] p-6 lg:p-10 shadow-sm border border-gray-100 flex flex-col min-h-[80vh]">
+      <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-10 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col min-h-[80vh] transition-colors duration-300">
         
         {/* Title Input */}
         <input 
@@ -136,15 +136,15 @@ export default function NewStoryPage() {
           placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="text-3xl font-bold font-sans text-gray-900 border-none outline-none placeholder-gray-300 w-full mb-6 bg-transparent"
+          className="text-3xl font-bold font-sans text-gray-900 dark:text-white border-none outline-none placeholder-gray-300 dark:placeholder-gray-600 w-full mb-6 bg-transparent transition-colors duration-300"
         />
 
         {/* Tags Section */}
         <div className="flex flex-wrap items-center gap-2 mb-8 relative">
           {tags.map(tag => (
-            <span key={tag} className="flex items-center gap-1 bg-white border border-[#B5CCBD] text-gray-700 px-3 py-1.5 rounded-full text-sm font-medium font-sans">
+            <span key={tag} className="flex items-center gap-1 bg-white dark:bg-komorebi-dark-bg border border-[#B5CCBD] dark:border-komorebi-dark-border text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-full text-sm font-medium font-sans transition-colors duration-300">
               {tag}
-              <button onClick={() => toggleTag(tag)} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => toggleTag(tag)} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300">
                 <X className="w-3 h-3" />
               </button>
             </span>
@@ -152,7 +152,7 @@ export default function NewStoryPage() {
           
           <button 
             onClick={() => setShowTagMenu(!showTagMenu)}
-            className="flex items-center gap-1.5 bg-white border border-[#B5CCBD] text-gray-600 px-4 py-1.5 rounded-full text-sm font-medium font-sans hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-1.5 bg-white dark:bg-komorebi-dark-bg border border-[#B5CCBD] dark:border-komorebi-dark-border text-gray-600 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium font-sans hover:bg-gray-50 dark:hover:bg-white/5 transition-colors duration-300"
           >
             <Plus className="w-4 h-4" />
             Add Tags
@@ -164,7 +164,7 @@ export default function NewStoryPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="absolute top-10 left-0 bg-white border border-gray-100 shadow-lg rounded-2xl p-4 w-64 z-10"
+                className="absolute top-10 left-0 bg-white dark:bg-komorebi-dark-card border border-gray-100 dark:border-komorebi-dark-border shadow-lg rounded-2xl p-4 w-64 z-10 transition-colors duration-300"
               >
                 <div className="flex flex-wrap gap-2">
                   {availableTags.map(tag => (
@@ -172,7 +172,7 @@ export default function NewStoryPage() {
                       key={tag}
                       onClick={() => { toggleTag(tag); setShowTagMenu(false); }}
                       className={`px-3 py-1.5 rounded-full border text-xs font-medium font-sans transition-all duration-300 ${
-                        tags.includes(tag) ? "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100 border-transparent"
+                        tags.includes(tag) ? "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] text-white" : "bg-gray-50 dark:bg-komorebi-dark-bg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 border-transparent"
                       }`}
                     >
                       {tag}
@@ -185,12 +185,12 @@ export default function NewStoryPage() {
         </div>
 
         {/* Editor Area */}
-        <div className="flex-1 border border-gray-200 rounded-2xl flex flex-col overflow-hidden mb-6">
+        <div className="flex-1 border border-gray-200 dark:border-komorebi-dark-border rounded-2xl flex flex-col overflow-hidden mb-6 transition-colors duration-300">
           <textarea
             placeholder="Body text"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="flex-1 w-full p-6 text-[15px] font-sans text-gray-700 bg-transparent resize-none outline-none min-h-[300px] leading-relaxed"
+            className="flex-1 w-full p-6 text-[15px] font-sans text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-transparent resize-none outline-none min-h-[300px] leading-relaxed transition-colors duration-300"
           />
           
           {imageUrl && (
@@ -209,7 +209,7 @@ export default function NewStoryPage() {
         {/* Bottom Toolbar & Actions */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           
-          <div className="flex items-center gap-2 text-gray-500">
+          <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 transition-colors duration-300">
             <input 
               type="file"
               ref={fileInputRef}
@@ -220,20 +220,20 @@ export default function NewStoryPage() {
             <button 
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg transition-colors"
               title="Add Image"
             >
               {isUploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ImageIcon className="w-5 h-5" />}
             </button>
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors"><LinkIcon className="w-5 h-5" /></button>
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors"><Video className="w-5 h-5" /></button>
+            <button className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg transition-colors"><LinkIcon className="w-5 h-5" /></button>
+            <button className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg transition-colors"><Video className="w-5 h-5" /></button>
             
-            <div className="w-px h-6 bg-gray-200 mx-2"></div>
+            <div className="w-px h-6 bg-gray-200 dark:bg-komorebi-dark-border mx-2 transition-colors duration-300"></div>
             
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors"><Bold className="w-5 h-5" /></button>
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors"><Italic className="w-5 h-5" /></button>
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors"><List className="w-5 h-5" /></button>
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors"><ListOrdered className="w-5 h-5" /></button>
+            <button className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg transition-colors"><Bold className="w-5 h-5" /></button>
+            <button className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg transition-colors"><Italic className="w-5 h-5" /></button>
+            <button className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg transition-colors"><List className="w-5 h-5" /></button>
+            <button className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg transition-colors"><ListOrdered className="w-5 h-5" /></button>
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -246,7 +246,7 @@ export default function NewStoryPage() {
             </button>
             <button 
               onClick={() => navigate("/forum")}
-              className="flex-1 sm:flex-none px-8 py-2.5 border border-[#B5CCBD] bg-white text-gray-700 hover:bg-gray-50 rounded-full font-medium font-sans transition-colors"
+              className="flex-1 sm:flex-none px-8 py-2.5 border border-[#B5CCBD] dark:border-komorebi-dark-border bg-white dark:bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/10 rounded-full font-medium font-sans transition-colors duration-300"
             >
               Drafts
             </button>

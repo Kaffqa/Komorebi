@@ -115,7 +115,7 @@ export default function MindCheckFlow() {
   if (!started) {
     return (
       <div className="w-full max-w-7xl mx-auto animate-in fade-in duration-500 pb-10">
-        <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 overflow-hidden relative">
+        <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] shadow-sm border border-gray-100 dark:border-komorebi-dark-border overflow-hidden relative transition-colors duration-300">
           <div className="absolute top-6 left-6 lg:top-8 lg:left-8">
             <button
               onClick={() => navigate(-1)}
@@ -128,10 +128,10 @@ export default function MindCheckFlow() {
           <div className="p-8 pt-16 lg:p-12 flex flex-col items-center text-center max-w-2xl mx-auto">
             {/* Icon */}
             <div className="w-20 h-20 bg-[#5D8B66]/10 rounded-full flex items-center justify-center mb-6">
-              <Brain className="w-10 h-10 text-[#5D8B66]" />
+              <Brain className="w-10 h-10 text-[#5D8B66] dark:text-[#7DA085]" />
             </div>
 
-            <h1 className="text-[28px] lg:text-[32px] font-bold text-black font-sans mb-3">
+            <h1 className="text-[28px] lg:text-[32px] font-bold text-black dark:text-white font-sans mb-3 transition-colors duration-300">
               Mind Check-In
             </h1>
             <p className="text-[15px] text-gray-500 font-sans leading-relaxed mb-8 max-w-md">
@@ -143,28 +143,28 @@ export default function MindCheckFlow() {
 
             {/* Info cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full mb-8">
-              <div className="bg-[#F7FAF8] rounded-[16px] p-4">
-                <p className="text-[24px] font-bold text-[#5D8B66]">21</p>
-                <p className="text-[12px] text-gray-500 font-sans mt-1">
+              <div className="bg-[#F7FAF8] dark:bg-komorebi-dark-bg rounded-[16px] p-4 transition-colors duration-300">
+                <p className="text-[24px] font-bold text-[#5D8B66] dark:text-[#7DA085]">21</p>
+                <p className="text-[12px] text-gray-500 dark:text-gray-400 font-sans mt-1">
                   Pertanyaan
                 </p>
               </div>
-              <div className="bg-[#F7FAF8] rounded-[16px] p-4">
-                <p className="text-[24px] font-bold text-[#5D8B66]">5-10</p>
-                <p className="text-[12px] text-gray-500 font-sans mt-1">
+              <div className="bg-[#F7FAF8] dark:bg-komorebi-dark-bg rounded-[16px] p-4 transition-colors duration-300">
+                <p className="text-[24px] font-bold text-[#5D8B66] dark:text-[#7DA085]">5-10</p>
+                <p className="text-[12px] text-gray-500 dark:text-gray-400 font-sans mt-1">
                   Menit
                 </p>
               </div>
-              <div className="bg-[#F7FAF8] rounded-[16px] p-4">
-                <p className="text-[24px] font-bold text-[#5D8B66]">DASS-21</p>
-                <p className="text-[12px] text-gray-500 font-sans mt-1">
+              <div className="bg-[#F7FAF8] dark:bg-komorebi-dark-bg rounded-[16px] p-4 transition-colors duration-300">
+                <p className="text-[24px] font-bold text-[#5D8B66] dark:text-[#7DA085]">DASS-21</p>
+                <p className="text-[12px] text-gray-500 dark:text-gray-400 font-sans mt-1">
                   Standar Internasional
                 </p>
               </div>
             </div>
 
-            <div className="bg-amber-50 border border-amber-200 rounded-[16px] p-4 mb-8 w-full">
-              <p className="text-[13px] text-amber-700 font-sans leading-relaxed">
+            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/50 rounded-[16px] p-4 mb-8 w-full transition-colors duration-300">
+              <p className="text-[13px] text-amber-700 dark:text-amber-500 font-sans leading-relaxed">
                 ⚠️ Hasil ini bersifat informatif dan <strong>bukan</strong>{" "}
                 diagnosis medis. Jika gejala Anda berlanjut, silakan konsultasi
                 dengan profesional kesehatan mental.
@@ -185,9 +185,9 @@ export default function MindCheckFlow() {
 
   return (
     <div className="w-full max-w-7xl mx-auto animate-in fade-in duration-500 pb-10">
-      <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] shadow-sm border border-gray-100 dark:border-komorebi-dark-border overflow-hidden transition-colors duration-300">
         {/* Progress Bar */}
-        <div className="relative h-2 bg-gray-100">
+        <div className="relative h-2 bg-gray-100 dark:bg-komorebi-dark-bg transition-colors duration-300">
           <motion.div
             className="absolute left-0 top-0 h-full bg-[#5D8B66] rounded-r-full"
             initial={{ width: 0 }}
@@ -248,7 +248,7 @@ export default function MindCheckFlow() {
                 </div>
 
                 {/* Question text */}
-                <h2 className="text-[20px] lg:text-[24px] font-bold text-black font-sans text-center mb-8 leading-snug">
+                <h2 className="text-[20px] lg:text-[24px] font-bold text-black dark:text-white font-sans text-center mb-8 leading-snug transition-colors duration-300">
                   {currentQuestion.text}
                 </h2>
 
@@ -262,16 +262,16 @@ export default function MindCheckFlow() {
                         onClick={() => handleAnswer(option.value)}
                         className={`w-full text-left p-4 rounded-[16px] border-2 transition-all duration-200 group ${
                           isSelected
-                            ? "border-[#5D8B66] bg-[#5D8B66]/5 shadow-sm"
-                            : "border-gray-100 hover:border-gray-200 hover:bg-gray-50"
+                            ? "border-[#5D8B66] dark:border-[#7DA085] bg-[#5D8B66]/5 dark:bg-[#7DA085]/10 shadow-sm"
+                            : "border-gray-100 dark:border-[#32473D] hover:border-gray-200 dark:hover:border-[#43674F] hover:bg-gray-50 dark:hover:bg-white/5"
                         }`}
                       >
                         <div className="flex items-center gap-4">
                           <div
                             className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
                               isSelected
-                                ? "border-[#5D8B66] bg-[#5D8B66]"
-                                : "border-gray-300 group-hover:border-gray-400"
+                                ? "border-[#5D8B66] dark:border-[#7DA085] bg-[#5D8B66] dark:bg-[#7DA085]"
+                                : "border-gray-300 dark:border-gray-600 group-hover:border-gray-400 dark:group-hover:border-gray-500"
                             }`}
                           >
                             {isSelected && (
@@ -280,13 +280,13 @@ export default function MindCheckFlow() {
                           </div>
                           <div>
                             <p
-                              className={`text-[15px] font-semibold font-sans ${
-                                isSelected ? "text-[#5D8B66]" : "text-black"
+                              className={`text-[15px] font-semibold font-sans transition-colors duration-300 ${
+                                isSelected ? "text-[#5D8B66] dark:text-[#7DA085]" : "text-black dark:text-gray-200"
                               }`}
                             >
                               {option.label}
                             </p>
-                            <p className="text-[12px] text-gray-400 font-sans mt-0.5">
+                            <p className="text-[12px] text-gray-400 dark:text-gray-500 font-sans mt-0.5 transition-colors duration-300">
                               {option.description}
                             </p>
                           </div>
@@ -305,8 +305,8 @@ export default function MindCheckFlow() {
                 disabled={currentStep === 0}
                 className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-[13px] font-medium transition-all ${
                   currentStep === 0
-                    ? "text-gray-300 cursor-not-allowed"
-                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                    ? "text-gray-300 dark:text-gray-600 cursor-not-allowed"
+                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/10"
                 }`}
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -337,7 +337,7 @@ export default function MindCheckFlow() {
                   disabled={currentAnswer === undefined}
                   className={`flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-[14px] font-semibold transition-all duration-200 ${
                     currentAnswer === undefined
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-transparent"
+                      ? "bg-gray-100 dark:bg-komorebi-dark-bg text-gray-400 dark:text-gray-500 cursor-not-allowed border border-transparent"
                       : "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white"
                   }`}
                 >

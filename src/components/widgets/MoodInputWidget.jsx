@@ -94,15 +94,15 @@ export function MoodInputWidget() {
   };
 
   return (
-    <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col h-full" data-tour-id="mood-input">
-      <h3 className="text-[20px] font-sans font-semibold text-black mb-1">How Are You Feeling Today?</h3>
-      <p className="text-[14px] text-gray-400 font-sans mb-12">
+    <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col h-full transition-colors duration-300" data-tour-id="mood-input">
+      <h3 className="text-[20px] font-sans font-semibold text-black dark:text-white mb-1 transition-colors duration-300">How Are You Feeling Today?</h3>
+      <p className="text-[14px] text-gray-400 dark:text-komorebi-dark-muted font-sans mb-12 transition-colors duration-300">
         Sharing your mood gives us a clearer picture of your well being so we can tailor your care
       </p>
 
       {/* Custom Slider */}
       <div className="mb-14 px-4 relative w-full">
-        <div className="relative w-full h-3 bg-[#E5EBE7] rounded-full">
+        <div className="relative w-full h-3 bg-[#E5EBE7] dark:bg-komorebi-dark-bg rounded-full transition-colors duration-300">
           {/* Inner container for active area to prevent label overflow while maintaining equal spacing */}
           <div className="absolute inset-y-0 left-[10%] right-[10%]">
             {/* Invisible native slider for drag interaction */}
@@ -117,7 +117,7 @@ export function MoodInputWidget() {
             />
 
             <div 
-              className="absolute top-1/2 -translate-y-1/2 -ml-[18px] w-9 h-9 bg-white border border-gray-100 rounded-full shadow-sm flex items-center justify-center transition-all duration-300 ease-out z-10 pointer-events-none"
+              className="absolute top-1/2 -translate-y-1/2 -ml-[18px] w-9 h-9 bg-white dark:bg-komorebi-dark-hover border border-gray-100 dark:border-[#32473D] rounded-full shadow-sm flex items-center justify-center transition-all duration-300 ease-out z-10 pointer-events-none"
               style={{ left: `${((moodScore - 1) / 4) * 100}%` }}
             >
               {moodIcons[moodScore - 1]}
@@ -145,7 +145,7 @@ export function MoodInputWidget() {
           placeholder="What's on your mind today?"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          className="w-full flex-1 min-h-[140px] resize-none border border-gray-200 rounded-[20px] p-5 font-sans text-[15px] outline-none focus:ring-2 focus:ring-[#7DA085]/30 focus:border-[#7DA085] placeholder:text-gray-300 text-gray-700"
+          className="w-full flex-1 min-h-[140px] resize-none border border-gray-200 dark:border-[#32473D] rounded-[20px] p-5 font-sans text-[15px] outline-none focus:ring-2 focus:ring-[#7DA085]/30 focus:border-[#7DA085] placeholder:text-gray-300 dark:placeholder:text-gray-600 text-gray-700 dark:text-white bg-transparent transition-colors duration-300"
         />
       </div>
 

@@ -211,7 +211,7 @@ export function AppLayout() {
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
   return (
-    <div className="flex h-screen bg-[#F8F9FA] overflow-hidden">
+    <div className="flex h-screen bg-[#F8F9FA] dark:bg-komorebi-dark-bg transition-colors duration-300 overflow-hidden">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div 
@@ -233,7 +233,7 @@ export function AppLayout() {
       {/* Main content */}
       <div className="flex flex-1 flex-col overflow-hidden w-full">
         {/* Mobile header */}
-        <div className="md:hidden flex h-16 shrink-0 items-center justify-between px-4 bg-white border-b border-gray-100">
+        <div className="md:hidden flex h-16 shrink-0 items-center justify-between px-4 bg-white dark:bg-komorebi-dark-card border-b border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300">
           <img src={Logo} alt="Komorebi" className="h-6 object-contain" />
           <div className="flex items-center gap-2">
             {location.pathname === "/forum" && (
@@ -246,7 +246,7 @@ export function AppLayout() {
             )}
             <button 
               onClick={() => setSidebarOpen(true)}
-              className="p-2 -mr-2 text-gray-700 focus:outline-none"
+              className="p-2 -mr-2 text-gray-700 dark:text-gray-300 focus:outline-none"
             >
               <Menu className="h-6 w-6" />
             </button>
@@ -254,8 +254,8 @@ export function AppLayout() {
         </div>
 
         {/* Desktop Topbar */}
-        <div className="hidden md:flex h-[80px] shrink-0 items-center justify-between px-8 bg-white border-b border-gray-100">
-           <div className="text-[20px] font-sans font-medium text-black flex items-center gap-3">
+        <div className="hidden md:flex h-[80px] shrink-0 items-center justify-between px-8 bg-white dark:bg-komorebi-dark-card border-b border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300">
+           <div className="text-[20px] font-sans font-medium text-black dark:text-white flex items-center gap-3">
              {greeting.text}, {profile?.display_name || "Guest"} {greeting.icon}
            </div>
            <div className="flex items-center space-x-3">
@@ -271,7 +271,7 @@ export function AppLayout() {
               <div className="relative" ref={notificationRef}>
                 <button 
                   onClick={() => setShowNotifications(!showNotifications)}
-                  className="relative p-2 rounded-lg border border-[#7DA085]/60 text-[#5D8B66] hover:bg-[#7DA085]/10 transition-colors"
+                  className="relative p-2 rounded-lg border border-[#7DA085]/60 text-[#5D8B66] dark:text-[#7DA085] hover:bg-[#7DA085]/10 transition-colors"
                 >
                   <Bell className="w-5 h-5" />
                   <AnimatePresence>
@@ -294,10 +294,10 @@ export function AppLayout() {
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute right-0 mt-3 w-80 sm:w-96 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden z-50 flex flex-col max-h-[85vh]"
+                      className="absolute right-0 mt-3 w-80 sm:w-96 bg-white dark:bg-komorebi-dark-card rounded-3xl shadow-2xl border border-gray-100 dark:border-komorebi-dark-border overflow-hidden z-50 flex flex-col max-h-[85vh]"
                     >
-                      <div className="p-5 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-                        <h3 className="font-bold font-sans text-gray-900 text-lg flex items-center gap-2">
+                      <div className="p-5 border-b border-gray-50 dark:border-komorebi-dark-border flex justify-between items-center bg-gray-50/50 dark:bg-black/20">
+                        <h3 className="font-bold font-sans text-gray-900 dark:text-white text-lg flex items-center gap-2">
                           Notifications
                           {unreadCount > 0 && (
                             <span className="bg-[#5D8B66] text-white text-[10px] px-2 py-0.5 rounded-full">{unreadCount}</span>
@@ -312,11 +312,11 @@ export function AppLayout() {
                       <div className="overflow-y-auto [&::-webkit-scrollbar]:hidden">
                         {notifications.length === 0 ? (
                           <div className="p-8 text-center flex flex-col items-center">
-                            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-3">
-                              <Bell className="w-6 h-6 text-gray-300" />
+                            <div className="w-16 h-16 bg-gray-50 dark:bg-white/5 rounded-full flex items-center justify-center mb-3">
+                              <Bell className="w-6 h-6 text-gray-300 dark:text-gray-600" />
                             </div>
-                            <p className="text-gray-500 font-sans text-sm font-medium">You're all caught up!</p>
-                            <p className="text-gray-400 font-sans text-xs mt-1">No new notifications</p>
+                            <p className="text-gray-500 dark:text-gray-400 font-sans text-sm font-medium">You're all caught up!</p>
+                            <p className="text-gray-400 dark:text-gray-500 font-sans text-xs mt-1">No new notifications</p>
                           </div>
                         ) : (
                           notifications.map((notif, idx) => (
@@ -326,18 +326,18 @@ export function AppLayout() {
                               transition={{ delay: idx * 0.05 }}
                               key={notif.id} 
                               onClick={() => markAsRead(notif.id, notif.is_read)}
-                              className={`p-4 border-b border-gray-50 hover:bg-gray-50/80 transition-colors cursor-pointer flex gap-4 ${!notif.is_read ? 'bg-[#5D8B66]/5' : ''}`}
+                              className={`p-4 border-b border-gray-50 dark:border-white/5 hover:bg-gray-50/80 dark:hover:bg-white/5 transition-colors cursor-pointer flex gap-4 ${!notif.is_read ? 'bg-[#5D8B66]/5 dark:bg-[#7DA085]/10' : ''}`}
                             >
-                              <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm border ${!notif.is_read ? 'bg-white border-[#5D8B66]/20' : 'bg-gray-50 border-gray-100'}`}>
+                              <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm border ${!notif.is_read ? 'bg-white dark:bg-komorebi-dark-bg border-[#5D8B66]/20' : 'bg-gray-50 dark:bg-komorebi-dark-hover border-gray-100 dark:border-transparent'}`}>
                                 {getNotifIcon(notif.type)}
                               </div>
                               <div className="flex-1 min-w-0 pt-0.5">
-                                <p className={`text-[14px] leading-snug font-sans ${!notif.is_read ? 'font-bold text-gray-900' : 'font-medium text-gray-600'}`}>{notif.title}</p>
-                                <p className="text-[13px] text-gray-500 font-sans mt-1 line-clamp-2">{notif.content}</p>
-                                <p className="text-[11px] font-bold text-gray-400 mt-2 tracking-wide uppercase">{formatNotifTime(notif.created_at)}</p>
+                                <p className={`text-[14px] leading-snug font-sans ${!notif.is_read ? 'font-bold text-gray-900 dark:text-white' : 'font-medium text-gray-600 dark:text-gray-400'}`}>{notif.title}</p>
+                                <p className="text-[13px] text-gray-500 dark:text-komorebi-dark-muted font-sans mt-1 line-clamp-2">{notif.content}</p>
+                                <p className="text-[11px] font-bold text-gray-400 dark:text-gray-500 mt-2 tracking-wide uppercase">{formatNotifTime(notif.created_at)}</p>
                               </div>
                               {!notif.is_read && (
-                                <div className="w-2 h-2 rounded-full bg-[#5D8B66] shrink-0 mt-2"></div>
+                                <div className="w-2 h-2 rounded-full bg-[#5D8B66] dark:bg-[#7DA085] shrink-0 mt-2"></div>
                               )}
                             </motion.div>
                           ))
@@ -359,7 +359,7 @@ export function AppLayout() {
 
               <button 
                 onClick={() => setIsSettingsOpen(true)}
-                className="p-2 rounded-lg border border-[#7DA085]/60 text-[#5D8B66] hover:bg-[#7DA085]/10 transition-colors"
+                className="p-2 rounded-lg border border-[#7DA085]/60 text-[#5D8B66] dark:text-[#7DA085] hover:bg-[#7DA085]/10 transition-colors"
               >
                 <Settings className="w-5 h-5" />
               </button>
