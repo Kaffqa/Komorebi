@@ -12,6 +12,7 @@ import {
   BookOpen, 
   UserX 
 } from "lucide-react";
+import { Skeleton } from "../../components/ui/Skeleton";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -63,15 +64,33 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(8)].map((_, i) => (
             <div key={i} className="h-[140px] bg-white rounded-[24px] shadow-sm border border-gray-100 p-6 flex flex-col justify-between overflow-hidden relative">
-               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-50/50 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite]" />
-               <div className="w-12 h-12 bg-gray-100 rounded-2xl mb-4" />
-               <div className="w-24 h-8 bg-gray-100 rounded-lg mb-2" />
-               <div className="w-16 h-4 bg-gray-50 rounded-md" />
+               <Skeleton className="w-12 h-12 rounded-2xl mb-4" />
+               <Skeleton className="w-24 h-8 rounded-lg mb-2" />
+               <Skeleton className="w-16 h-4 rounded-md" />
             </div>
           ))}
         </div>
-        <div className="flex-1 bg-white rounded-[32px] shadow-sm border border-gray-100 min-h-[400px] overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-50/50 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite]" />
+        <div className="flex-1 bg-white rounded-[32px] shadow-sm border border-gray-100 min-h-[400px] overflow-hidden p-8">
+           <div className="flex justify-between mb-8">
+             <div>
+               <Skeleton className="w-40 h-6 mb-2" />
+               <Skeleton className="w-32 h-4" />
+             </div>
+           </div>
+           <div className="space-y-6">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="flex items-center gap-6">
+                  <Skeleton className="w-12 h-12 rounded-full shrink-0" />
+                  <div className="flex-1">
+                    <Skeleton className="w-48 h-5 mb-2" />
+                    <Skeleton className="w-32 h-4" />
+                  </div>
+                  <Skeleton className="w-20 h-6 rounded-xl" />
+                  <Skeleton className="w-20 h-6 rounded-xl" />
+                  <Skeleton className="w-24 h-4" />
+                </div>
+              ))}
+           </div>
         </div>
       </div>
     );

@@ -10,6 +10,7 @@ import {
   Ban,
   X
 } from "lucide-react";
+import { Skeleton } from "../../components/ui/Skeleton";
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -212,8 +213,19 @@ export default function UserManagement() {
           </div>
           <div className="flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:hidden">
             {loading ? (
-              <div className="flex items-center justify-center h-40">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#5D8B66]"></div>
+              <div className="flex flex-col gap-2">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="p-4 flex items-center justify-between border border-gray-100 rounded-[20px] shadow-sm">
+                    <div className="flex items-center gap-4">
+                      <Skeleton className="w-12 h-12 rounded-full shrink-0" />
+                      <div>
+                        <Skeleton className="w-32 h-5 mb-1" />
+                        <Skeleton className="w-24 h-4" />
+                      </div>
+                    </div>
+                    <Skeleton className="w-8 h-8 rounded-full" />
+                  </div>
+                ))}
               </div>
             ) : filteredUsers.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-40 text-gray-500">

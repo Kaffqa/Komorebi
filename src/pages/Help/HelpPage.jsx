@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, SlidersHorizontal, ThumbsUp, Briefcase, X, MapPin, Shield, Phone, Mail, ExternalLink } from "lucide-react";
 import { supabase } from "../../services/supabase";
+import { Skeleton } from "../../components/ui/Skeleton";
 
 const SPECIALISTS = [
   {
@@ -256,9 +257,22 @@ export default function HelpPage() {
       {/* Specialist Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {loading ? (
-          <div className="col-span-full text-center py-16">
-            <div className="w-10 h-10 border-4 border-[#7DA085]/30 border-t-[#7DA085] rounded-full animate-spin mx-auto"></div>
-          </div>
+          <>
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="bg-white dark:bg-komorebi-dark-card rounded-[20px] p-4 border border-gray-100 dark:border-komorebi-dark-border shadow-sm flex flex-col h-[320px]">
+                <Skeleton className="w-full h-[180px] rounded-xl mb-4" />
+                <Skeleton className="w-48 h-5 mb-2" />
+                <Skeleton className="w-32 h-4 mb-4" />
+                <div className="flex items-center justify-between mt-auto">
+                  <div className="flex gap-2">
+                    <Skeleton className="w-16 h-8 rounded-full" />
+                    <Skeleton className="w-20 h-8 rounded-full" />
+                  </div>
+                  <Skeleton className="w-16 h-4" />
+                </div>
+              </div>
+            ))}
+          </>
         ) : filteredSpecialists.length === 0 ? (
           <div className="col-span-full text-center py-16 bg-white dark:bg-komorebi-dark-card rounded-2xl border border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300">
             <Search className="w-10 h-10 text-gray-200 dark:text-gray-600 mx-auto mb-3" />

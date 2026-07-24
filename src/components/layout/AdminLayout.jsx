@@ -11,6 +11,7 @@ import {
   LogOut,
   Flower2
 } from "lucide-react";
+import { Skeleton } from "../ui/Skeleton";
 
 const NAV_ITEMS = [
   { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
@@ -32,7 +33,43 @@ export function AdminLayout() {
   }, [profile, loading, navigate]);
 
   if (loading) {
-    return <div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading admin...</div>;
+    return (
+      <div className="flex h-screen bg-[#F8F9FA] overflow-hidden font-sans">
+        <aside className="w-[260px] bg-[#0A0D14] flex flex-col shrink-0 border-r border-white/5">
+          <div className="h-[72px] px-6 flex items-center gap-3 border-b border-white/10 shrink-0">
+            <Skeleton className="w-8 h-8 rounded-lg bg-white/10" />
+            <Skeleton className="h-5 w-32 bg-white/10" />
+          </div>
+          <div className="flex-1 py-8 px-4 space-y-4">
+            <Skeleton className="h-3 w-12 bg-white/10 mb-6" />
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="flex items-center gap-3 px-4 py-3">
+                <Skeleton className="w-5 h-5 rounded bg-white/10" />
+                <Skeleton className="h-4 w-28 bg-white/10" />
+              </div>
+            ))}
+          </div>
+        </aside>
+        <div className="flex-1 flex flex-col min-w-0">
+          <header className="h-[80px] px-6 sm:px-10 bg-white/70 border-b border-gray-100 flex items-center justify-between shrink-0">
+            <div>
+              <Skeleton className="h-6 w-40 mb-2" />
+              <Skeleton className="h-4 w-32" />
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="hidden sm:block space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-3 w-16" />
+              </div>
+              <Skeleton className="w-12 h-12 rounded-full" />
+            </div>
+          </header>
+          <main className="flex-1 p-6 sm:p-10">
+            <Skeleton className="w-full h-full rounded-2xl" />
+          </main>
+        </div>
+      </div>
+    );
   }
 
   return (

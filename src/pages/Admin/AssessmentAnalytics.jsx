@@ -13,6 +13,7 @@ import {
   Save,
   Pencil
 } from "lucide-react";
+import { Skeleton } from "../../components/ui/Skeleton";
 
 const SEVERITY_COLORS = {
   'Normal': '#5D8B66',
@@ -159,30 +160,57 @@ export default function AssessmentAnalytics() {
             exit={{ opacity: 0, y: -10 }}
             className="space-y-6"
           >
-            {/* Stats Row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white rounded-[24px] p-8 border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-3xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity" />
-                <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-2 font-sans relative z-10">Total Assessments</p>
-                <p className="text-[36px] font-black text-gray-900 font-sans tracking-tight relative z-10">{stats?.total || 0}</p>
-              </div>
-              <div className="bg-white rounded-[24px] p-8 border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-full blur-3xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity" />
-                <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-2 font-sans relative z-10">Most Common Severity</p>
-                <p className="text-[28px] font-black text-[#5D8B66] font-sans mt-2 tracking-tight relative z-10">
-                  {stats?.severity_distribution?.[0]?.severity_level || "N/A"}
-                </p>
-              </div>
-              <div className="bg-white rounded-[24px] p-8 border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full blur-3xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity" />
-                <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-2 font-sans relative z-10">Avg Monthly Health</p>
-                <p className="text-[36px] font-black text-gray-900 font-sans tracking-tight relative z-10">
-                  {stats?.monthly_trend?.[stats.monthly_trend.length - 1]?.avg_percentage || 0}%
-                </p>
-              </div>
-            </div>
+            {loading ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="bg-white rounded-[24px] p-8 border border-gray-100 shadow-sm relative overflow-hidden">
+                      <Skeleton className="w-32 h-3 mb-2" />
+                      <Skeleton className="w-16 h-10" />
+                    </div>
+                  ))}
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                  <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm h-[400px]">
+                     <Skeleton className="w-48 h-6 mb-2" />
+                     <Skeleton className="w-64 h-4 mb-8" />
+                     <div className="flex justify-center items-center h-[200px]">
+                       <Skeleton className="w-48 h-48 rounded-full" />
+                     </div>
+                  </div>
+                  <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm h-[400px]">
+                     <Skeleton className="w-48 h-6 mb-2" />
+                     <Skeleton className="w-64 h-4 mb-8" />
+                     <Skeleton className="w-full h-[200px] rounded-xl" />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Stats Row */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="bg-white rounded-[24px] p-8 border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-3xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity" />
+                    <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-2 font-sans relative z-10">Total Assessments</p>
+                    <p className="text-[36px] font-black text-gray-900 font-sans tracking-tight relative z-10">{stats?.total || 0}</p>
+                  </div>
+                  <div className="bg-white rounded-[24px] p-8 border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-full blur-3xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity" />
+                    <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-2 font-sans relative z-10">Most Common Severity</p>
+                    <p className="text-[28px] font-black text-[#5D8B66] font-sans mt-2 tracking-tight relative z-10">
+                      {stats?.severity_distribution?.[0]?.severity_level || "N/A"}
+                    </p>
+                  </div>
+                  <div className="bg-white rounded-[24px] p-8 border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full blur-3xl -mr-10 -mt-10 opacity-50 group-hover:opacity-100 transition-opacity" />
+                    <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-2 font-sans relative z-10">Avg Monthly Health</p>
+                    <p className="text-[36px] font-black text-gray-900 font-sans tracking-tight relative z-10">
+                      {stats?.monthly_trend?.[stats.monthly_trend.length - 1]?.avg_percentage || 0}%
+                    </p>
+                  </div>
+                </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
               {/* Pie Chart */}
               <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm flex flex-col">
                 <h3 className="text-[18px] font-bold text-gray-900 font-sans tracking-tight">Severity Distribution</h3>
@@ -251,6 +279,8 @@ export default function AssessmentAnalytics() {
                 </div>
               </div>
             </div>
+          </>
+          )}
           </motion.div>
         )}
 

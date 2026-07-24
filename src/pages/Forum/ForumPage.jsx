@@ -16,6 +16,7 @@ import {
   AlertTriangle,
   CheckCircle2
 } from "lucide-react";
+import { Skeleton } from "../../components/ui/Skeleton";
 
 export default function ForumPage() {
   const { user } = useAuthStore();
@@ -285,7 +286,33 @@ export default function ForumPage() {
       {/* Feed List */}
       <div className="space-y-6">
         {loading ? (
-          <div className="text-center py-10 text-gray-500">Loading posts...</div>
+          <>
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 border border-gray-100 dark:border-komorebi-dark-border shadow-sm">
+                <div className="flex items-center gap-4 mb-4">
+                  <Skeleton className="w-12 h-12 rounded-2xl" />
+                  <div>
+                    <Skeleton className="w-32 h-5 mb-1" />
+                    <Skeleton className="w-20 h-4" />
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <Skeleton className="w-3/4 h-6 mb-3" />
+                  <Skeleton className="w-full h-4 mb-2" />
+                  <Skeleton className="w-full h-4 mb-2" />
+                  <Skeleton className="w-4/5 h-4 mb-4" />
+                  <div className="flex gap-2">
+                    <Skeleton className="w-16 h-7 rounded-full" />
+                    <Skeleton className="w-20 h-7 rounded-full" />
+                  </div>
+                </div>
+                <div className="flex gap-6">
+                  <Skeleton className="w-12 h-5" />
+                  <Skeleton className="w-12 h-5" />
+                </div>
+              </div>
+            ))}
+          </>
         ) : posts.length === 0 ? (
           <div className="text-center py-10 text-gray-500 bg-white dark:bg-komorebi-dark-card rounded-2xl border border-gray-100 dark:border-[#32473D] transition-colors duration-300">
             No posts found. Be the first to share a story!
@@ -483,7 +510,21 @@ export default function ForumPage() {
                 {/* Comment List */}
                 <div className="p-4 sm:p-6 space-y-6 bg-gray-50/30 dark:bg-komorebi-dark-bg/30 flex-1 transition-colors duration-300">
                 {loadingComments ? (
-                  <div className="text-center py-10 text-gray-500">Loading comments...</div>
+                  <>
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="flex gap-4">
+                        <Skeleton className="w-8 h-8 rounded-full shrink-0 mt-1" />
+                        <div className="flex-1 bg-white dark:bg-[#32473D] border border-gray-100 dark:border-[#43674F] p-4 rounded-2xl rounded-tl-none shadow-sm">
+                          <div className="flex justify-between items-start mb-2">
+                            <Skeleton className="w-24 h-4" />
+                            <Skeleton className="w-16 h-3" />
+                          </div>
+                          <Skeleton className="w-full h-3 mb-2" />
+                          <Skeleton className="w-4/5 h-3" />
+                        </div>
+                      </div>
+                    ))}
+                  </>
                 ) : comments.length === 0 ? (
                   <div className="text-center py-10 text-gray-500">No comments yet. Be the first!</div>
                 ) : (

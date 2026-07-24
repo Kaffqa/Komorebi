@@ -7,6 +7,7 @@ import { supabase } from '../../../services/supabase';
 import { dispatchJournalUpdate } from '../../../hooks/useMoodEvent';
 import { getLocalDateString } from '../../../utils/date';
 import { useTranslation } from 'react-i18next';
+import { Skeleton } from '../../ui/Skeleton';
 
 const TAG_SUGGESTIONS = ["Anxiety", "Work", "Family", "Health", "Social", "Self-Care", "Stress", "Gratitude", "Sleep", "Exercise"];
 
@@ -282,7 +283,21 @@ export function DailyJournalWidget() {
 
               <div className="flex-1 overflow-y-auto space-y-4 pr-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {loadingJournals ? (
-                  <p className="text-center text-gray-400 py-10">{t('journaling.daily_journal.loading')}</p>
+                  <>
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="border border-gray-100 dark:border-[#32473D] rounded-2xl p-5">
+                        <div className="flex items-center justify-between mb-4">
+                          <Skeleton className="w-32 h-4" />
+                          <Skeleton className="w-20 h-6 rounded-lg" />
+                        </div>
+                        <div className="space-y-2">
+                          <Skeleton className="w-full h-3" />
+                          <Skeleton className="w-full h-3" />
+                          <Skeleton className="w-4/5 h-3" />
+                        </div>
+                      </div>
+                    ))}
+                  </>
                 ) : pastJournals.length === 0 ? (
                   <div className="text-center py-16">
                     <BookOpen className="w-12 h-12 text-gray-200 mx-auto mb-3" />

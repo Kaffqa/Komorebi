@@ -11,6 +11,7 @@ import {
   SUBSCALE_INFO,
   calculateDASS21Scores,
 } from "../../data/diagnoseQuestions";
+import { Skeleton } from "../../components/ui/Skeleton";
 
 export default function DiagnoseResultPage() {
   const { id } = useParams();
@@ -42,8 +43,43 @@ export default function DiagnoseResultPage() {
 
   if (loading) {
     return (
-      <div className="w-full max-w-7xl mx-auto flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 text-[#5D8B66] animate-spin" />
+      <div className="w-full max-w-7xl mx-auto animate-in fade-in duration-500 pb-10">
+        <Skeleton className="w-40 h-4 mb-4" />
+        <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-10 shadow-sm border border-gray-100 dark:border-komorebi-dark-border">
+          <div className="mb-8">
+            <Skeleton className="w-64 h-8 mb-4" />
+            <Skeleton className="w-full max-w-2xl h-4" />
+            <Skeleton className="w-3/4 max-w-xl h-4 mt-2" />
+          </div>
+          <div className="flex flex-col lg:flex-row gap-8">
+            <div className="flex-1 border border-gray-100 dark:border-komorebi-dark-border rounded-[20px] p-6 lg:p-8">
+              <Skeleton className="w-48 h-6 mb-8" />
+              <div className="space-y-8">
+                {[1, 2, 3].map((i) => (
+                  <div key={i}>
+                    <div className="flex justify-between mb-3">
+                      <Skeleton className="w-24 h-4" />
+                      <Skeleton className="w-10 h-4" />
+                    </div>
+                    <Skeleton className="w-full h-3 mb-3 rounded-full" />
+                    <Skeleton className="w-full h-3" />
+                    <Skeleton className="w-4/5 h-3 mt-2" />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="lg:w-[320px] flex flex-col items-center justify-center">
+              <Skeleton className="w-[220px] h-[220px] rounded-full mb-6" />
+              <Skeleton className="w-48 h-3 mb-2" />
+              <Skeleton className="w-40 h-3 mb-8" />
+              <div className="flex gap-3 w-full">
+                <Skeleton className="flex-1 h-12 rounded-full" />
+                <Skeleton className="w-12 h-12 rounded-full" />
+                <Skeleton className="w-12 h-12 rounded-full" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

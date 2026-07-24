@@ -12,6 +12,7 @@ import {
   Stethoscope,
   UploadCloud
 } from "lucide-react";
+import { Skeleton } from "../../components/ui/Skeleton";
 
 const SPECIALIST_TITLES = ["Psikiater", "Psikolog Klinis", "Konsultan Psikiater"];
 
@@ -240,8 +241,25 @@ export default function SpecialistManagement() {
 
       {/* Specialists Grid */}
       {loading ? (
-        <div className="flex justify-center p-20">
-          <div className="w-10 h-10 border-4 border-[#5D8B66]/30 border-t-[#5D8B66] rounded-full animate-spin"></div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-white rounded-[32px] border border-gray-100 shadow-sm flex flex-col overflow-hidden">
+              <div className="h-28 bg-gray-50 shrink-0"></div>
+              <div className="px-6 flex-1 flex flex-col items-center">
+                <Skeleton className="w-24 h-24 rounded-xl -mt-12 mb-4 shrink-0 shadow-sm" />
+                <Skeleton className="w-40 h-6 mb-2" />
+                <Skeleton className="w-32 h-4 mb-8" />
+                <div className="w-full grid grid-cols-2 gap-3 mb-6">
+                  <Skeleton className="w-full h-10 rounded-2xl" />
+                  <Skeleton className="w-full h-10 rounded-2xl" />
+                </div>
+                <div className="w-full flex gap-2 pb-6 border-t border-gray-100 pt-6 mt-auto">
+                  <Skeleton className="flex-1 h-12 rounded-2xl" />
+                  <Skeleton className="w-12 h-12 rounded-2xl" />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       ) : filteredSpecialists.length === 0 ? (
         <div className="bg-white rounded-[32px] p-16 text-center border border-gray-100 shadow-sm border-dashed">

@@ -15,6 +15,7 @@ import { useAuthStore } from "../../stores/useAuthStore";
 import { supabase } from "../../services/supabase";
 import { sendMessageToKomi, getKomiGreeting } from "../../services/gemini";
 import Logo from "../../assets/logo.svg";
+import { Skeleton } from "../../components/ui/Skeleton";
 
 export default function ChatPage() {
   const { user, profile } = useAuthStore();
@@ -346,8 +347,34 @@ export default function ChatPage() {
           }}
         >
           {loading ? (
-            <div className="flex items-center justify-center h-full">
-              <Loader2 className="w-6 h-6 text-[#5D8B66] animate-spin" />
+            <div className="flex flex-col gap-6 py-6 px-4">
+              <div className="flex justify-start">
+                <div className="bg-white dark:bg-komorebi-dark-bg rounded-[16px] px-5 py-4 w-[75%] border border-gray-100 dark:border-[#32473D] flex gap-3 shadow-sm">
+                   <Skeleton className="w-6 h-6 rounded-full shrink-0" />
+                   <div className="flex-1 space-y-3 mt-1">
+                     <Skeleton className="w-full h-3" />
+                     <Skeleton className="w-4/5 h-3" />
+                     <Skeleton className="w-1/2 h-3" />
+                   </div>
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <div className="bg-[#5D8B66]/10 rounded-[16px] rounded-br-[4px] px-5 py-4 w-[60%]">
+                   <div className="space-y-3">
+                     <Skeleton className="w-full h-3" />
+                     <Skeleton className="w-3/4 h-3" />
+                   </div>
+                </div>
+              </div>
+              <div className="flex justify-start">
+                <div className="bg-white dark:bg-komorebi-dark-bg rounded-[16px] px-5 py-4 w-[70%] border border-gray-100 dark:border-[#32473D] flex gap-3 shadow-sm">
+                   <Skeleton className="w-6 h-6 rounded-full shrink-0" />
+                   <div className="flex-1 space-y-3 mt-1">
+                     <Skeleton className="w-full h-3" />
+                     <Skeleton className="w-2/3 h-3" />
+                   </div>
+                </div>
+              </div>
             </div>
           ) : (
             <>

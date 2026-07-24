@@ -7,6 +7,7 @@ import { supabase } from "../../services/supabase";
 import { getSeverityLabel, getSeverityEmoji } from "../../data/diagnoseQuestions";
 import { useTranslation } from "react-i18next";
 import i18n from "../../i18n";
+import { Skeleton } from "../../components/ui/Skeleton";
 
 export default function DiagnosePage() {
   const { t } = useTranslation();
@@ -80,8 +81,18 @@ export default function DiagnosePage() {
 
       {/* Results Grid */}
       {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <div className="w-8 h-8 border-3 border-[#5D8B66] border-t-transparent rounded-full animate-spin" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-white dark:bg-komorebi-dark-card rounded-[20px] p-6 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col min-h-[180px]">
+              <Skeleton className="w-24 h-3 mb-4" />
+              <Skeleton className="w-32 h-5 mb-3" />
+              <div className="space-y-2 mb-6">
+                <Skeleton className="w-full h-3" />
+                <Skeleton className="w-4/5 h-3" />
+              </div>
+              <Skeleton className="w-28 h-3 mt-auto" />
+            </div>
+          ))}
         </div>
       ) : results.length === 0 ? (
         <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-12 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col items-center justify-center text-center transition-colors duration-300">
