@@ -177,7 +177,7 @@ export default function LandingPage() {
           className="w-full bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100/50"
         >
           {/* Image Container */}
-          <div className="w-full h-[50vh] md:h-[65vh] relative bg-gray-200">
+          <div className="w-full h-[35vh] sm:h-[45vh] md:h-[65vh] relative bg-gray-200">
             <img 
               src={HeroImg} 
               alt="Komorebi Hero" 
@@ -192,16 +192,16 @@ export default function LandingPage() {
                 hidden: { opacity: 0, x: -50 },
                 visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut", delay: 0.3 } }
               }}
-              className="text-[40px] md:text-6xl lg:text-[68px] xl:text-[72px] font-heading text-[#5D8B66] leading-[1.1] whitespace-nowrap"
+              className="text-[36px] sm:text-[40px] md:text-6xl lg:text-[68px] xl:text-[72px] font-heading text-[#5D8B66] leading-[1.1] md:whitespace-nowrap"
             >
-              Your First Step Toward<br />Feeling Like Yourself Again.
+              Your First Step Toward<br className="hidden md:block" />Feeling Like Yourself Again.
             </motion.h1>
             <motion.p 
               variants={{
                 hidden: { opacity: 1 },
                 visible: { opacity: 1, transition: { staggerChildren: 0.01, delayChildren: 0.8 } }
               }}
-              className="text-[11px] lg:text-[12px] text-[#5D8B66]/80 text-right lg:max-w-[360px] leading-[1.6] font-sans font-medium lg:pb-3 self-end lg:self-auto"
+              className="text-[14px] md:text-[15px] lg:text-[16px] text-[#5D8B66]/80 text-left lg:text-right lg:max-w-[380px] xl:max-w-[440px] leading-[1.6] font-sans font-medium lg:pb-3 self-start lg:self-auto mt-6 lg:mt-0"
             >
               {"Stop second-guessing how you feel. Our advanced screening system accurately evaluates your symptoms to connect you with certified psychiatrists and psychologists who specialize in exactly what you're going through.".split(" ").map((word, wordIndex) => (
                 <span key={`word-${wordIndex}`} className="inline-block whitespace-pre">
@@ -513,20 +513,20 @@ export default function LandingPage() {
           {/* Stats and Links Container */}
           <div className="w-full px-4 lg:px-12 xl:px-16">
             {/* Stats Section */}
-            <div className="pt-12 pb-10 flex flex-col md:flex-row md:justify-between items-center md:items-start gap-12 md:gap-0 w-full">
-              <div className="flex flex-col items-center md:items-start text-center md:text-left">
+            <div className="pt-8 md:pt-12 pb-10 grid grid-cols-2 md:flex md:flex-row md:justify-between items-start gap-y-8 gap-x-4 md:gap-0 w-full">
+              <div className="flex flex-col items-start text-left">
                 <h3 className="text-[#5D8B66] text-4xl md:text-5xl lg:text-[56px] font-sans font-medium mb-3">25,000+</h3>
                 <p className="text-gray-400 text-[13px] md:text-[15px] font-sans font-medium">Assessments Completed</p>
               </div>
-              <div className="flex flex-col items-center text-center">
+              <div className="flex flex-col items-start text-left">
                 <h3 className="text-[#5D8B66] text-4xl md:text-5xl lg:text-[56px] font-sans font-medium mb-3">500+</h3>
                 <p className="text-gray-400 text-[13px] md:text-[15px] font-sans font-medium">Licensed Psychologists & Psychiatrists</p>
               </div>
-              <div className="flex flex-col items-center text-center">
+              <div className="flex flex-col items-start text-left">
                 <h3 className="text-[#5D8B66] text-4xl md:text-5xl lg:text-[56px] font-sans font-medium mb-3">4.9/5</h3>
                 <p className="text-gray-400 text-[13px] md:text-[15px] font-sans font-medium">Patient Care Rating</p>
               </div>
-              <div className="flex flex-col items-center md:items-end text-center md:text-right">
+              <div className="flex flex-col items-start text-left md:items-end md:text-right">
                 <h3 className="text-[#5D8B66] text-4xl md:text-5xl lg:text-[56px] font-sans font-medium mb-3">92%</h3>
                 <p className="text-gray-400 text-[13px] md:text-[15px] font-sans font-medium">Accurate Initial Match Rate</p>
               </div>
@@ -534,16 +534,16 @@ export default function LandingPage() {
           <div className="w-full h-px bg-gray-100 mb-10"></div>
   
             {/* Links Section */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-0 pb-32 relative z-10 w-full">
-              <div className="flex flex-col items-center md:items-start text-center md:text-left gap-5">
-                <h4 className="text-[#5D8B66] font-sans font-medium mb-2 text-[15px]">Explore</h4>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-4 md:gap-0 pb-24 md:pb-32 relative z-10 w-full">
+              <div className="flex flex-col items-start text-left gap-4 md:gap-5">
+                <h4 className="text-[#5D8B66] font-sans font-medium mb-1 md:mb-2 text-[15px]">Explore</h4>
                 <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">How It Works</a>
                 <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Our Experts</a>
                 <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Testimonials</a>
                 <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">FAQs</a>
               </div>
-              <div className="flex flex-col items-center md:items-center">
-                <div className="flex flex-col items-start text-left gap-5">
+              <div className="flex flex-col items-start md:items-center">
+                <div className="flex flex-col items-start text-left gap-4 md:gap-5">
                   <h4 className="text-[#5D8B66] font-sans font-medium mb-2 text-[15px]">Legal & Trust</h4>
                   <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Privacy Policy</a>
                   <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Terms of Service</a>
@@ -551,8 +551,8 @@ export default function LandingPage() {
                   <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Informed Consent</a>
                 </div>
               </div>
-              <div className="flex flex-col items-center md:items-end text-center md:text-right gap-5">
-                <h4 className="text-[#5D8B66] font-sans font-medium mb-2 text-[15px]">Reach Out</h4>
+              <div className="flex flex-col items-start text-left md:items-end md:text-right gap-4 md:gap-5 col-span-2 md:col-span-1">
+                <h4 className="text-[#5D8B66] font-sans font-medium mb-1 md:mb-2 text-[15px]">Reach Out</h4>
                 <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Support Center</a>
                 <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Contact Us</a>
                 <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">Partner Clinics</a>
