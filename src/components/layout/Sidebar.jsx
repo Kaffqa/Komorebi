@@ -120,7 +120,7 @@ export function Sidebar() {
                 className={cn(
                   "relative group flex items-center px-4 py-3 text-[15px] font-sans font-medium rounded-xl transition-all duration-200 overflow-hidden",
                   isActive
-                    ? "text-white"
+                    ? "text-[#5D8B66] dark:text-[#7DA085]"
                     : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 border border-transparent",
                   isCollapsed ? "md:justify-center justify-between" : "justify-between"
                 )}
@@ -129,7 +129,7 @@ export function Sidebar() {
                 {isActive && (
                   <motion.div
                     layoutId="activeSidebarIndicator"
-                    className="absolute inset-0 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] rounded-xl"
+                    className="absolute inset-0 bg-[#5D8B66]/10 dark:bg-[#7DA085]/10 border border-[#5D8B66]/20 dark:border-[#7DA085]/20 rounded-xl"
                     initial={false}
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
@@ -139,7 +139,7 @@ export function Sidebar() {
                     className={cn(
                       "flex-shrink-0 h-[20px] w-[20px] transition-colors",
                       isCollapsed ? "md:mr-0 mr-3" : "mr-3",
-                      isActive ? "text-white" : "text-gray-500 dark:text-komorebi-dark-muted group-hover:text-gray-700 dark:group-hover:text-gray-200"
+                      isActive ? "text-[#5D8B66] dark:text-[#7DA085]" : "text-gray-500 dark:text-komorebi-dark-muted group-hover:text-gray-700 dark:group-hover:text-gray-200"
                     )}
                     strokeWidth={isActive ? 2.5 : 2}
                     fill={isActive && item.fillOnActive ? "currentColor" : "none"}

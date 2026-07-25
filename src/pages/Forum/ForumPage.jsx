@@ -28,6 +28,8 @@ export default function ForumPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [likedPosts, setLikedPosts] = useState(new Set());
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [sortBy, setSortBy] = useState("Most Recent");
+  const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
   const [toastMessage, setToastMessage] = useState(null); // { type: 'success' | 'error', text: '' }
 
@@ -46,7 +48,7 @@ export default function ForumPage() {
 
   useEffect(() => {
     fetchPosts();
-  }, [activeFilter, searchQuery]);
+  }, [activeFilter, searchQuery, sortBy]);
 
   // Fetch which posts the current user has liked
   const fetchLikedPosts = async (postIds) => {
@@ -69,8 +71,15 @@ export default function ForumPage() {
         .select(`
           id, title, content, image_url, tags, created_at, likes_count, replies_count, user_id,
           profiles:user_id ( id, display_name, avatar_url )
-        `)
-        .order("created_at", { ascending: false });
+        `);
+
+      if (sortBy === "Popular") {
+        query = query.order("likes_count", { ascending: false }).order("created_at", { ascending: false });
+      } else if (sortBy === "Most Discussed") {
+        query = query.order("replies_count", { ascending: false }).order("created_at", { ascending: false });
+      } else {
+        query = query.order("created_at", { ascending: false });
+      }
 
       if (activeFilter !== "All Feed") {
         query = query.contains("tags", [activeFilter]);
@@ -277,10 +286,39 @@ export default function ForumPage() {
           })}
         </div>
         
-        <button className="flex items-center gap-2 px-5 py-2 rounded-full border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-black/20 whitespace-nowrap transition-colors duration-300">
-          Most Recent
-          <ChevronDown className="w-4 h-4" />
-        </button>
+        <div className="relative">
+          <button 
+            onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
+            className="flex items-center gap-2 px-5 py-2 rounded-full border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-black/20 whitespace-nowrap transition-colors duration-300"
+          >
+            {sortBy}
+            <ChevronDown className="w-4 h-4" />
+          </button>
+          
+          <AnimatePresence>
+            {sortDropdownOpen && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="absolute top-full right-0 mt-2 bg-white dark:bg-[#1c2620] rounded-xl shadow-lg border border-gray-100 dark:border-[#32473D] py-2 z-50 min-w-[160px]"
+              >
+                {["Most Recent", "Popular", "Most Discussed"].map((option) => (
+                  <button 
+                    key={option}
+                    onClick={() => {
+                      setSortBy(option);
+                      setSortDropdownOpen(false);
+                    }} 
+                    className={`w-full text-left px-4 py-2 hover:bg-gray-50 dark:hover:bg-black/20 text-[13px] transition-colors ${sortBy === option ? 'font-medium text-[#5D8B66]' : 'font-light text-gray-700 dark:text-gray-300'}`}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* Feed List */}

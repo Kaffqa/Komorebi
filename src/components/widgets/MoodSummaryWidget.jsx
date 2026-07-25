@@ -23,11 +23,11 @@ export function MoodSummaryWidget() {
   }, []);
 
   const emptyData = [
-    { label: "Neutral", percentage: 0, color: "#678D73" },
-    { label: "Not Bad", percentage: 0, color: "#8AAFA0" },
-    { label: "Bad", percentage: 0, color: "#C9DBCF" },
-    { label: "Very Good", percentage: 0, color: "#274230" },
-    { label: "Good", percentage: 0, color: "#486E53" },
+    { label: "Neutral", percentage: 0, rawPercentage: 0, color: "#678D73" },
+    { label: "Not Bad", percentage: 0, rawPercentage: 0, color: "#8AAFA0" },
+    { label: "Bad", percentage: 0, rawPercentage: 0, color: "#C9DBCF" },
+    { label: "Very Good", percentage: 0, rawPercentage: 0, color: "#274230" },
+    { label: "Good", percentage: 0, rawPercentage: 0, color: "#486E53" },
   ];
   
   const [data, setData] = useState(emptyData);
@@ -67,11 +67,11 @@ export function MoodSummaryWidget() {
     const uiLabels = t('dashboard.mood_input.labels', { returnObjects: true });
     
     setData([
-      { label: uiLabels[2], percentage: Math.round((counts[3] / total) * 100), color: "#678D73" },
-      { label: uiLabels[1], percentage: Math.round((counts[2] / total) * 100), color: "#8AAFA0" },
-      { label: uiLabels[0], percentage: Math.round((counts[1] / total) * 100), color: "#C9DBCF" },
-      { label: uiLabels[4], percentage: Math.round((counts[5] / total) * 100), color: "#274230" },
-      { label: uiLabels[3], percentage: Math.round((counts[4] / total) * 100), color: "#486E53" },
+      { label: uiLabels[2], percentage: Math.round((counts[3] / total) * 100), rawPercentage: counts[3] / total, color: "#678D73" },
+      { label: uiLabels[1], percentage: Math.round((counts[2] / total) * 100), rawPercentage: counts[2] / total, color: "#8AAFA0" },
+      { label: uiLabels[0], percentage: Math.round((counts[1] / total) * 100), rawPercentage: counts[1] / total, color: "#C9DBCF" },
+      { label: uiLabels[4], percentage: Math.round((counts[5] / total) * 100), rawPercentage: counts[5] / total, color: "#274230" },
+      { label: uiLabels[3], percentage: Math.round((counts[4] / total) * 100), rawPercentage: counts[4] / total, color: "#486E53" },
     ]);
   }, [user, view, t]);
 
@@ -93,7 +93,7 @@ export function MoodSummaryWidget() {
   const chartSlices = data
     .filter(d => d.percentage > 0)
     .map(item => {
-      const targetLength = (item.percentage / 100) * circumference;
+      const targetLength = item.rawPercentage * circumference;
       const gap = 6;
       const strokeWidth = 32;
       const dashArrayLength = Math.max(0, targetLength - gap - strokeWidth);
@@ -103,14 +103,17 @@ export function MoodSummaryWidget() {
       
       // If the slice is 100%, its calculated middle is at the bottom.
       // We force it to the top-right (-45 degrees) for better aesthetics and to avoid the legend.
-      if (item.percentage === 100) {
+      if (item.rawPercentage === 1) {
         angle = -Math.PI / 4;
       }
+      
+      // Calculate correct offset to perfectly space the rounded linecaps
+      const strokeDashoffset = -(offset + gap/2 + strokeWidth/2);
       
       const sliceData = {
         ...item,
         dashArrayLength,
-        strokeDashoffset: -offset,
+        strokeDashoffset,
         angle
       };
       

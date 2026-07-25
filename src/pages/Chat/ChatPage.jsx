@@ -12,6 +12,7 @@ import {
   Activity,
 } from "lucide-react";
 import { useAuthStore } from "../../stores/useAuthStore";
+import { useThemeStore } from "../../stores/useThemeStore";
 import { supabase } from "../../services/supabase";
 import { sendMessageToKomi, getKomiGreeting } from "../../services/gemini";
 import Logo from "../../assets/logo.svg";
@@ -19,6 +20,7 @@ import { Skeleton } from "../../components/ui/Skeleton";
 
 export default function ChatPage() {
   const { user, profile } = useAuthStore();
+  const { isDarkMode } = useThemeStore();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -340,8 +342,8 @@ export default function ChatPage() {
         {/* Messages Area */}
         <div
           ref={chatContainerRef}
-          className="flex-1 overflow-y-auto px-6 py-4 space-y-1 scroll-smooth"
-          style={{
+          className="flex-1 overflow-y-auto scrollbar-hide px-6 py-4 space-y-1 scroll-smooth"
+          style={isDarkMode ? {} : {
             backgroundImage: `radial-gradient(circle at 1px 1px, #f0f0f0 1px, transparent 0)`,
             backgroundSize: "24px 24px",
           }}

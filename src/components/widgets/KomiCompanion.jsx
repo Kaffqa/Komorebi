@@ -88,7 +88,9 @@ export function KomiCompanion({ constraintsRef }) {
     stemEnd: "#3D6846",
     limbsDark: "#43674F",
     limbsLight: "#7DA085",
-    blush: "#A8D8B6"
+    blush: "#A8D8B6",
+    faceDark: "#1F3323",
+    faceLight: "#2D4732"
   };
   let moodFace = "normal";
 
@@ -102,7 +104,9 @@ export function KomiCompanion({ constraintsRef }) {
       stemEnd: "#1A237E",
       limbsDark: "#283593",
       limbsLight: "#5C6BC0",
-      blush: "#82B1FF"
+      blush: "#82B1FF",
+      faceDark: "#08103A",
+      faceLight: "#1A237E"
     };
     moodFace = "sad";
   } else if (moodScore >= 4) {
@@ -115,7 +119,9 @@ export function KomiCompanion({ constraintsRef }) {
       stemEnd: "#F57F17",
       limbsDark: "#E65100",
       limbsLight: "#FFB300",
-      blush: "#FFCC80"
+      blush: "#FFCC80",
+      faceDark: "#4A2900",
+      faceLight: "#B84000"
     };
     moodFace = "happy";
   }
@@ -141,8 +147,10 @@ export function KomiCompanion({ constraintsRef }) {
 
   // AFK Timer & Eye Tracking
   useEffect(() => {
+    let lastMoveTime = 0;
+    
     const resetAfkTimer = () => {
-      if (isSleeping) setIsSleeping(false);
+      setIsSleeping(false);
       if (afkTimerRef.current) clearTimeout(afkTimerRef.current);
       afkTimerRef.current = setTimeout(() => {
         setIsSleeping(true);
@@ -150,8 +158,17 @@ export function KomiCompanion({ constraintsRef }) {
     };
 
     const handleMouseMove = (e) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-      resetAfkTimer();
+      const now = Date.now();
+      if (now - lastMoveTime > 50) { // Throttle mouse position update
+        setMousePos({ x: e.clientX, y: e.clientY });
+        lastMoveTime = now;
+      }
+      // Always wake up and reset timer on mouse move
+      setIsSleeping(false);
+      if (afkTimerRef.current) clearTimeout(afkTimerRef.current);
+      afkTimerRef.current = setTimeout(() => {
+        setIsSleeping(true);
+      }, 10000);
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -165,7 +182,7 @@ export function KomiCompanion({ constraintsRef }) {
       window.removeEventListener("click", resetAfkTimer);
       if (afkTimerRef.current) clearTimeout(afkTimerRef.current);
     };
-  }, [isSleeping]);
+  }, []);
 
   // Update Pet Center for Eye Tracking
   useEffect(() => {
@@ -371,81 +388,102 @@ export function KomiCompanion({ constraintsRef }) {
             {isDragging ? (
               // Dizzy Eyes (Swirls or X_X)
               <g className="dizzy-eyes">
-                <path d="M40 65 L50 75 M50 65 L40 75" stroke="#1F3323" strokeWidth="4" strokeLinecap="round" />
-                <path d="M70 65 L80 75 M80 65 L70 75" stroke="#1F3323" strokeWidth="4" strokeLinecap="round" />
-                <path d="M35 50 Q45 60 52 50" stroke="#2D4732" strokeWidth="3" strokeLinecap="round" fill="none" />
-                <path d="M68 50 Q75 60 85 50" stroke="#2D4732" strokeWidth="3" strokeLinecap="round" fill="none" />
-                <path d="M52 90 Q55 85 60 90 T68 90" stroke="#2D4732" strokeWidth="3" strokeLinecap="round" fill="none" />
+                <path d="M40 65 L50 75 M50 65 L40 75" stroke={themeColors.faceDark} strokeWidth="4" strokeLinecap="round" />
+                <path d="M70 65 L80 75 M80 65 L70 75" stroke={themeColors.faceDark} strokeWidth="4" strokeLinecap="round" />
+                <path d="M35 50 Q45 60 52 50" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
+                <path d="M68 50 Q75 60 85 50" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
+                <path d="M52 90 Q55 85 60 90 T68 90" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
               </g>
-            ) : isSleeping ? (
-              // Sleeping Face (- -)
-              <g className="sleeping-eyes">
-                <path d="M40 70 L50 70" stroke="#1F3323" strokeWidth="4" strokeLinecap="round" />
-                <path d="M70 70 L80 70" stroke="#1F3323" strokeWidth="4" strokeLinecap="round" />
-                <path d="M35 55 Q45 50 52 58" stroke="#2D4732" strokeWidth="3" strokeLinecap="round" fill="none" />
-                <path d="M68 58 Q75 50 85 55" stroke="#2D4732" strokeWidth="3" strokeLinecap="round" fill="none" />
-                <circle cx="60" cy="90" r="3" fill="#2D4732" /> {/* Small snoring mouth */}
-              </g>
-            ) : isHappy || moodFace === "happy" ? (
-              // Happy Face (^ ^)
+            ) : moodFace === "happy" ? (
               <g className="happy-eyes">
-                <path d="M38 72 Q45 62 52 72" stroke="#1F3323" strokeWidth="4" strokeLinecap="round" fill="none" />
-                <path d="M68 72 Q75 62 82 72" stroke="#1F3323" strokeWidth="4" strokeLinecap="round" fill="none" />
+                {isSleeping ? (
+                  <>
+                    <path d="M38 72 Q45 62 52 72" stroke={themeColors.faceDark} strokeWidth="4" strokeLinecap="round" fill="none" />
+                    <path d="M68 72 Q75 62 82 72" stroke={themeColors.faceDark} strokeWidth="4" strokeLinecap="round" fill="none" />
+                    <circle cx="60" cy="90" r="3" fill={themeColors.faceLight} /> {/* Snoring mouth */}
+                  </>
+                ) : (
+                  <>
+                    <path d="M38 72 Q45 62 52 72" stroke={themeColors.faceDark} strokeWidth="4" strokeLinecap="round" fill="none" />
+                    <path d="M68 72 Q75 62 82 72" stroke={themeColors.faceDark} strokeWidth="4" strokeLinecap="round" fill="none" />
+                    <path d="M50 85 Q60 100 70 85 Z" fill={themeColors.faceDark} /> 
+                  </>
+                )}
                 <ellipse cx="38" cy="78" rx="6" ry="3" fill={themeColors.blush} className="transition-colors duration-1000" opacity="0.8" />
                 <ellipse cx="82" cy="78" rx="6" ry="3" fill={themeColors.blush} className="transition-colors duration-1000" opacity="0.8" />
-                <path d="M35 50 Q45 45 52 53" stroke="#2D4732" strokeWidth="3" strokeLinecap="round" fill="none" />
-                <path d="M68 53 Q75 45 85 50" stroke="#2D4732" strokeWidth="3" strokeLinecap="round" fill="none" />
-                <path d="M50 85 Q60 100 70 85 Z" fill="#1F3323" /> 
+                <path d="M35 50 Q45 45 52 53" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
+                <path d="M68 53 Q75 45 85 50" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
               </g>
             ) : moodFace === "sad" ? (
-              // Sad Face
               <g className="sad-eyes">
-                <circle cx="48" cy="72" r="5" fill="#1F3323" />
-                <circle cx="72" cy="72" r="5" fill="#1F3323" />
-                <circle cx="49" cy="70" r="2" fill="white" />
-                <circle cx="71" cy="70" r="2" fill="white" />
+                {isSleeping ? (
+                  <>
+                    <path d="M40 70 Q45 74 50 70" stroke={themeColors.faceDark} strokeWidth="4" strokeLinecap="round" fill="none" />
+                    <path d="M70 70 Q75 74 80 70" stroke={themeColors.faceDark} strokeWidth="4" strokeLinecap="round" fill="none" />
+                  </>
+                ) : (
+                  <>
+                    <circle cx="48" cy="72" r="5" fill={themeColors.faceDark} />
+                    <circle cx="72" cy="72" r="5" fill={themeColors.faceDark} />
+                    <circle cx="49" cy="70" r="2" fill="white" />
+                    <circle cx="71" cy="70" r="2" fill="white" />
+                  </>
+                )}
                 <ellipse cx="38" cy="80" rx="5" ry="2.5" fill={themeColors.blush} className="transition-colors duration-1000" opacity="0.4" />
                 <ellipse cx="82" cy="80" rx="5" ry="2.5" fill={themeColors.blush} className="transition-colors duration-1000" opacity="0.4" />
                 {/* Sad eyebrows pointing up in middle */}
-                <path d="M35 55 Q45 45 52 50" stroke="#2D4732" strokeWidth="3" strokeLinecap="round" fill="none" />
-                <path d="M68 50 Q75 45 85 55" stroke="#2D4732" strokeWidth="3" strokeLinecap="round" fill="none" />
-                {/* Sad mouth curved down */}
-                <path d="M55 95 Q60 88 65 95" stroke="#2D4732" strokeWidth="3" strokeLinecap="round" fill="none" />
+                <path d="M35 55 Q45 45 52 50" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
+                <path d="M68 50 Q75 45 85 55" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
+                {/* Sad mouth */}
+                {isSleeping ? (
+                  <circle cx="60" cy="90" r="2.5" fill={themeColors.faceLight} />
+                ) : (
+                  <path d="M55 95 Q60 88 65 95" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
+                )}
               </g>
             ) : (
-              // Normal Eyes with Eye Tracking
               <g className="normal-eyes">
-                <motion.ellipse 
-                  cx="45" cy="70" rx="10" ry="12" fill="white"
-                  initial={{ ry: 12 }}
-                  animate={{ ry: [12, 1, 12] }} 
-                  transition={{ duration: 4, repeat: Infinity, times: [0, 0.05, 0.1] }}
-                />
-                <motion.ellipse 
-                  cx="75" cy="70" rx="10" ry="12" fill="white"
-                  initial={{ ry: 12 }}
-                  animate={{ ry: [12, 1, 12] }} 
-                  transition={{ duration: 4, repeat: Infinity, times: [0, 0.05, 0.1] }}
-                />
-                
-                {/* Dynamic Eye Tracking Pupils */}
-                <motion.circle cx="48" cy="72" r="5" fill="#1F3323" animate={{ x: pupilOffsetX, y: pupilOffsetY }} transition={{ type: "spring", stiffness: 300, damping: 20 }} />
-                <motion.circle cx="72" cy="72" r="5" fill="#1F3323" animate={{ x: pupilOffsetX, y: pupilOffsetY }} transition={{ type: "spring", stiffness: 300, damping: 20 }} />
-                
-                {/* Eye Catchlights */}
-                <motion.circle cx="49" cy="70" r="2" fill="white" animate={{ x: pupilOffsetX * 0.8, y: pupilOffsetY * 0.8 }} />
-                <motion.circle cx="71" cy="70" r="2" fill="white" animate={{ x: pupilOffsetX * 0.8, y: pupilOffsetY * 0.8 }} />
+                {isSleeping ? (
+                  <>
+                    <path d="M40 70 L50 70" stroke={themeColors.faceDark} strokeWidth="4" strokeLinecap="round" />
+                    <path d="M70 70 L80 70" stroke={themeColors.faceDark} strokeWidth="4" strokeLinecap="round" />
+                    <circle cx="60" cy="90" r="3" fill={themeColors.faceLight} /> {/* Snoring mouth */}
+                  </>
+                ) : (
+                  <>
+                    <motion.ellipse 
+                      cx="45" cy="70" rx="10" ry="12" fill="white"
+                      initial={{ ry: 12 }}
+                      animate={{ ry: [12, 1, 12] }} 
+                      transition={{ duration: 4, repeat: Infinity, times: [0, 0.05, 0.1] }}
+                    />
+                    <motion.ellipse 
+                      cx="75" cy="70" rx="10" ry="12" fill="white"
+                      initial={{ ry: 12 }}
+                      animate={{ ry: [12, 1, 12] }} 
+                      transition={{ duration: 4, repeat: Infinity, times: [0, 0.05, 0.1] }}
+                    />
+                    
+                    {/* Dynamic Eye Tracking Pupils */}
+                    <motion.circle cx="48" cy="72" r="5" fill={themeColors.faceDark} animate={{ x: pupilOffsetX, y: pupilOffsetY }} transition={{ type: "spring", stiffness: 300, damping: 20 }} />
+                    <motion.circle cx="72" cy="72" r="5" fill={themeColors.faceDark} animate={{ x: pupilOffsetX, y: pupilOffsetY }} transition={{ type: "spring", stiffness: 300, damping: 20 }} />
+                    
+                    {/* Eye Catchlights */}
+                    <motion.circle cx="49" cy="70" r="2" fill="white" animate={{ x: pupilOffsetX * 0.8, y: pupilOffsetY * 0.8 }} />
+                    <motion.circle cx="71" cy="70" r="2" fill="white" animate={{ x: pupilOffsetX * 0.8, y: pupilOffsetY * 0.8 }} />
+                    
+                    {/* Mouth */}
+                    <path d="M55 90 Q60 95 65 90" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
+                  </>
+                )}
 
                 {/* Cute Blush */}
                 <ellipse cx="38" cy="80" rx="5" ry="2.5" fill={themeColors.blush} className="transition-colors duration-1000" opacity="0.6" />
                 <ellipse cx="82" cy="80" rx="5" ry="2.5" fill={themeColors.blush} className="transition-colors duration-1000" opacity="0.6" />
 
                 {/* Smug eyebrows */}
-                <path d="M35 55 Q45 50 52 58" stroke="#2D4732" strokeWidth="3" strokeLinecap="round" fill="none" />
-                <path d="M68 58 Q75 50 85 55" stroke="#2D4732" strokeWidth="3" strokeLinecap="round" fill="none" />
-
-                {/* Mouth */}
-                <path d="M55 90 Q60 95 65 90" stroke="#2D4732" strokeWidth="3" strokeLinecap="round" fill="none" />
+                <path d="M35 55 Q45 50 52 58" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
+                <path d="M68 58 Q75 50 85 55" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
               </g>
             )}
           </g>
