@@ -59,15 +59,16 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "welcome",
       target: null,
       position: "center",
-      title: `Halo, ${userName}! \ud83d\udc4b`,
+      title: `Halo, ${userName}`,
       message: `Selamat datang di Komorebi! Aku Komi, teman virtualmu. Aku akan menemanimu menjelajahi platform ini. Yuk, ikuti tur singkatnya!`,
       buttonText: "Ayo Mulai!"
     },
+
     {
       id: "mood-input",
       target: "[data-tour-id='mood-input']",
       position: "right",
-      title: "Catatan Suasana Hati \ud83c\udf08",
+      title: "Catatan Suasana Hati ",
       message: "Di sini kamu bisa mencatat suasana hatimu setiap hari. Aku juga akan berubah warna mengikuti perasaanmu loh!",
       buttonText: "Lanjut"
     },
@@ -75,7 +76,7 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "mood-summary",
       target: "[data-tour-id='mood-summary']",
       position: "left",
-      title: "Riwayat Mood \ud83d\udcca",
+      title: "Riwayat Mood ",
       message: "Di sini kamu bisa melihat ringkasan mood-mu dalam seminggu atau sebulan terakhir. Makin sering mengisi, datanya makin akurat lho!",
       buttonText: "Lanjut"
     },
@@ -83,7 +84,7 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "assessment-history",
       target: "[data-tour-id='assessment-history']",
       position: "right",
-      title: "Riwayat Pemeriksaan \ud83d\udcca",
+      title: "Riwayat Pemeriksaan ",
       message: "Di sini kamu bisa melihat riwayat pemeriksaan kesehatan mentalmu. Semua hasilnya tersimpan aman dan bisa diakses kapan saja.",
       buttonText: "Lanjut"
     },
@@ -91,7 +92,7 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "activity-suggestion",
       target: "[data-tour-id='activity-suggestion']",
       position: "left",
-      title: "Rekomendasi Aktivitas \u2728",
+      title: "Rekomendasi Aktivitas ",
       message: "Aku juga menyiapkan daftar aktivitas yang dirancang khusus untuk kondisi mood kamu saat ini. Coba luangkan waktu sebentar untuk relaksasi!",
       buttonText: "Lanjut"
     },
@@ -99,7 +100,7 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "nav-reflection",
       target: "[data-tour-id='nav-reflection']",
       position: "right-sidebar",
-      title: "Jurnal Refleksi \ud83d\udcd6",
+      title: "Jurnal Refleksi ",
       message: "Halaman Refleksi adalah tempat menulis jurnal harianmu. Semakin rutin menulis, streak-mu makin panjang dan Komi makin senang!",
       buttonText: "Lanjut"
     },
@@ -107,7 +108,7 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "nav-diagnose",
       target: "[data-tour-id='nav-diagnose']",
       position: "right-sidebar",
-      title: "Diagnosa Kesehatan Mental \ud83d\udd0d",
+      title: "Diagnosa Kesehatan Mental ",
       message: "Butuh pemeriksaan? Di sini kamu bisa melakukan tes kesehatan mental yang dipandu oleh sistem pakar kami secara gratis.",
       buttonText: "Lanjut"
     },
@@ -115,7 +116,7 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "nav-chat",
       target: "[data-tour-id='nav-chat']",
       position: "right-sidebar",
-      title: "Ngobrol dengan Komi \ud83d\udcac",
+      title: "Ngobrol dengan Komi ",
       message: "Kamu juga bisa klik 2x padaku kapan saja, atau kunjungi menu ini untuk ngobrol langsung denganku! Aku selalu siap mendengarkanmu.",
       buttonText: "Lanjut"
     },
@@ -123,7 +124,7 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "nav-sharing",
       target: "[data-tour-id='nav-sharing']",
       position: "right-sidebar",
-      title: "Ruang Berbagi \ud83d\udc65",
+      title: "Ruang Berbagi ",
       message: "Di Forum Sharing kamu bisa berbagi cerita, membaca pengalaman orang lain, dan saling mendukung dalam komunitas yang aman.",
       buttonText: "Lanjut"
     },
@@ -131,7 +132,7 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "nav-help",
       target: "[data-tour-id='nav-help']",
       position: "right-sidebar",
-      title: "Bantuan Profesional \ud83e\ude7a",
+      title: "Bantuan Profesional ",
       message: "Butuh bantuan profesional? Di menu Help ini kamu bisa menemukan daftar Psikiater dan Psikolog terpercaya untuk konsultasi lebih lanjut.",
       buttonText: "Lanjut"
     },
@@ -139,7 +140,7 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "closing",
       target: null,
       position: "center",
-      title: `Selamat Menjelajah, ${userName}! \ud83c\udf3f`,
+      title: `Selamat Menjelajah, ${userName}!  `,
       message: "Itu dia semuanya! Kamu bisa mulai menjelajah sekarang. Aku akan selalu ada di pojok layar kalau kamu butuh teman. Jangan lupa isi jurnal harianmu ya!",
       buttonText: "Mulai Sekarang!"
     },
@@ -188,6 +189,11 @@ export function KomiOnboardingTour({ onComplete }) {
       } else if (step.position === "right-sidebar") {
         setKomiPos({
           x: rect.right + 30,
+          y: rect.top + rect.height / 2 - 60
+        });
+      } else if (step.position === "left") {
+        setKomiPos({
+          x: rect.left - 440, // Space for bubble + Komi
           y: rect.top + rect.height / 2 - 60
         });
       }

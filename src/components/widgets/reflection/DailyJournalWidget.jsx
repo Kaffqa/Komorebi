@@ -47,7 +47,8 @@ export function DailyJournalWidget() {
         // Extract tags from content if stored with hashtags
         const hashTags = loadedContent.match(/#\w+/g);
         if (hashTags) {
-          setTags(hashTags.map(t => t.replace('#', '')));
+          const parsedTags = hashTags.map(t => t.replace('#', ''));
+          setTags([...new Set(parsedTags)]); // Remove duplicate tags
           // Remove the tags from the text area content
           loadedContent = loadedContent.replace(/#\w+/g, '').trim();
         }
@@ -198,8 +199,8 @@ export function DailyJournalWidget() {
 
         {/* Tags display */}
         <div className="flex flex-wrap items-center gap-2">
-          {tags.map((tag) => (
-            <span key={tag} className="inline-flex items-center gap-1.5 bg-[#7DA085]/10 text-[#5D8B66] px-4 py-2 rounded-xl text-[13px] font-medium">
+          {tags.map((tag, index) => (
+            <span key={`${tag}-${index}`} className="inline-flex items-center gap-1.5 bg-[#7DA085]/10 text-[#5D8B66] px-4 py-2 rounded-xl text-[13px] font-medium">
               #{tag}
               <button onClick={() => removeTag(tag)} className="hover:text-red-500 transition-colors">
                 <X className="w-3.5 h-3.5" />

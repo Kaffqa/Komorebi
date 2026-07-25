@@ -20,6 +20,7 @@ export default function DiagnoseResultPage() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [hasSaved, setHasSaved] = useState(false);
   const [showToast, setShowToast] = useState("");
 
   useEffect(() => {
@@ -40,6 +41,38 @@ export default function DiagnoseResultPage() {
     }
     fetchResult();
   }, [user, id]);
+
+  // Derive values safely
+  const subscales = result?.answers?.subscales || {};
+  const severity = result?.severity_level || "Normal";
+  const healthPct = result?.percentage || 0;
+
+  const generatedJournalContent = `📋 Hasil Mind Check-In\n` +
+    `Tingkat: ${getSeverityLabel(severity)} ${getSeverityEmoji(severity)}\n` +
+    `Akurasi: ${healthPct}%\n\n` +
+    `Detail:\n` +
+    `• ${SUBSCALE_INFO.depression.name}: ${subscales.depression?.percentage || 0}% (${subscales.depression?.level || "Normal"})\n` +
+    `• ${SUBSCALE_INFO.anxiety.name}: ${subscales.anxiety?.percentage || 0}% (${subscales.anxiety?.level || "Normal"})\n` +
+    `• ${SUBSCALE_INFO.stress.name}: ${subscales.stress?.percentage || 0}% (${subscales.stress?.level || "Normal"})\n\n` +
+    `#MindCheckIn #${getSeverityLabel(severity).replace(/\s+/g, '')}`;
+
+  useEffect(() => {
+    async function checkAlreadySaved() {
+      if (!user || !result) return;
+      const today = new Date().toISOString().split('T')[0];
+      const { data: existing } = await supabase
+        .from('journal_entries')
+        .select('content')
+        .eq('user_id', user.id)
+        .eq('entry_date', today)
+        .maybeSingle();
+
+      if (existing && existing.content.includes(generatedJournalContent)) {
+        setHasSaved(true);
+      }
+    }
+    checkAlreadySaved();
+  }, [result, user, generatedJournalContent]);
 
   if (loading) {
     return (
@@ -97,11 +130,8 @@ export default function DiagnoseResultPage() {
       </div>
     );
   }
-
   // Extract subscale data from answers JSONB
-  const subscales = result.answers?.subscales || {};
-  const severity = result.severity_level;
-  const healthPct = result.percentage || 0;
+  // (already extracted above)
 
   // Build subscale breakdown for UI
   const breakdownItems = [
@@ -338,14 +368,6 @@ Bisakah kita bahas hasil ini?`;
                   setIsSaving(true);
                   try {
                     const today = new Date().toISOString().split('T')[0];
-                    const journalContent = `📋 Hasil Mind Check-In\n` +
-                      `Tingkat: ${getSeverityLabel(severity)} ${getSeverityEmoji(severity)}\n` +
-                      `Akurasi: ${healthPct}%\n\n` +
-                      `Detail:\n` +
-                      `• ${SUBSCALE_INFO.depression.name}: ${subscales.depression?.percentage || 0}% (${subscales.depression?.level || "Normal"})\n` +
-                      `• ${SUBSCALE_INFO.anxiety.name}: ${subscales.anxiety?.percentage || 0}% (${subscales.anxiety?.level || "Normal"})\n` +
-                      `• ${SUBSCALE_INFO.stress.name}: ${subscales.stress?.percentage || 0}% (${subscales.stress?.level || "Normal"})\n\n` +
-                      `#MindCheckIn #${getSeverityLabel(severity).replace(/\s+/g, '')}`;
 
                     // Check if today's journal entry exists
                     const { data: existing } = await supabase
@@ -356,8 +378,15 @@ Bisakah kita bahas hasil ini?`;
                       .maybeSingle();
 
                     if (existing) {
+                      // Prevent duplicate appending if somehow clicked
+                      if (existing.content.includes(generatedJournalContent)) {
+                        setHasSaved(true);
+                        setIsSaving(false);
+                        return;
+                      }
+
                       // Append to existing journal
-                      const updatedContent = existing.content + '\n\n---\n\n' + journalContent;
+                      const updatedContent = existing.content + '\n\n---\n\n' + generatedJournalContent;
                       const { error } = await supabase
                         .from('journal_entries')
                         .update({ content: updatedContent })
@@ -369,7 +398,7 @@ Bisakah kita bahas hasil ini?`;
                         .from('journal_entries')
                         .insert({
                           user_id: user.id,
-                          content: journalContent,
+                          content: generatedJournalContent,
                           mood: 'Neutral',
                           mood_score: 3,
                           stress_level: 'Moderate',
@@ -378,6 +407,7 @@ Bisakah kita bahas hasil ini?`;
                         });
                       if (error) throw error;
                     }
+                    setHasSaved(true);
                     setShowToast("Saved to Journal!");
                     setTimeout(() => setShowToast(""), 3000);
                   } catch (error) {
@@ -387,12 +417,18 @@ Bisakah kita bahas hasil ini?`;
                     setIsSaving(false);
                   }
                 }}
-                disabled={isSaving}
-                className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg hover:bg-[#7DA085]/10 dark:hover:bg-white/10 hover:border-[#7DA085]/30 dark:hover:border-[#5D8B66] transition-colors group disabled:opacity-50"
-                title="Save to Journal"
+                disabled={isSaving || hasSaved}
+                className={`w-10 h-10 flex items-center justify-center rounded-full border transition-colors group ${
+                  hasSaved
+                    ? "border-[#5D8B66]/30 bg-[#5D8B66]/10 cursor-default"
+                    : "border-gray-200 dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg hover:bg-[#7DA085]/10 dark:hover:bg-white/10 hover:border-[#7DA085]/30 dark:hover:border-[#5D8B66] disabled:opacity-50"
+                }`}
+                title={hasSaved ? "Already Saved" : "Save to Journal"}
               >
                 {isSaving ? (
                   <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />
+                ) : hasSaved ? (
+                  <Check className="w-4 h-4 text-[#5D8B66] dark:text-[#7DA085]" />
                 ) : (
                   <BookOpen className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-[#5D8B66] dark:group-hover:text-[#7DA085]" />
                 )}

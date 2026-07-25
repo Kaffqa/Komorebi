@@ -246,14 +246,14 @@ export function KomiCompanion({ constraintsRef }) {
   };
 
   return (
-    <div className="fixed z-[99] bottom-10 right-10 w-24 h-24">
+    <div className="fixed z-[99] bottom-4 right-4 md:bottom-10 md:right-10 w-16 h-16 md:w-24 md:h-24 scale-[0.65] md:scale-100 origin-bottom-right">
       <motion.div
         ref={containerRef}
         className="relative flex flex-col items-center justify-end w-full h-full"
         drag
         dragConstraints={constraintsRef || { left: -window.innerWidth + 100, right: 20, top: -window.innerHeight + 100, bottom: 20 }}
         dragElastic={0.2}
-        dragSnapToOrigin={true}
+        dragMomentum={false}
         whileDrag={{ scale: 1.1, cursor: "grabbing" }}
         style={{ cursor: "grab" }}
         onDragStart={() => setIsDragging(true)}

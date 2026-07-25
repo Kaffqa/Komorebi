@@ -9,7 +9,8 @@ import {
   UsersRound, 
   HelpCircle,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Settings
 } from "lucide-react";
 import { cn } from "../../utils/cn";
 import Logo from "../../assets/logo.svg";
@@ -18,7 +19,7 @@ import { supabase } from "../../services/supabase";
 import { getLocalDateString } from "../../utils/date";
 import { useTranslation } from "react-i18next";
 
-export function Sidebar() {
+export function Sidebar({ onOpenSettings }) {
   const location = useLocation();
   const { user } = useAuthStore();
   const [streak, setStreak] = useState(1);
@@ -162,6 +163,24 @@ export function Sidebar() {
             );
           })}
         </nav>
+      </div>
+
+      {/* Mobile-only Settings Button at the bottom */}
+      <div className="md:hidden shrink-0 p-4 border-t border-gray-100 dark:border-komorebi-dark-border mt-auto">
+        <button 
+          onClick={onOpenSettings}
+          className="relative group flex items-center justify-between px-4 py-3 w-full text-[15px] font-sans font-medium rounded-xl transition-all duration-200 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 border border-transparent"
+        >
+          <div className="flex items-center relative z-10">
+            <Settings 
+              className="flex-shrink-0 h-[20px] w-[20px] transition-colors mr-3 text-gray-500 dark:text-komorebi-dark-muted group-hover:text-gray-700 dark:group-hover:text-gray-200" 
+              strokeWidth={2} 
+            />
+            <span className="whitespace-nowrap transition-all duration-300 block">
+              {t("sidebar.settings", { defaultValue: "Settings" })}
+            </span>
+          </div>
+        </button>
       </div>
     </div>
   );

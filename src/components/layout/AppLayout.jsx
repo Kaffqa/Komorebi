@@ -229,7 +229,10 @@ export function AppLayout() {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <Sidebar />
+        <Sidebar onOpenSettings={() => {
+          setSidebarOpen(false); // Close sidebar when opening settings on mobile
+          setIsSettingsOpen(true);
+        }} />
       </div>
 
       {/* Main content */}
