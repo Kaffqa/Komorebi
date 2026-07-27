@@ -129,35 +129,6 @@ export default function LandingPage() {
     }
   }, [location.search]);
 
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const handleWheel = (e) => {
-      // Ignore if user is already scrolling horizontally (trackpad)
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-
-      if (e.deltaY !== 0 && !e.shiftKey) {
-        const isScrollingDown = e.deltaY > 0;
-        const isScrollingUp = e.deltaY < 0;
-        const maxScroll = container.scrollWidth - container.clientWidth;
-
-        // If at the edges, allow native vertical scroll
-        if ((isScrollingDown && container.scrollLeft >= maxScroll - 5) || 
-            (isScrollingUp && container.scrollLeft <= 0)) {
-          return;
-        }
-
-        e.preventDefault();
-        // Smooth scroll by the delta amount, multiplying for speed
-        container.scrollLeft += e.deltaY * 1.5;
-      }
-    };
-
-    // Use passive: false to allow e.preventDefault()
-    container.addEventListener("wheel", handleWheel, { passive: false });
-    return () => container.removeEventListener("wheel", handleWheel);
-  }, []);
 
   return (
     <div className="min-h-screen bg-white">
@@ -347,8 +318,8 @@ export default function LandingPage() {
           >
             <img src={Expert1} alt="Expert 1" className="w-full h-full object-cover object-top" />
             
-            {/* Text Box (Animated on hover) */}
-            <div className="absolute bottom-0 left-0 right-0 px-8 py-8 md:px-10 md:py-8 bg-white flex flex-col justify-center transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
+            {/* Text Box (Animated on hover for desktop, always visible on mobile) */}
+            <div className="absolute bottom-0 left-0 right-0 px-8 py-8 md:px-10 md:py-8 bg-white flex flex-col justify-center transform translate-y-0 md:translate-y-full md:group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
               <h3 className="text-xl md:text-2xl font-medium text-[#5D8B66] mb-3">Therapy from Home</h3>
               <p className="text-[#5D8B66]/80 text-[14px] md:text-[16px] font-sans font-normal leading-relaxed">
                 Skip the commute. Speak to a dedicated expert via secure online video calls from a space where you feel safest.
@@ -363,8 +334,8 @@ export default function LandingPage() {
           >
             <img src={Expert2} alt="Expert 2" className="w-full h-full object-cover object-top" />
 
-            {/* Text Box (Animated on hover) */}
-            <div className="absolute bottom-0 left-0 right-0 px-8 py-8 md:px-10 md:py-8 bg-white flex flex-col justify-center transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
+            {/* Text Box (Animated on hover for desktop, always visible on mobile) */}
+            <div className="absolute bottom-0 left-0 right-0 px-8 py-8 md:px-10 md:py-8 bg-white flex flex-col justify-center transform translate-y-0 md:translate-y-full md:group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
               <h3 className="text-xl md:text-2xl font-medium text-[#5D8B66] mb-3">Local Clinic Visits</h3>
               <p className="text-[#5D8B66]/80 text-[14px] md:text-[16px] font-sans font-normal leading-relaxed">
                 Meet your doctor in a supportive, physical clinical environment. We track your location to surface nearby experts ready to welcome you.
@@ -476,11 +447,11 @@ export default function LandingPage() {
           className="flex overflow-x-auto gap-6 pb-8 items-stretch [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
         >
           {testimonialsData.map((item, idx) => (
-            <div key={idx} className="w-[85vw] md:w-[350px] lg:w-[380px] h-auto shrink-0 bg-white rounded-[24px] shadow-sm border border-gray-100 flex flex-col overflow-hidden">
-              <div className="w-full aspect-[4/3] relative shrink-0 rounded-t-[24px] overflow-hidden">
-                <img src={item.image} alt={`Review ${idx + 1}`} className="w-full h-full object-cover object-[center_30%] rounded-t-[24px]" />
+            <div key={idx} className="w-[280px] sm:w-[320px] md:w-[350px] lg:w-[380px] h-auto shrink-0 bg-white rounded-[24px] shadow-sm border border-gray-100 flex flex-col overflow-hidden">
+              <div className="w-full aspect-[5/4] relative shrink-0 rounded-t-[24px] overflow-hidden">
+                <img src={item.image} alt={`Review ${idx + 1}`} className="w-full h-full object-cover object-[center_15%] rounded-t-[24px]" />
               </div>
-              <div className="p-6 md:p-8 flex flex-col flex-1 justify-between gap-4">
+              <div className="p-5 md:p-6 flex flex-col flex-1 justify-between gap-3">
                 <p className="text-[#5D8B66] text-[14px] md:text-[15px] font-sans font-normal leading-relaxed">
                   {item.text}
                 </p>
@@ -534,7 +505,7 @@ export default function LandingPage() {
           <div className="w-full h-px bg-gray-100 mb-10"></div>
   
             {/* Links Section */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-4 md:gap-0 pb-24 md:pb-32 relative z-10 w-full">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-4 md:gap-0 pb-32 md:pb-48 relative z-10 w-full">
               <div className="flex flex-col items-start text-left gap-4 md:gap-5">
                 <h4 className="text-[#5D8B66] font-sans font-medium mb-1 md:mb-2 text-[15px]">Explore</h4>
                 <a href="#" className="text-gray-400 hover:text-[#5D8B66] transition-colors font-sans text-[14px]">How It Works</a>
