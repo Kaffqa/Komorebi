@@ -45,7 +45,7 @@ CONTOH SAPAAN AWAL:
 /**
  * Helper internal untuk memanggil stream dengan auto-retry & rotasi
  */
-async function callStreamWithRetry(history, userMessage, onChunk, retryCount = 0) {
+async function callStreamWithRetry(history, userMessage, onChunk, retryCount = 0, dynamicPrompt = SYSTEM_PROMPT) {
   const currentApi = API_KEYS[currentKeyIndex];
   
   try {
@@ -61,7 +61,7 @@ async function callStreamWithRetry(history, userMessage, onChunk, retryCount = 0
       const response = await groq.chat.completions.create({
         model: "llama-3.3-70b-versatile",
         messages: [
-          { role: "system", content: SYSTEM_PROMPT },
+          { role: "system", content: dynamicPrompt },
           ...groqHistory,
           { role: "user", content: userMessage }
         ],
@@ -86,7 +86,7 @@ async function callStreamWithRetry(history, userMessage, onChunk, retryCount = 0
           { role: "user", parts: [{ text: userMessage }] },
         ],
         config: {
-          systemInstruction: SYSTEM_PROMPT,
+          systemInstruction: dynamicPrompt,
           temperature: 0.8,
           topP: 0.95,
           maxOutputTokens: 1024,
@@ -107,7 +107,7 @@ async function callStreamWithRetry(history, userMessage, onChunk, retryCount = 0
       console.warn(`[AI] Provider ${currentApi.provider} (Key ${currentKeyIndex + 1}) gagal. Merotasi ke key berikutnya...`);
       // Pindah ke key berikutnya (rotasi melingkar)
       currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
-      return callStreamWithRetry(history, userMessage, onChunk, retryCount + 1);
+      return callStreamWithRetry(history, userMessage, onChunk, retryCount + 1, dynamicPrompt);
     }
     // Jika error lain atau sudah semua key dicoba
     console.error("Error calling AI API:", error);
@@ -118,8 +118,17 @@ async function callStreamWithRetry(history, userMessage, onChunk, retryCount = 0
 /**
  * Send a message to Komi and get a streamed response
  */
-export async function sendMessageToKomi(conversationHistory, userMessage, onChunk) {
-  return callStreamWithRetry(conversationHistory, userMessage, onChunk);
+export async function sendMessageToKomi(conversationHistory, userMessage, onChunk, userContext = null) {
+  let prompt = SYSTEM_PROMPT;
+  
+  if (userContext) {
+    prompt += `\n\n=== KONTEKS PENGGUNA SAAT INI ===\n`;
+    if (userContext.mood) prompt += `- Mood Hari Ini: ${userContext.mood}\n`;
+    if (userContext.stress) prompt += `- Tingkat Stres: ${userContext.stress}\n`;
+    prompt += `Gunakan informasi ini sebagai konteks tambahan untuk lebih berempati jika sangat relevan dengan percakapan, tetapi JANGAN pernah menyebutkan skor, data teknis, atau seolah-olah kamu membaca sebuah laporan. Tetaplah merespons layaknya teman biasa.`;
+  }
+
+  return callStreamWithRetry(conversationHistory, userMessage, onChunk, 0, prompt);
 }
 
 /**
@@ -132,4 +141,28 @@ export function getKomiGreeting(userName) {
     `Hi${userName ? `, ${userName}` : ""}! Saya Komi 🌿 Bagaimana perasaanmu saat ini? Apapun yang kamu rasakan, itu valid. Yuk, ngobrol bareng.`,
   ];
   return greetings[Math.floor(Math.random() * greetings.length)];
+}
+
+/**
+ * Generate Komi's empathetic greeting when mood is low
+ */
+export function getKomiEmpatheticGreeting(userName) {
+  const empatheticGreetings = [
+    `Hai${userName ? ` ${userName}` : ""} 🌿 Komi perhatikan kamu sedang merasa kurang baik hari ini. Harimu terasa berat ya? Kalau kamu butuh teman cerita, Komi di sini untuk mendengarkan.`,
+    `Halo${userName ? ` ${userName}` : ""} 🌿 Sepertinya hari ini bukan hari yang mudah buatmu. Nggak apa-apa kok merasa lelah. Mau cerita pelan-pelan ke Komi?`,
+    `Hi${userName ? ` ${userName}` : ""} 🌿 Komi lihat mood kamu sedang turun hari ini. Ingat ya, kamu tidak harus melewati semuanya sendirian. Ada hal yang mengganjal pikiranmu yang ingin diceritakan?`,
+  ];
+  return empatheticGreetings[Math.floor(Math.random() * empatheticGreetings.length)];
+}
+
+/**
+ * Generate Komi's happy greeting when mood is high
+ */
+export function getKomiHappyGreeting(userName) {
+  const happyGreetings = [
+    `Wah, hai${userName ? ` ${userName}` : ""}! 🌿 Komi lihat hari ini mood kamu sedang sangat bagus! Ada cerita seru apa hari ini?`,
+    `Halo${userName ? ` ${userName}` : ""} 🌿 Sepertinya harimu berjalan dengan sangat baik hari ini! Komi ikut senang mendengarnya. Mau berbagi energi positifmu?`,
+    `Hi${userName ? ` ${userName}` : ""} 🌿 Wah, indikator mood-mu sangat cerah hari ini! Hal manis apa yang membuatmu tersenyum hari ini?`,
+  ];
+  return happyGreetings[Math.floor(Math.random() * happyGreetings.length)];
 }

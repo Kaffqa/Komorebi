@@ -14,7 +14,8 @@ import {
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useThemeStore } from "../../stores/useThemeStore";
 import { supabase } from "../../services/supabase";
-import { sendMessageToKomi, getKomiGreeting } from "../../services/gemini";
+import { sendMessageToKomi, getKomiGreeting, getKomiEmpatheticGreeting, getKomiHappyGreeting } from "../../services/gemini";
+import { getLocalDateString } from "../../utils/date";
 import Logo from "../../assets/logo.svg";
 import { Skeleton } from "../../components/ui/Skeleton";
 
@@ -30,6 +31,7 @@ export default function ChatPage() {
   const [showMenu, setShowMenu] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [hasSentDiagnosis, setHasSentDiagnosis] = useState(false);
+  const [userContext, setUserContext] = useState(null);
   
   const location = useLocation();
 
@@ -37,6 +39,7 @@ export default function ChatPage() {
   const chatContainerRef = useRef(null);
   const inputRef = useRef(null);
   const menuRef = useRef(null);
+  const initLock = useRef(false);
 
   // Close menu on outside click
   useEffect(() => {
@@ -67,59 +70,113 @@ export default function ChatPage() {
 
   // Fetch or create conversation & load messages
   const initChat = useCallback(async () => {
-    if (!user) return;
+    if (!user || initLock.current) return;
+    initLock.current = true;
     setLoading(true);
 
-    // Get or create conversation
-    let { data: conv } = await supabase
-      .from("chat_conversations")
-      .select("id")
-      .eq("user_id", user.id)
-      .single();
-
-    if (!conv) {
-      const { data: newConv } = await supabase
+    try {
+      // Get or create conversation
+      let { data: conv } = await supabase
         .from("chat_conversations")
-        .insert({ user_id: user.id })
-        .select()
+        .select("id")
+        .eq("user_id", user.id)
         .single();
-      conv = newConv;
-    }
 
-    if (!conv) {
-      setLoading(false);
-      return;
-    }
+      if (!conv) {
+        const { data: newConv } = await supabase
+          .from("chat_conversations")
+          .insert({ user_id: user.id })
+          .select()
+          .single();
+        conv = newConv;
+      }
 
-    setConversationId(conv.id);
+      if (!conv) {
+        setLoading(false);
+        initLock.current = false;
+        return;
+      }
 
-    // Load messages
-    const { data: msgs } = await supabase
-      .from("chat_messages")
-      .select("*")
-      .eq("conversation_id", conv.id)
-      .order("created_at", { ascending: true });
+      setConversationId(conv.id);
 
-    if (msgs && msgs.length > 0) {
-      setMessages(msgs);
-    } else {
-      // First visit: insert Komi's greeting
-      const greeting = getKomiGreeting(profile?.display_name);
-      const { data: greetMsg } = await supabase
+      // Load messages
+      const { data: msgs } = await supabase
         .from("chat_messages")
-        .insert({
-          conversation_id: conv.id,
-          sender: "ai",
-          content: greeting,
-        })
-        .select()
-        .single();
+        .select("*")
+        .eq("conversation_id", conv.id)
+        .order("created_at", { ascending: true });
 
-      if (greetMsg) setMessages([greetMsg]);
+      let finalMsgs = msgs || [];
+
+      // Emotion-Aware Proactivity Check
+      const today = getLocalDateString();
+      const { data: moodData } = await supabase
+        .from('mood_entries')
+        .select('mood, mood_score')
+        .eq('user_id', user.id)
+        .eq('entry_date', today)
+        .maybeSingle();
+
+      if (moodData) {
+        setUserContext({
+          mood: moodData.mood,
+          moodScore: moodData.mood_score
+        });
+      }
+
+      const moodScore = moodData ? moodData.mood_score : 3;
+      const isBadMood = moodScore <= 2;
+      const isGoodMood = moodScore >= 4;
+      
+      let needsProactiveGreeting = false;
+
+      if (finalMsgs.length === 0) {
+        needsProactiveGreeting = true;
+      } else {
+        // If we already have messages, check if the last message was today
+        const lastMsg = finalMsgs[finalMsgs.length - 1];
+        // Get YYYY-MM-DD from created_at securely
+        const lastMsgDate = new Date(lastMsg.created_at);
+        const localTodayDate = new Date();
+        const isLastMsgToday = lastMsgDate.getFullYear() === localTodayDate.getFullYear() && 
+                              lastMsgDate.getMonth() === localTodayDate.getMonth() && 
+                              lastMsgDate.getDate() === localTodayDate.getDate();
+
+        // If it's a new day, Komi should always greet proactively based on mood
+        if (!isLastMsgToday) {
+          needsProactiveGreeting = true;
+        }
+      }
+
+      if (needsProactiveGreeting) {
+        let greetingText;
+        if (isBadMood) greetingText = getKomiEmpatheticGreeting(profile?.display_name);
+        else if (isGoodMood) greetingText = getKomiHappyGreeting(profile?.display_name);
+        else greetingText = getKomiGreeting(profile?.display_name);
+
+        const { data: greetMsg } = await supabase
+          .from("chat_messages")
+          .insert({
+            conversation_id: conv.id,
+            sender: "ai",
+            content: greetingText,
+          })
+          .select()
+          .single();
+
+        if (greetMsg) {
+          finalMsgs = [...finalMsgs, greetMsg];
+        }
+      }
+
+      setMessages(finalMsgs);
+    } catch (err) {
+      console.error("Failed to init chat:", err);
+    } finally {
+      setLoading(false);
+      initLock.current = false;
+      setTimeout(() => scrollToBottom("auto"), 100);
     }
-
-    setLoading(false);
-    setTimeout(() => scrollToBottom("auto"), 100);
   }, [user, profile]);
 
   useEffect(() => {
@@ -166,18 +223,23 @@ export default function ChatPage() {
     setStreamingText("");
 
     try {
-      const history = buildHistory();
-      const fullResponse = await sendMessageToKomi(history, text, (chunk) => {
-        setStreamingText(chunk);
-      });
-
+      const streamRes = await sendMessageToKomi(
+        buildHistory(),
+        text,
+        (chunk) => {
+          setStreamingText(chunk);
+          scrollToBottom("auto");
+        },
+        userContext
+      );
+      
       // Save AI message
       const { data: aiMsg } = await supabase
         .from("chat_messages")
         .insert({
           conversation_id: conversationId,
           sender: "ai",
-          content: fullResponse,
+          content: streamRes,
         })
         .select()
         .single();
