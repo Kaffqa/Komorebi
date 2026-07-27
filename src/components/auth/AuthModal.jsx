@@ -133,7 +133,11 @@ export function AuthModal({ isOpen, onClose }) {
                   <p className="text-gray-500 font-sans text-[15px] mb-8 leading-relaxed">
                     Kami telah mengirimkan tautan verifikasi ke email <br/>
                     <strong className="text-gray-800">{email}</strong>.<br/>
-                    Silakan periksa kotak masuk atau spam Anda dan klik tautan tersebut untuk mengaktifkan akun.
+                    <br/>
+                    <span className="text-[#D97757] text-[13.5px] font-medium bg-[#FFF4F0] px-4 py-2 rounded-xl inline-flex items-center gap-2 border border-[#F2D7CE]">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                      Harap periksa folder Spam jika tidak ada di Inbox
+                    </span>
                   </p>
                   <Button 
                     type="button"

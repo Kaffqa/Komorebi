@@ -54,7 +54,7 @@ export function KomiOnboardingTour({ onComplete }) {
 
   const userName = profile?.display_name || "Teman";
 
-  const tourSteps = useMemo(() => [
+  const allTourSteps = useMemo(() => [
     {
       id: "welcome",
       target: null,
@@ -63,12 +63,11 @@ export function KomiOnboardingTour({ onComplete }) {
       message: `Selamat datang di Komorebi! Aku Komi, teman virtualmu. Aku akan menemanimu menjelajahi platform ini. Yuk, ikuti tur singkatnya!`,
       buttonText: "Ayo Mulai!"
     },
-
     {
       id: "mood-input",
       target: "[data-tour-id='mood-input']",
       position: "right",
-      title: "Catatan Suasana Hati ",
+      title: "Catatan Suasana Hati",
       message: "Di sini kamu bisa mencatat suasana hatimu setiap hari. Aku juga akan berubah warna mengikuti perasaanmu loh!",
       buttonText: "Lanjut"
     },
@@ -76,7 +75,7 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "mood-summary",
       target: "[data-tour-id='mood-summary']",
       position: "left",
-      title: "Riwayat Mood ",
+      title: "Riwayat Mood",
       message: "Di sini kamu bisa melihat ringkasan mood-mu dalam seminggu atau sebulan terakhir. Makin sering mengisi, datanya makin akurat lho!",
       buttonText: "Lanjut"
     },
@@ -84,7 +83,7 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "assessment-history",
       target: "[data-tour-id='assessment-history']",
       position: "right",
-      title: "Riwayat Pemeriksaan ",
+      title: "Riwayat Pemeriksaan",
       message: "Di sini kamu bisa melihat riwayat pemeriksaan kesehatan mentalmu. Semua hasilnya tersimpan aman dan bisa diakses kapan saja.",
       buttonText: "Lanjut"
     },
@@ -92,7 +91,7 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "activity-suggestion",
       target: "[data-tour-id='activity-suggestion']",
       position: "left",
-      title: "Rekomendasi Aktivitas ",
+      title: "Rekomendasi Aktivitas",
       message: "Aku juga menyiapkan daftar aktivitas yang dirancang khusus untuk kondisi mood kamu saat ini. Coba luangkan waktu sebentar untuk relaksasi!",
       buttonText: "Lanjut"
     },
@@ -100,7 +99,7 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "nav-reflection",
       target: "[data-tour-id='nav-reflection']",
       position: "right-sidebar",
-      title: "Jurnal Refleksi ",
+      title: "Jurnal Refleksi",
       message: "Halaman Refleksi adalah tempat menulis jurnal harianmu. Semakin rutin menulis, streak-mu makin panjang dan Komi makin senang!",
       buttonText: "Lanjut"
     },
@@ -108,7 +107,7 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "nav-diagnose",
       target: "[data-tour-id='nav-diagnose']",
       position: "right-sidebar",
-      title: "Diagnosa Kesehatan Mental ",
+      title: "Diagnosa Kesehatan Mental",
       message: "Butuh pemeriksaan? Di sini kamu bisa melakukan tes kesehatan mental yang dipandu oleh sistem pakar kami secara gratis.",
       buttonText: "Lanjut"
     },
@@ -116,7 +115,7 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "nav-chat",
       target: "[data-tour-id='nav-chat']",
       position: "right-sidebar",
-      title: "Ngobrol dengan Komi ",
+      title: "Ngobrol dengan Komi",
       message: "Kamu juga bisa klik 2x padaku kapan saja, atau kunjungi menu ini untuk ngobrol langsung denganku! Aku selalu siap mendengarkanmu.",
       buttonText: "Lanjut"
     },
@@ -124,7 +123,7 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "nav-sharing",
       target: "[data-tour-id='nav-sharing']",
       position: "right-sidebar",
-      title: "Ruang Berbagi ",
+      title: "Ruang Berbagi",
       message: "Di Forum Sharing kamu bisa berbagi cerita, membaca pengalaman orang lain, dan saling mendukung dalam komunitas yang aman.",
       buttonText: "Lanjut"
     },
@@ -132,7 +131,7 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "nav-help",
       target: "[data-tour-id='nav-help']",
       position: "right-sidebar",
-      title: "Bantuan Profesional ",
+      title: "Bantuan Profesional",
       message: "Butuh bantuan profesional? Di menu Help ini kamu bisa menemukan daftar Psikiater dan Psikolog terpercaya untuk konsultasi lebih lanjut.",
       buttonText: "Lanjut"
     },
@@ -140,11 +139,34 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "closing",
       target: null,
       position: "center",
-      title: `Selamat Menjelajah, ${userName}!  `,
+      title: `Selamat Menjelajah, ${userName}!`,
       message: "Itu dia semuanya! Kamu bisa mulai menjelajah sekarang. Aku akan selalu ada di pojok layar kalau kamu butuh teman. Jangan lupa isi jurnal harianmu ya!",
       buttonText: "Mulai Sekarang!"
-    },
+    }
   ], [userName]);
+
+  const tourSteps = useMemo(() => {
+    // Pada mobile (layar di bawah 1024px), sidebar disembunyikan.
+    // Jika kita mencoba menyorot menu sidebar, targetnya akan 0x0 atau off-screen.
+    if (window.innerWidth >= 1024) {
+      return allTourSteps;
+    }
+
+    // Filter out semua langkah yang menyorot sidebar
+    const mobileSteps = allTourSteps.filter(step => step.position !== "right-sidebar");
+    
+    // Tambahkan 1 langkah rangkuman menu untuk pengguna mobile sebelum penutupan
+    mobileSteps.splice(mobileSteps.length - 1, 0, {
+      id: "mobile-menu",
+      target: null,
+      position: "center",
+      title: "Menu Utama (Sidebar)",
+      message: "Untuk mengakses Jurnal Refleksi, Diagnosa Psikologi, Chat AI, dan Forum Berbagi, silakan tekan ikon Garis Tiga (☰) di pojok kanan atas layar ya!",
+      buttonText: "Lanjut"
+    });
+
+    return mobileSteps;
+  }, [allTourSteps]);
 
   const step = tourSteps[currentStep];
 
@@ -172,30 +194,46 @@ export function KomiOnboardingTour({ onComplete }) {
       const compStyle = window.getComputedStyle(el);
       const padding = parseInt(el.getAttribute('data-tour-padding') || '0', 10);
       
+      let tLeft = rect.left - padding;
+      let tWidth = rect.width + (padding * 2);
+      
+      // Prevent horizontal overflow mask on mobile
+      if (tLeft < 0) tLeft = 8;
+      if (tLeft + tWidth > window.innerWidth) tWidth = window.innerWidth - tLeft - 8;
+
       setTargetRect({
         top: rect.top - padding,
-        left: rect.left - padding,
-        width: rect.width + (padding * 2),
+        left: tLeft,
+        width: tWidth,
         height: rect.height + (padding * 2),
         borderRadius: compStyle.borderRadius && compStyle.borderRadius !== '0px' ? compStyle.borderRadius : '16px',
         isActive: true
       });
 
-      if (step.position === "right") {
+      const isMobile = window.innerWidth < 768;
+
+      if (isMobile) {
         setKomiPos({
-          x: rect.right + 40,
-          y: rect.top + rect.height / 2 - 60
+          x: Math.max(50, Math.min(rect.left + rect.width / 2, window.innerWidth - 50)),
+          y: Math.max(80, rect.top - 60)
         });
-      } else if (step.position === "right-sidebar") {
-        setKomiPos({
-          x: rect.right + 30,
-          y: rect.top + rect.height / 2 - 60
-        });
-      } else if (step.position === "left") {
-        setKomiPos({
-          x: rect.left - 440, // Space for bubble + Komi
-          y: rect.top + rect.height / 2 - 60
-        });
+      } else {
+        if (step.position === "right") {
+          setKomiPos({
+            x: rect.right + 40,
+            y: rect.top + rect.height / 2 - 60
+          });
+        } else if (step.position === "right-sidebar") {
+          setKomiPos({
+            x: rect.right + 30,
+            y: rect.top + rect.height / 2 - 60
+          });
+        } else if (step.position === "left") {
+          setKomiPos({
+            x: rect.left - 440, // Space for bubble + Komi
+            y: rect.top + rect.height / 2 - 60
+          });
+        }
       }
     }
   }, [step]);
@@ -249,22 +287,23 @@ export function KomiOnboardingTour({ onComplete }) {
   if (!isReady) return null;
 
   const isCenter = step.position === "center";
+  const isMobile = window.innerWidth < 768;
 
   const getBubbleStyle = () => {
-    if (isCenter) {
+    if (isCenter || isMobile) {
       return {
         position: 'fixed',
         left: '50%',
-        top: komiPos.y + 90,
-        transform: 'translateX(-50%)',
+        bottom: isMobile ? '24px' : 'auto',
+        top: isMobile ? 'auto' : komiPos.y + 90,
         maxWidth: '380px',
-        width: '90vw',
+        width: 'calc(100vw - 32px)',
       };
     }
 
     return {
       position: 'fixed',
-      left: Math.min(komiPos.x + 70, window.innerWidth - 400),
+      left: Math.min(komiPos.x + 70, window.innerWidth - 360),
       top: Math.max(komiPos.y - 30, 20),
       maxWidth: '340px',
       width: '340px',
@@ -324,9 +363,9 @@ export function KomiOnboardingTour({ onComplete }) {
         {/* Speech Bubble / Info Card */}
         <motion.div
           key={currentStep}
-          initial={{ opacity: 0, y: 20, scale: 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: 20, scale: 0.9, x: (isCenter || isMobile) ? "-50%" : 0 }}
+          animate={{ opacity: 1, y: 0, scale: 1, x: (isCenter || isMobile) ? "-50%" : 0 }}
+          exit={{ opacity: 0, y: -10, scale: 0.9, x: (isCenter || isMobile) ? "-50%" : 0 }}
           transition={{ delay: 0.3, duration: 0.4, ease: "easeOut" }}
           className="z-[10003]"
           style={{ ...getBubbleStyle(), pointerEvents: 'auto' }}
@@ -371,7 +410,7 @@ export function KomiOnboardingTour({ onComplete }) {
           </div>
 
           {/* Thought cloud tail */}
-          {!isCenter && (
+          {!isCenter && !isMobile && (
             <>
               <div className="absolute -left-4 top-12 w-5 h-5 bg-white dark:bg-komorebi-dark-card rounded-full border border-gray-100 dark:border-transparent shadow-sm transition-colors duration-300"></div>
               <div className="absolute -left-8 top-6 w-3 h-3 bg-white dark:bg-komorebi-dark-card rounded-full border border-gray-100 dark:border-transparent shadow-sm transition-colors duration-300"></div>
