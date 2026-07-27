@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Plus, X, ChevronDown, BookOpen } from 'lucide-react';
-import { Check, Loader2, MessageSquare, ChevronRight, Tags } from 'lucide-react';
+import { Check, Loader2, MessageSquare, ChevronRight, Tags, Lightbulb, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { supabase } from '../../../services/supabase';
@@ -10,6 +10,15 @@ import { useTranslation } from 'react-i18next';
 import { Skeleton } from '../../ui/Skeleton';
 
 const TAG_SUGGESTIONS = ["Anxiety", "Work", "Family", "Health", "Social", "Self-Care", "Stress", "Gratitude", "Sleep", "Exercise"];
+
+const CBT_PROMPTS = [
+  "Apa satu hal kecil yang berhasil kamu syukuri hari ini?",
+  "Sebutkan satu pikiran negatifmu, dan mari cari bukti bahwa pikiran itu belum tentu benar.",
+  "Jika sahabatmu sedang merasa sepertimu saat ini, apa yang akan kamu katakan padanya?",
+  "Apa satu hal yang berada di luar kendalimu hari ini, dan bagaimana kamu bisa merelakannya?",
+  "Tuliskan tiga kekuatan atau kelebihan dirimu yang membantumu bertahan sejauh ini.",
+  "Apa satu hal yang bisa kamu lakukan esok hari untuk membuat dirimu merasa sedikit lebih baik?"
+];
 
 export function DailyJournalWidget() {
   const { t } = useTranslation();
@@ -26,6 +35,7 @@ export function DailyJournalWidget() {
   const [loadingJournals, setLoadingJournals] = useState(false);
   const [selectedJournal, setSelectedJournal] = useState(null);
   const [existingEntryId, setExistingEntryId] = useState(null);
+  const [activePrompt, setActivePrompt] = useState(null);
   const tagInputRef = useRef(null);
 
   // Load today's journal if it exists
@@ -162,6 +172,14 @@ export function DailyJournalWidget() {
 
   const moodEmoji = { "Bad": "😢", "Not Bad": "😔", "Neutral": "😐", "Good": "😊", "Very Good": "😁" };
 
+  const handleShufflePrompt = () => {
+    let newPrompt;
+    do {
+      newPrompt = CBT_PROMPTS[Math.floor(Math.random() * CBT_PROMPTS.length)];
+    } while (newPrompt === activePrompt && CBT_PROMPTS.length > 1);
+    setActivePrompt(newPrompt);
+  };
+
   return (
     <>
       <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col w-full transition-colors duration-300">
@@ -190,12 +208,55 @@ export function DailyJournalWidget() {
           </div>
         </div>
 
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder={t('journaling.daily_journal.placeholder')}
-          className="w-full h-[180px] sm:h-[220px] resize-none border border-gray-200 dark:border-[#32473D] rounded-[20px] p-5 font-sans text-[15px] outline-none focus:ring-2 focus:ring-[#7DA085]/30 focus:border-[#7DA085] placeholder:text-gray-300 dark:placeholder:text-gray-600 text-gray-700 dark:text-white bg-transparent mb-4 transition-colors duration-300"
-        />
+        {/* Guided CBT Prompts Area */}
+        <AnimatePresence>
+          {activePrompt && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+              animate={{ opacity: 1, height: 'auto', marginBottom: 16 }}
+              exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="bg-[#7DA085]/10 border border-[#7DA085]/30 rounded-2xl p-4 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                <div className="flex items-start gap-3">
+                  <div className="bg-white dark:bg-[#32473D] p-2 rounded-xl shrink-0">
+                    <Lightbulb className="w-5 h-5 text-[#5D8B66] dark:text-[#7DA085]" />
+                  </div>
+                  <div>
+                    <h4 className="text-[13px] font-sans font-semibold text-[#5D8B66] dark:text-[#7DA085] uppercase tracking-wider mb-1">Guided Prompt</h4>
+                    <p className="text-[14px] font-sans text-gray-700 dark:text-gray-200 font-medium leading-relaxed">{activePrompt}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                  <button onClick={handleShufflePrompt} className="p-2 hover:bg-[#7DA085]/20 text-[#5D8B66] rounded-xl transition-colors" title="Ganti Pertanyaan">
+                    <RefreshCw className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => setActivePrompt(null)} className="p-2 hover:bg-[#7DA085]/20 text-[#5D8B66] rounded-xl transition-colors" title="Tutup">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="relative">
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder={t('journaling.daily_journal.placeholder')}
+            className="w-full h-[180px] sm:h-[220px] resize-none border border-gray-200 dark:border-[#32473D] rounded-[20px] p-5 font-sans text-[15px] outline-none focus:ring-2 focus:ring-[#7DA085]/30 focus:border-[#7DA085] placeholder:text-gray-300 dark:placeholder:text-gray-600 text-gray-700 dark:text-white bg-transparent mb-4 transition-colors duration-300"
+          />
+          {!activePrompt && (
+            <button 
+              onClick={handleShufflePrompt}
+              className="absolute bottom-8 right-4 flex items-center gap-2 bg-white/80 dark:bg-[#1c2620]/80 backdrop-blur-md border border-gray-200 dark:border-[#32473D] hover:border-[#7DA085] hover:text-[#5D8B66] text-gray-500 dark:text-gray-400 px-4 py-2 rounded-xl text-[13px] font-medium transition-all duration-300 shadow-sm hover:shadow"
+            >
+              <Lightbulb className="w-4 h-4" />
+              Bantu aku mulai menulis
+            </button>
+          )}
+        </div>
 
         {/* Tags display */}
         <div className="flex flex-wrap items-center gap-2">
