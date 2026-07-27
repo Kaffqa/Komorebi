@@ -24,6 +24,7 @@ const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard'))
 const UserManagement = lazy(() => import('./pages/Admin/UserManagement'))
 const AssessmentAnalytics = lazy(() => import('./pages/Admin/AssessmentAnalytics'))
 const SpecialistManagement = lazy(() => import('./pages/Admin/SpecialistManagement'))
+const ForumModeration = lazy(() => import('./pages/Admin/ForumModeration'))
 
 function App() {
   const { initialize } = useAuthStore()
@@ -73,6 +74,7 @@ function App() {
             <Route path="/admin/users" element={<UserManagement />} />
             <Route path="/admin/assessments" element={<AssessmentAnalytics />} />
             <Route path="/admin/specialists" element={<SpecialistManagement />} />
+            <Route path="/admin/moderation" element={<ForumModeration />} />
           </Route>
         </Route>
       </Routes>

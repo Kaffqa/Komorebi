@@ -291,7 +291,7 @@ export default function UserManagement() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="md:w-1/3 bg-white rounded-[32px] shadow-sm border border-gray-100 p-8 flex flex-col h-[calc(100vh-140px)] sticky top-0"
+            className="md:w-1/3 bg-white rounded-[32px] shadow-sm border border-gray-100 p-6 sm:p-8 flex flex-col max-h-[calc(100vh-140px)] overflow-y-auto [&::-webkit-scrollbar]:hidden sticky top-0 sm:top-6"
           >
             <div className="flex justify-between items-start mb-8">
               <h3 className="text-[20px] font-bold text-gray-900 font-sans tracking-tight">User Details</h3>

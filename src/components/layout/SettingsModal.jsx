@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import Cropper from 'react-easy-crop';
 import getCroppedImg from '../../utils/cropImage';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export function SettingsModal({ isOpen, onClose }) {
   const { user, profile, fetchProfile, signOut } = useAuthStore();
@@ -30,6 +32,13 @@ export function SettingsModal({ isOpen, onClose }) {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+
+  // Account settings states
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     if (profile) {
@@ -68,6 +77,167 @@ export function SettingsModal({ isOpen, onClose }) {
       alert("Failed to update profile: " + (err.message || "Unknown error"));
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      alert(t('settings.account.password_mismatch', 'Passwords do not match.'));
+      return;
+    }
+    if (newPassword.length < 6) {
+      alert(t('settings.account.password_short', 'Password must be at least 6 characters.'));
+      return;
+    }
+    
+    setIsChangingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      
+      alert(t('settings.account.password_success', 'Password successfully updated!'));
+      setShowPasswordModal(false);
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err) {
+      console.error("Error updating password:", err);
+      alert(t('settings.account.password_error', 'Failed to update password: ') + err.message);
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
+
+  const handleExportData = async () => {
+    if (!user) return;
+    setIsExporting(true);
+    
+    try {
+      // Fetch all user data concurrently
+      const [moodRes, journalRes, assessmentRes, forumRes] = await Promise.all([
+        supabase.from('mood_entries').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
+        supabase.from('journal_entries').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
+        supabase.from('assessment_results').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
+        supabase.from('forum_posts').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
+      ]);
+      
+      const doc = new jsPDF();
+      
+      // Document Title
+      doc.setFontSize(22);
+      doc.setTextColor(40, 40, 40);
+      doc.text("Komorebi Personal Data Export", 14, 22);
+      
+      // User Info
+      doc.setFontSize(11);
+      doc.setTextColor(100, 100, 100);
+      doc.text(`Name: ${profile?.display_name || 'N/A'}`, 14, 32);
+      doc.text(`Email: ${user.email}`, 14, 38);
+      doc.text(`Export Date: ${new Date().toLocaleDateString()}`, 14, 44);
+
+      let currentY = 55;
+
+      // 1. Mood Entries
+      const moodData = moodRes.data || [];
+      if (moodData.length > 0) {
+        doc.setFontSize(14);
+        doc.setTextColor(0, 0, 0);
+        doc.text("Mood Tracker History", 14, currentY);
+        
+        autoTable(doc, {
+          startY: currentY + 5,
+          head: [['Date', 'Mood', 'Note']],
+          body: moodData.map(m => [
+            new Date(m.created_at).toLocaleDateString(),
+            m.mood || `Score: ${m.mood_score}`,
+            (m.note || '-').substring(0, 50)
+          ]),
+          theme: 'grid',
+          headStyles: { fillColor: [93, 139, 102] }
+        });
+        currentY = doc.lastAutoTable.finalY + 15;
+      }
+
+      // 2. Journal Entries
+      const journalData = journalRes.data || [];
+      if (journalData.length > 0) {
+        if (currentY > 250) { doc.addPage(); currentY = 20; }
+        doc.setFontSize(14);
+        doc.setTextColor(0, 0, 0);
+        doc.text("Journal Entries", 14, currentY);
+        
+        autoTable(doc, {
+          startY: currentY + 5,
+          head: [['Date', 'Title', 'Content Snippet']],
+          body: journalData.map(j => {
+            // Strip HTML from journal content
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = j.content;
+            const textContent = tempDiv.textContent || tempDiv.innerText || "";
+            return [
+              new Date(j.created_at).toLocaleDateString(),
+              j.title,
+              textContent.substring(0, 80) + '...'
+            ];
+          }),
+          theme: 'grid',
+          headStyles: { fillColor: [93, 139, 102] }
+        });
+        currentY = doc.lastAutoTable.finalY + 15;
+      }
+
+      // 3. Assessment Results
+      const assessmentData = assessmentRes.data || [];
+      if (assessmentData.length > 0) {
+        if (currentY > 250) { doc.addPage(); currentY = 20; }
+        doc.setFontSize(14);
+        doc.setTextColor(0, 0, 0);
+        doc.text("Assessment Results", 14, currentY);
+        
+        autoTable(doc, {
+          startY: currentY + 5,
+          head: [['Date', 'Category', 'Score', 'Severity']],
+          body: assessmentData.map(a => [
+            new Date(a.created_at).toLocaleDateString(),
+            a.assessment_id || 'General',
+            a.total_score?.toString() || '0',
+            a.severity_level || '-'
+          ]),
+          theme: 'grid',
+          headStyles: { fillColor: [93, 139, 102] }
+        });
+        currentY = doc.lastAutoTable.finalY + 15;
+      }
+
+      // 4. Forum Posts
+      const forumData = forumRes.data || [];
+      if (forumData.length > 0) {
+        if (currentY > 250) { doc.addPage(); currentY = 20; }
+        doc.setFontSize(14);
+        doc.setTextColor(0, 0, 0);
+        doc.text("Forum Contributions", 14, currentY);
+        
+        autoTable(doc, {
+          startY: currentY + 5,
+          head: [['Date', 'Title', 'Tags']],
+          body: forumData.map(f => [
+            new Date(f.created_at).toLocaleDateString(),
+            f.title || 'Untitled',
+            Array.isArray(f.tags) ? f.tags.join(', ') : '-'
+          ]),
+          theme: 'grid',
+          headStyles: { fillColor: [93, 139, 102] }
+        });
+      }
+
+      // Download PDF
+      doc.save(`komorebi_export_${new Date().toISOString().split('T')[0]}.pdf`);
+      
+    } catch (err) {
+      console.error("Error exporting data:", err);
+      alert(t('settings.account.export_error', 'Failed to export data: ') + err.message);
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -135,22 +305,26 @@ export function SettingsModal({ isOpen, onClose }) {
   ];
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center pt-10 sm:p-6">
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-black/40 backdrop-blur-md"
-          onClick={onClose}
-        />
-        
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95, y: 50 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 50 }}
-          className="bg-white/95 dark:bg-komorebi-dark-bg/95 backdrop-blur-2xl border border-white/60 dark:border-white/10 rounded-t-[32px] sm:rounded-[32px] w-full max-w-4xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(93,139,102,0.15)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] relative z-10 flex flex-col sm:flex-row h-[85vh] sm:h-[600px] mt-auto sm:mt-0 transition-colors duration-300"
-        >
+    <>
+      <AnimatePresence>
+        {isOpen && (
+          <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center pt-10 sm:p-6">
+            <motion.div 
+              key="settings-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/40 backdrop-blur-md"
+              onClick={onClose}
+            />
+            
+            <motion.div 
+              key="settings-modal"
+              initial={{ opacity: 0, scale: 0.95, y: 50 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 50 }}
+              className="bg-white/95 dark:bg-komorebi-dark-bg/95 backdrop-blur-2xl border border-white/60 dark:border-white/10 rounded-t-[32px] sm:rounded-[32px] w-full max-w-4xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(93,139,102,0.15)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] relative z-10 flex flex-col sm:flex-row h-[85vh] sm:h-[600px] mt-auto sm:mt-0 transition-colors duration-300"
+            >
           {/* Sidebar Tabs */}
           <div className="w-full sm:w-[280px] shrink-0 bg-gradient-to-b from-[#F9FBF9] to-[#F1F6F3] dark:from-[#1c2620] dark:to-[#141c17] border-b sm:border-b-0 sm:border-r border-[#E5EBE7] dark:border-komorebi-dark-border p-5 sm:p-8 flex flex-col relative overflow-hidden transition-colors duration-300">
             <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#7DA085]/10 dark:from-[#7DA085]/5 to-transparent rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none" />
@@ -371,12 +545,20 @@ export function SettingsModal({ isOpen, onClose }) {
                     </div>
                   </div>
 
-                  <button className="w-full text-left px-5 py-4 rounded-2xl border border-gray-200 dark:border-komorebi-dark-border bg-white dark:bg-komorebi-dark-card hover:border-[#D3E1D7] dark:hover:border-[#32473D] hover:bg-[#F9FBF9] dark:hover:bg-[#233028] hover:text-[#5D8B66] dark:hover:text-[#7DA085] font-medium text-[15px] text-gray-700 dark:text-gray-300 transition-all shadow-sm">
+                  <button 
+                    onClick={() => setShowPasswordModal(true)}
+                    className="w-full text-left px-5 py-4 rounded-2xl border border-gray-200 dark:border-komorebi-dark-border bg-white dark:bg-komorebi-dark-card hover:border-[#D3E1D7] dark:hover:border-[#32473D] hover:bg-[#F9FBF9] dark:hover:bg-[#233028] hover:text-[#5D8B66] dark:hover:text-[#7DA085] font-medium text-[15px] text-gray-700 dark:text-gray-300 transition-all shadow-sm"
+                  >
                     {t('settings.account.change_password')}
                   </button>
 
-                  <button className="w-full text-left px-5 py-4 rounded-2xl border border-gray-200 dark:border-komorebi-dark-border bg-white dark:bg-komorebi-dark-card hover:border-[#D3E1D7] dark:hover:border-[#32473D] hover:bg-[#F9FBF9] dark:hover:bg-[#233028] hover:text-[#5D8B66] dark:hover:text-[#7DA085] font-medium text-[15px] text-gray-700 dark:text-gray-300 transition-all shadow-sm">
-                    {t('settings.account.export_data')}
+                  <button 
+                    onClick={handleExportData}
+                    disabled={isExporting}
+                    className="w-full flex items-center justify-between px-5 py-4 rounded-2xl border border-gray-200 dark:border-komorebi-dark-border bg-white dark:bg-komorebi-dark-card hover:border-[#D3E1D7] dark:hover:border-[#32473D] hover:bg-[#F9FBF9] dark:hover:bg-[#233028] hover:text-[#5D8B66] dark:hover:text-[#7DA085] font-medium text-[15px] text-gray-700 dark:text-gray-300 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span>{t('settings.account.export_data')}</span>
+                    {isExporting && <Loader2 className="w-4 h-4 animate-spin text-[#5D8B66]" />}
                   </button>
 
                   <div className="pt-6 mt-6">
@@ -395,12 +577,15 @@ export function SettingsModal({ isOpen, onClose }) {
           </div>
         </motion.div>
       </div>
+      )}
+      </AnimatePresence>
 
       {/* Cropper Overlay */}
       <AnimatePresence>
         {imageSrc && (
           <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
             <motion.div 
+              key="cropper-modal"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -451,6 +636,69 @@ export function SettingsModal({ isOpen, onClose }) {
           </div>
         )}
       </AnimatePresence>
-    </AnimatePresence>
+
+      {/* Password Change Modal */}
+      <AnimatePresence>
+        {showPasswordModal && (
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+            <motion.div 
+              key="password-modal"
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="bg-white dark:bg-komorebi-dark-card w-full max-w-sm rounded-[24px] overflow-hidden flex flex-col shadow-2xl relative border border-gray-100 dark:border-komorebi-dark-border"
+            >
+              <div className="p-5 border-b border-gray-100 dark:border-white/5 flex justify-between items-center bg-white dark:bg-komorebi-dark-card relative z-10">
+                <h3 className="font-bold text-gray-900 dark:text-white font-sans text-[18px]">{t('settings.account.change_password')}</h3>
+                <button onClick={() => setShowPasswordModal(false)} className="p-2 bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 rounded-full text-gray-500 dark:text-gray-300 transition-colors">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <form onSubmit={handleChangePassword} className="p-6 flex flex-col gap-5">
+                <div>
+                  <label className="block text-[13px] font-medium text-gray-700 dark:text-gray-300 mb-1.5">{t('settings.account.new_password', 'New Password')}</label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Min. 6 characters"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-komorebi-dark-bg border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5F916F]/50 text-gray-900 dark:text-white transition-all"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-[13px] font-medium text-gray-700 dark:text-gray-300 mb-1.5">{t('settings.account.confirm_password', 'Confirm Password')}</label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Retype new password"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-komorebi-dark-bg border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5F916F]/50 text-gray-900 dark:text-white transition-all"
+                    required
+                  />
+                </div>
+                <div className="mt-2 flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordModal(false)}
+                    className="flex-1 py-3 rounded-xl border border-gray-200 dark:border-white/10 font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isChangingPassword}
+                    className="flex-1 py-3 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:translate-y-[1px] text-white rounded-xl font-medium transition-all flex justify-center items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                  >
+                    {isChangingPassword ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Save'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+    </>
   );
 }

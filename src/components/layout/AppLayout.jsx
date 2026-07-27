@@ -273,6 +273,15 @@ export function AppLayout() {
                   {t('topbar.new_story')}
                 </button>
               )}
+              {profile?.role === 'admin' && (
+                <Link
+                  to="/admin"
+                  className="hidden sm:flex items-center gap-1.5 px-4 py-2 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white rounded-[10px] text-[13px] font-bold transition-all duration-300 font-sans mr-2"
+                >
+                  {t('topbar.admin_panel')}
+                </Link>
+              )}
+
               <div className="relative" ref={notificationRef}>
                 <button 
                   onClick={() => setShowNotifications(!showNotifications)}
@@ -352,15 +361,6 @@ export function AppLayout() {
                   )}
                 </AnimatePresence>
               </div>
-              
-              {profile?.role === 'admin' && (
-                <Link
-                  to="/admin"
-                  className="hidden sm:flex items-center gap-2 px-3 py-2 bg-[#5D8B66] text-white rounded-lg hover:bg-[#43674F] transition-colors shadow-sm border border-[#43674F]/20 text-[13px] font-bold"
-                >
-                  {t('topbar.admin_panel')}
-                </Link>
-              )}
 
               <button 
                 onClick={() => setIsSettingsOpen(true)}

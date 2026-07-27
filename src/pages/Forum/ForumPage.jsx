@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../../services/supabase";
 import { useAuthStore } from "../../stores/useAuthStore";
+import { ReportPostModal } from "../../components/modals/ReportPostModal";
 import {
   Search,
   ChevronDown,
@@ -31,6 +32,7 @@ export default function ForumPage() {
   const [sortBy, setSortBy] = useState("Most Recent");
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
+  const [postToReport, setPostToReport] = useState(null);
   const [toastMessage, setToastMessage] = useState(null); // { type: 'success' | 'error', text: '' }
 
   const showToast = (text, type = 'success') => {
@@ -402,7 +404,10 @@ export default function ForumPage() {
                             Hapus Postingan
                           </button>
                         ) : (
-                          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                          <button 
+                            onClick={() => { setPostToReport(post); setActiveDropdown(null); }}
+                            className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                          >
                             Laporkan Postingan
                           </button>
                         )}
@@ -683,6 +688,11 @@ export default function ForumPage() {
         )}
       </AnimatePresence>
 
+      <ReportPostModal 
+        isOpen={!!postToReport} 
+        onClose={() => setPostToReport(null)} 
+        post={postToReport} 
+      />
     </div>
   );
 }

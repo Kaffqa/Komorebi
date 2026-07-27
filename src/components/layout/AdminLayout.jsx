@@ -9,7 +9,8 @@ import {
   Stethoscope, 
   ArrowLeft,
   LogOut,
-  Flower2
+  Flower2,
+  ShieldAlert
 } from "lucide-react";
 import { Skeleton } from "../ui/Skeleton";
 
@@ -18,6 +19,7 @@ const NAV_ITEMS = [
   { name: "User Management", path: "/admin/users", icon: Users },
   { name: "Assessments", path: "/admin/assessments", icon: ClipboardList },
   { name: "Specialists", path: "/admin/specialists", icon: Stethoscope },
+  { name: "Moderation", path: "/admin/moderation", icon: ShieldAlert },
 ];
 
 export function AdminLayout() {
@@ -86,7 +88,7 @@ export function AdminLayout() {
           <div className="w-8 h-8 rounded-lg bg-[#5D8B66] flex items-center justify-center">
             <Flower2 className="w-5 h-5 text-white" />
           </div>
-          <span className="text-[18px] font-bold tracking-wide">Admin Panel</span>
+          <span className="text-[18px] font-light tracking-wide">Admin Panel</span>
         </div>
 
         {/* Navigation */}
