@@ -138,7 +138,7 @@ export function KomiCompanion({ constraintsRef }) {
       faceDark: "#08103A",
       faceLight: "#1A237E"
     };
-    moodFace = "sad";
+    moodFace = isHovered ? "happy" : "sad";
   } else if (moodScore >= 4) {
     themeColors = { 
       highlight: "#FFF59D", 
@@ -154,6 +154,9 @@ export function KomiCompanion({ constraintsRef }) {
       faceLight: "#B84000"
     };
     moodFace = "happy";
+  } else {
+    // Normal mood: smile when being petted!
+    moodFace = isHovered ? "happy" : "normal";
   }
 
   // Randomly show messages

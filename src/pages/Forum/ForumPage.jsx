@@ -512,14 +512,20 @@ export default function ForumPage() {
                 <div className="p-4 sm:p-6 bg-white dark:bg-komorebi-dark-card border-b border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300">
                   <div className="flex items-center gap-4 mb-4">
                     <div className="w-[48px] h-[48px] rounded-2xl bg-gray-200 dark:bg-[#32473D] overflow-hidden shrink-0 transition-colors duration-300">
-                      {selectedPost.profiles?.avatar_url ? (
+                      {selectedPost.is_anonymous ? (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-900 shadow-inner">
+                          <VenetianMask className="w-6 h-6 text-white/90" strokeWidth={1.5} />
+                        </div>
+                      ) : selectedPost.profiles?.avatar_url ? (
                         <img src={selectedPost.profiles.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 text-xl">👤</div>
                       )}
                     </div>
                     <div className="flex flex-col">
-                      <h4 className="text-[18px] text-gray-900 dark:text-white font-sans font-bold transition-colors duration-300">{selectedPost.profiles?.display_name || "Anonymous"}</h4>
+                      <h4 className={`text-[18px] font-sans transition-colors duration-300 ${selectedPost.is_anonymous ? 'text-gray-600 dark:text-gray-400 italic font-medium' : 'text-gray-900 dark:text-white font-bold'}`}>
+                        {selectedPost.is_anonymous ? "Anonymous Member" : (selectedPost.profiles?.display_name || "Anonymous")}
+                      </h4>
                       <span className="text-[14px] text-gray-500 font-sans">{formatDate(selectedPost.created_at)}</span>
                     </div>
                   </div>
