@@ -15,7 +15,8 @@ import {
   Send,
   ArrowLeft,
   AlertTriangle,
-  CheckCircle2
+  CheckCircle2,
+  VenetianMask
 } from "lucide-react";
 import { Skeleton } from "../../components/ui/Skeleton";
 
@@ -71,7 +72,7 @@ export default function ForumPage() {
       let query = supabase
         .from("forum_posts")
         .select(`
-          id, title, content, image_url, tags, created_at, likes_count, replies_count, user_id,
+          id, title, content, image_url, tags, created_at, likes_count, replies_count, user_id, is_anonymous,
           profiles:user_id ( id, display_name, avatar_url )
         `);
 
@@ -209,7 +210,8 @@ export default function ForumPage() {
 
   const handleShare = async (post) => {
     const shareUrl = `${window.location.origin}/forum`; 
-    const text = `Lihat postingan dari ${post.profiles?.display_name || "Anonymous"} di Komorebi: "${post.title || post.content.substring(0, 50)}..."\n\n${shareUrl}`;
+    const authorName = post.is_anonymous ? "Anonymous Member" : (post.profiles?.display_name || "Anonymous");
+    const text = `Lihat postingan dari ${authorName} di Komorebi: "${post.title || post.content.substring(0, 50)}..."\n\n${shareUrl}`;
     
     if (navigator.share) {
       try {
@@ -363,26 +365,33 @@ export default function ForumPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               key={post.id} 
-              className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 border border-gray-100 dark:border-komorebi-dark-border shadow-sm transition-colors duration-300"
+              onClick={() => openComments(post)}
+              className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 border border-gray-100 dark:border-komorebi-dark-border shadow-sm transition-all duration-300 hover:shadow-md hover:border-gray-200 dark:hover:border-gray-700 cursor-pointer"
             >
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-4">
                   <div className="w-[48px] h-[48px] rounded-2xl bg-gray-200 dark:bg-[#32473D] overflow-hidden shrink-0 transition-colors duration-300">
-                    {post.profiles?.avatar_url ? (
+                    {post.is_anonymous ? (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-900 shadow-inner">
+                        <VenetianMask className="w-6 h-6 text-white/90" strokeWidth={1.5} />
+                      </div>
+                    ) : post.profiles?.avatar_url ? (
                       <img src={post.profiles.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 text-xl">👤</div>
                     )}
                   </div>
                   <div className="flex items-center gap-3">
-                    <h4 className="text-[20px] text-gray-900 dark:text-white font-sans transition-colors duration-300">{post.profiles?.display_name || "Anonymous"}</h4>
+                    <h4 className={`text-[20px] font-sans transition-colors duration-300 ${post.is_anonymous ? 'text-gray-600 dark:text-gray-400 italic font-medium' : 'text-gray-900 dark:text-white'}`}>
+                      {post.is_anonymous ? "Anonymous Member" : (post.profiles?.display_name || "Anonymous")}
+                    </h4>
                     <span className="text-[15px] text-gray-400 font-sans">{formatDate(post.created_at)}</span>
                   </div>
                 </div>
                 <div className="relative">
                   <button 
-                    onClick={() => setActiveDropdown(activeDropdown === post.id ? null : post.id)} 
+                    onClick={(e) => { e.stopPropagation(); setActiveDropdown(activeDropdown === post.id ? null : post.id); }} 
                     className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-2 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-white/10"
                   >
                     <MoreHorizontal className="w-5 h-5" />
@@ -398,14 +407,14 @@ export default function ForumPage() {
                       >
                         {post.user_id === user?.id ? (
                           <button 
-                            onClick={() => { setPostToDelete(post.id); setActiveDropdown(null); }}
+                            onClick={(e) => { e.stopPropagation(); setPostToDelete(post.id); setActiveDropdown(null); }}
                             className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                           >
                             Hapus Postingan
                           </button>
                         ) : (
                           <button 
-                            onClick={() => { setPostToReport(post); setActiveDropdown(null); }}
+                            onClick={(e) => { e.stopPropagation(); setPostToReport(post); setActiveDropdown(null); }}
                             className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
                           >
                             Laporkan Postingan
@@ -446,7 +455,7 @@ export default function ForumPage() {
               {/* Actions */}
               <div className="flex items-center gap-6">
                 <button 
-                  onClick={() => handleLike(post)}
+                  onClick={(e) => { e.stopPropagation(); handleLike(post); }}
                   className={`flex items-center gap-2 transition-colors group ${
                     likedPosts.has(post.id) ? "text-red-500" : "text-gray-500 hover:text-red-400"
                   }`}
@@ -455,14 +464,14 @@ export default function ForumPage() {
                   <span className="text-sm font-medium font-sans">{post.likes_count || 0}</span>
                 </button>
                 <button 
-                  onClick={() => openComments(post)}
+                  onClick={(e) => { e.stopPropagation(); openComments(post); }}
                   className="flex items-center gap-2 text-gray-500 hover:text-[#7DA085] transition-colors"
                 >
                   <MessageCircle className="w-5 h-5" />
                   <span className="text-sm font-medium font-sans">{post.replies_count || 0}</span>
                 </button>
                 <button 
-                  onClick={() => handleShare(post)}
+                  onClick={(e) => { e.stopPropagation(); handleShare(post); }}
                   className="flex items-center gap-2 text-gray-500 hover:text-[#7DA085] transition-colors"
                 >
                   <Share2 className="w-5 h-5" />

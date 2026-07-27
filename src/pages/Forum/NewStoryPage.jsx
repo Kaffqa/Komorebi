@@ -20,6 +20,7 @@ import {
   X,
   Loader2,
   ArrowLeft,
+  EyeOff,
 } from "lucide-react";
 
 export default function NewStoryPage() {
@@ -39,6 +40,7 @@ export default function NewStoryPage() {
   
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkInputUrl, setLinkInputUrl] = useState("");
+  const [isAnonymous, setIsAnonymous] = useState(false);
   
   const fileInputRef = useRef(null);
 
@@ -171,7 +173,8 @@ export default function NewStoryPage() {
           title: title.trim(),
           content: htmlContent,
           tags: tags,
-          image_url: imageUrl || null
+          image_url: imageUrl || null,
+          is_anonymous: isAnonymous
         });
         
       if (error) throw error;
@@ -209,6 +212,27 @@ export default function NewStoryPage() {
           onChange={(e) => setTitle(e.target.value)}
           className="text-3xl font-bold font-sans text-gray-900 dark:text-white border-none outline-none placeholder-gray-300 dark:placeholder-gray-600 w-full mb-6 bg-transparent transition-colors duration-300"
         />
+
+        {/* Anonymous Toggle */}
+        <div className="flex items-center gap-3 mb-6 p-4 bg-gray-50 dark:bg-komorebi-dark-bg rounded-xl border border-gray-100 dark:border-komorebi-dark-border w-fit transition-colors duration-300">
+          <button
+            onClick={() => setIsAnonymous(!isAnonymous)}
+            className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 flex ${
+              isAnonymous ? 'bg-[#5F916F] justify-end' : 'bg-gray-300 dark:bg-gray-600 justify-start'
+            }`}
+          >
+            <motion.div
+              layout
+              className="w-4 h-4 bg-white rounded-full shadow-sm"
+            />
+          </button>
+          <div className="flex items-center gap-2">
+            <EyeOff className={`w-4 h-4 ${isAnonymous ? 'text-[#5F916F]' : 'text-gray-400 dark:text-gray-500'}`} />
+            <span className={`text-sm font-medium font-sans ${isAnonymous ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+              Post as Anonymous
+            </span>
+          </div>
+        </div>
 
         {/* Tags Section */}
         <div className="flex flex-wrap items-center gap-2 mb-8 relative">
