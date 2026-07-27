@@ -6,6 +6,8 @@ import { useThemeStore } from '../../stores/useThemeStore';
 import { supabase } from '../../services/supabase';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import Cropper from 'react-easy-crop';
+import getCroppedImg from '../../utils/cropImage';
 
 export function SettingsModal({ isOpen, onClose }) {
   const { user, profile, fetchProfile, signOut } = useAuthStore();
@@ -22,6 +24,12 @@ export function SettingsModal({ isOpen, onClose }) {
   const [isSaved, setIsSaved] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
+  
+  // Image Crop states
+  const [imageSrc, setImageSrc] = useState(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
   useEffect(() => {
     if (profile) {
@@ -63,19 +71,36 @@ export function SettingsModal({ isOpen, onClose }) {
     }
   };
 
-  const handleAvatarUpload = async (e) => {
+  const readFile = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.addEventListener('load', () => resolve(reader.result), false);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const onFileChange = async (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      let imageDataUrl = await readFile(file);
+      setImageSrc(imageDataUrl);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const uploadCroppedImage = async () => {
+    if (!user || !croppedAreaPixels || !imageSrc) return;
     try {
-      const file = e.target.files?.[0];
-      if (!file || !user) return;
-      
       setIsUploading(true);
-      const fileExt = file.name.split('.').pop();
+      const croppedImageBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
+      
+      const fileExt = 'jpeg'; // Blob is created as image/jpeg
       const fileName = `${user.id}-${Math.random()}.${fileExt}`;
 
       // Asumsikan bucket bernama "avatars" (harus dibuat di dashboard Supabase)
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(fileName, file);
+        .upload(fileName, croppedImageBlob);
 
       if (uploadError) throw uploadError;
 
@@ -84,12 +109,12 @@ export function SettingsModal({ isOpen, onClose }) {
         .getPublicUrl(fileName);
 
       setAvatarUrl(data.publicUrl);
+      setImageSrc(null); // Close cropper modal
     } catch (error) {
       console.error('Error uploading avatar:', error);
       alert('Gagal mengupload avatar. Pastikan bucket "avatars" sudah dibuat di Supabase Storage dan di-set ke public. Error: ' + error.message);
     } finally {
       setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -111,7 +136,7 @@ export function SettingsModal({ isOpen, onClose }) {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6">
+      <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center pt-10 sm:p-6">
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -121,17 +146,17 @@ export function SettingsModal({ isOpen, onClose }) {
         />
         
         <motion.div 
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          initial={{ opacity: 0, scale: 0.95, y: 50 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="bg-white/95 dark:bg-komorebi-dark-bg/95 backdrop-blur-2xl border border-white/60 dark:border-white/10 rounded-[32px] w-full max-w-4xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(93,139,102,0.15)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] relative z-10 flex flex-col sm:flex-row h-[600px] max-h-[85vh] transition-colors duration-300"
+          exit={{ opacity: 0, scale: 0.95, y: 50 }}
+          className="bg-white/95 dark:bg-komorebi-dark-bg/95 backdrop-blur-2xl border border-white/60 dark:border-white/10 rounded-t-[32px] sm:rounded-[32px] w-full max-w-4xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(93,139,102,0.15)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] relative z-10 flex flex-col sm:flex-row h-[85vh] sm:h-[600px] mt-auto sm:mt-0 transition-colors duration-300"
         >
           {/* Sidebar Tabs */}
-          <div className="w-full sm:w-[280px] bg-gradient-to-b from-[#F9FBF9] to-[#F1F6F3] dark:from-[#1c2620] dark:to-[#141c17] border-r border-[#E5EBE7] dark:border-komorebi-dark-border p-8 flex flex-col relative overflow-hidden transition-colors duration-300">
+          <div className="w-full sm:w-[280px] shrink-0 bg-gradient-to-b from-[#F9FBF9] to-[#F1F6F3] dark:from-[#1c2620] dark:to-[#141c17] border-b sm:border-b-0 sm:border-r border-[#E5EBE7] dark:border-komorebi-dark-border p-5 sm:p-8 flex flex-col relative overflow-hidden transition-colors duration-300">
             <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#7DA085]/10 dark:from-[#7DA085]/5 to-transparent rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none" />
             
-            <h2 className="text-2xl font-bold font-sans text-gray-900 dark:text-white mb-8 tracking-tight">{t('settings.title')}</h2>
-            <nav className="flex-1 space-y-2 relative z-10">
+            <h2 className="text-xl sm:text-2xl font-bold font-sans text-gray-900 dark:text-white mb-4 sm:mb-8 tracking-tight">{t('settings.title')}</h2>
+            <nav className="flex sm:flex-col gap-2 overflow-x-auto scrollbar-hide relative z-10 -mx-5 px-5 sm:mx-0 sm:px-0">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -139,13 +164,13 @@ export function SettingsModal({ isOpen, onClose }) {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center gap-3.5 px-5 py-3.5 rounded-2xl transition-all duration-300 font-sans text-[15px] font-medium ${
+                    className={`flex-shrink-0 sm:w-full flex items-center gap-2 sm:gap-3.5 px-4 sm:px-5 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all duration-300 font-sans text-[14px] sm:text-[15px] font-medium ${
                       isActive 
                         ? 'bg-gradient-to-r from-[#5D8B66] to-[#7DA085] text-white shadow-md shadow-[#5D8B66]/20 border border-[#5D8B66] dark:border-[#7DA085]/50' 
-                        : 'text-gray-500 dark:text-komorebi-dark-muted hover:bg-white/60 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-gray-200 border border-transparent hover:shadow-sm'
+                        : 'text-gray-500 dark:text-komorebi-dark-muted hover:bg-white/60 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-gray-200 border border-transparent sm:hover:shadow-sm'
                     }`}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                     {tab.label}
                   </button>
                 );
@@ -154,10 +179,10 @@ export function SettingsModal({ isOpen, onClose }) {
           </div>
 
           {/* Content Area */}
-          <div className="flex-1 p-8 sm:p-10 overflow-y-auto scrollbar-hide bg-white/50 dark:bg-komorebi-dark-bg/50 relative transition-colors duration-300">
+          <div className="flex-1 p-5 sm:p-10 overflow-y-auto scrollbar-hide bg-white/50 dark:bg-komorebi-dark-bg/50 relative transition-colors duration-300">
             <button 
               onClick={onClose}
-              className="absolute top-6 right-6 p-2.5 rounded-full hover:bg-gray-100/80 dark:hover:bg-white/10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+              className="absolute top-4 sm:top-6 right-4 sm:right-6 p-2 sm:p-2.5 rounded-full hover:bg-gray-100/80 dark:hover:bg-white/10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors z-20"
             >
               <X className="w-5 h-5" />
             </button>
@@ -172,7 +197,7 @@ export function SettingsModal({ isOpen, onClose }) {
                   {/* Avatar Upload */}
                   <div className="flex flex-col gap-3">
                     <label className="text-[14px] font-medium text-gray-700 dark:text-gray-300">{t('settings.profile.picture')}</label>
-                    <div className="flex items-center gap-5">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
                       <div className="w-20 h-20 rounded-full border-[3px] border-white dark:border-[#2c3a32] shadow-md bg-gradient-to-br from-[#F5F8F6] to-[#E9F0EC] dark:from-[#1c2620] dark:to-[#141c17] overflow-hidden flex items-center justify-center flex-shrink-0 relative group">
                         {avatarUrl ? (
                           <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
@@ -199,7 +224,7 @@ export function SettingsModal({ isOpen, onClose }) {
                       <input 
                         type="file" 
                         ref={fileInputRef} 
-                        onChange={handleAvatarUpload} 
+                        onChange={onFileChange} 
                         accept="image/*" 
                         className="hidden" 
                       />
@@ -370,6 +395,62 @@ export function SettingsModal({ isOpen, onClose }) {
           </div>
         </motion.div>
       </div>
+
+      {/* Cropper Overlay */}
+      <AnimatePresence>
+        {imageSrc && (
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white dark:bg-komorebi-dark-bg w-full max-w-md rounded-[32px] overflow-hidden flex flex-col shadow-2xl relative"
+            >
+              <div className="p-5 border-b border-gray-100 dark:border-white/10 flex justify-between items-center bg-gray-50 dark:bg-white/5 relative z-10">
+                <h3 className="font-bold text-gray-900 dark:text-white font-sans text-[16px]">{t('settings.profile.adjust_picture', { defaultValue: 'Adjust Picture' })}</h3>
+                <button onClick={() => setImageSrc(null)} className="p-2 bg-gray-200/50 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 rounded-full text-gray-500 dark:text-gray-300 transition-colors">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="relative h-[300px] sm:h-[400px] w-full bg-black/5">
+                <Cropper
+                  image={imageSrc}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={1}
+                  cropShape="round"
+                  showGrid={false}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={(croppedArea, croppedAreaPixels) => setCroppedAreaPixels(croppedAreaPixels)}
+                />
+              </div>
+              <div className="p-6 flex flex-col gap-6 relative z-10 bg-white dark:bg-komorebi-dark-bg">
+                <div className="flex items-center gap-4">
+                  <span className="text-sm font-medium text-gray-500">Zoom</span>
+                  <input
+                    type="range"
+                    value={zoom}
+                    min={1}
+                    max={3}
+                    step={0.1}
+                    aria-labelledby="Zoom"
+                    onChange={(e) => setZoom(e.target.value)}
+                    className="w-full accent-[#5D8B66]"
+                  />
+                </div>
+                <button
+                  onClick={uploadCroppedImage}
+                  disabled={isUploading}
+                  className="w-full py-3.5 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:translate-y-[1px] text-white rounded-xl font-medium transition-all flex justify-center items-center gap-2"
+                >
+                  {isUploading ? <><Loader2 className="w-5 h-5 animate-spin" /> Uploading...</> : <><Check className="w-5 h-5" /> Apply & Upload</>}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </AnimatePresence>
   );
 }

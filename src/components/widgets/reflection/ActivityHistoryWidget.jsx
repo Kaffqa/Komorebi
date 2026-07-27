@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, Activity, Smile, FileText, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { supabase } from '../../../services/supabase';
@@ -204,22 +204,51 @@ export function ActivityHistoryWidget() {
                     <AnimatePresence>
                       {hoveredCell?.rIdx === rIdx && hoveredCell?.cIdx === cIdx && (
                         <motion.div 
-                          initial={{ opacity: 0, y: 5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 5 }}
-                          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-36 bg-gray-900 text-white text-[11px] font-medium p-2.5 rounded-lg text-center z-50 pointer-events-none shadow-lg"
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-56 bg-white/95 dark:bg-[#1E2923]/95 backdrop-blur-md text-gray-800 dark:text-gray-100 p-4 rounded-[18px] z-50 pointer-events-none shadow-[0_15px_40px_-10px_rgba(93,139,102,0.2)] dark:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.6)] border border-gray-100/50 dark:border-komorebi-dark-border"
                         >
-                          <p className="mb-1 font-semibold">{monthName} {day}, {year}</p>
+                          <div className="flex items-center justify-between mb-3 border-b border-gray-100 dark:border-white/5 pb-2.5">
+                            <span className="text-[14px] font-bold tracking-tight font-sans">{monthName} {day}, {year}</span>
+                            {dayData?.hasJournal && <div className="bg-[#5D8B66]/10 text-[#5D8B66] p-1.5 rounded-lg"><FileText className="w-3.5 h-3.5" /></div>}
+                          </div>
+                          
                           {dayData ? (
-                            <>
-                              <p className="text-gray-300">Mood: {dayData.mood || moodLabels[dayData.moodScore] || "—"}</p>
-                              <p className="text-gray-300">Stress: {dayData.stressLevel || stressLabels[dayData.stressScore] || "—"}</p>
-                              {dayData.hasJournal && <p className="text-green-300 mt-0.5">📝 {t('journaling.activity_history.journal_logged')}</p>}
-                            </>
+                            <div className="flex flex-col gap-3">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-[12px] text-gray-500 dark:text-gray-400">
+                                  <Smile className="w-4 h-4" strokeWidth={2.5} />
+                                  <span className="font-medium">Mood</span>
+                                </div>
+                                <span className="text-[13px] font-semibold text-gray-800 dark:text-gray-200">{dayData.mood || moodLabels[dayData.moodScore] || "—"}</span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-[12px] text-gray-500 dark:text-gray-400">
+                                  <Activity className="w-4 h-4" strokeWidth={2.5} />
+                                  <span className="font-medium">Stress</span>
+                                </div>
+                                <span className="text-[13px] font-semibold text-gray-800 dark:text-gray-200">{dayData.stressLevel || stressLabels[dayData.stressScore] || "—"}</span>
+                              </div>
+                              {dayData.hasJournal && (
+                                <div className="mt-1.5 pt-2.5 border-t border-gray-100 dark:border-white/5 flex items-center justify-center gap-1.5 text-[12px] font-bold text-[#5D8B66]">
+                                  <CheckCircle2 className="w-4 h-4" />
+                                  <span>{t('journaling.activity_history.journal_logged', 'Journal Logged')}</span>
+                                </div>
+                              )}
+                            </div>
                           ) : (
-                            <p className="text-gray-400">{t('journaling.daily_journal.no_data')}</p>
+                            <div className="flex items-center justify-center py-4">
+                              <p className="text-[13px] text-gray-400 dark:text-gray-500 italic font-medium">{t('journaling.daily_journal.no_data', 'No Data')}</p>
+                            </div>
                           )}
-                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-gray-900" />
+                          
+                          {/* Triangle Pointer */}
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px]">
+                            <svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white/95 dark:text-[#1E2923]/95 drop-shadow-md">
+                              <path d="M10 10L0 0H20L10 10Z" fill="currentColor" />
+                            </svg>
+                          </div>
                         </motion.div>
                       )}
                     </AnimatePresence>

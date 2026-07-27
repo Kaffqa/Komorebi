@@ -213,7 +213,7 @@ export function AppLayout() {
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
   return (
-    <div className="flex h-screen bg-[#F8F9FA] dark:bg-komorebi-dark-bg transition-colors duration-300 overflow-hidden">
+    <div ref={mainContentRef} className="flex h-screen bg-[#F8F9FA] dark:bg-komorebi-dark-bg transition-colors duration-300 overflow-hidden">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div 
@@ -379,7 +379,7 @@ export function AppLayout() {
         </div>
 
         {/* Page content */}
-        <main ref={mainContentRef} className="flex-1 overflow-y-auto scrollbar-hide p-4 md:p-8 relative">
+        <main className="flex-1 overflow-y-auto scrollbar-hide p-4 md:p-8 relative">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

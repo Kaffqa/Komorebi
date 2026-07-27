@@ -251,7 +251,12 @@ export function KomiCompanion({ constraintsRef }) {
         ref={containerRef}
         className="relative flex flex-col items-center justify-end w-full h-full"
         drag
-        dragConstraints={constraintsRef || { left: -window.innerWidth + 100, right: 20, top: -window.innerHeight + 100, bottom: 20 }}
+        dragConstraints={{ 
+          left: -(typeof window !== 'undefined' ? window.innerWidth / (window.innerWidth < 768 ? 0.65 : 1) : 1000) + 100, 
+          right: 20, 
+          top: -(typeof window !== 'undefined' ? window.innerHeight / (window.innerWidth < 768 ? 0.65 : 1) : 1000) + 100, 
+          bottom: 20 
+        }}
         dragElastic={0.2}
         dragMomentum={false}
         whileDrag={{ scale: 1.1, cursor: "grabbing" }}

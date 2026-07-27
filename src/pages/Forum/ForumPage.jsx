@@ -415,9 +415,10 @@ export default function ForumPage() {
               {/* Content */}
               <div className="mb-4">
                 {post.title && <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 font-sans transition-colors duration-300">{post.title}</h3>}
-                <p className="text-[15px] text-gray-700 dark:text-gray-300 font-sans leading-relaxed line-clamp-3 mb-4 transition-colors duration-300">
-                  {post.content}
-                </p>
+                <div 
+                  className="prose dark:prose-invert prose-sm prose-p:leading-relaxed prose-a:text-[#5F916F] max-w-none text-[15px] text-gray-700 dark:text-gray-300 font-sans line-clamp-3 mb-4 transition-colors duration-300"
+                  dangerouslySetInnerHTML={{ __html: post.content }}
+                />
                 
                 {post.image_url && (
                   <div className="rounded-2xl overflow-hidden mb-4 border border-gray-100 dark:border-transparent max-h-[400px]">
@@ -428,8 +429,8 @@ export default function ForumPage() {
                 {/* Tags */}
                 {post.tags && post.tags.length > 0 && (
                   <div className="flex items-center gap-2 mb-4 flex-wrap">
-                    {post.tags.map(tag => (
-                      <span key={tag} className="px-4 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#43674F] bg-white dark:bg-[#32473D] text-xs font-medium text-gray-600 dark:text-gray-300 font-sans transition-colors duration-300">
+                    {post.tags.filter(t => t && t.trim() !== "").map((tag, index) => (
+                      <span key={`${tag}-${index}`} className="px-4 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#43674F] bg-white dark:bg-[#32473D] text-xs font-medium text-gray-600 dark:text-gray-300 font-sans transition-colors duration-300">
                         {tag}
                       </span>
                     ))}
@@ -511,9 +512,10 @@ export default function ForumPage() {
                   
                   <div className="mb-4">
                     {selectedPost.title && <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 font-sans transition-colors duration-300">{selectedPost.title}</h3>}
-                    <p className="text-[16px] text-gray-800 dark:text-gray-300 font-sans leading-relaxed mb-4 whitespace-pre-wrap transition-colors duration-300">
-                      {selectedPost.content}
-                    </p>
+                    <div 
+                      className="prose dark:prose-invert prose-base prose-p:leading-relaxed prose-a:text-[#5F916F] max-w-none text-gray-800 dark:text-gray-300 font-sans mb-4 transition-colors duration-300"
+                      dangerouslySetInnerHTML={{ __html: selectedPost.content }}
+                    />
                     {selectedPost.image_url && (
                       <div className="w-full rounded-2xl overflow-hidden bg-gray-100 dark:bg-[#32473D] mb-4 border border-gray-100 dark:border-transparent">
                         <img src={selectedPost.image_url} alt="Post image" className="w-full h-auto object-cover" />
@@ -521,8 +523,8 @@ export default function ForumPage() {
                     )}
                     {selectedPost.tags && selectedPost.tags.length > 0 && (
                       <div className="flex items-center gap-2 mb-4 flex-wrap">
-                        {selectedPost.tags.map(tag => (
-                          <span key={tag} className="px-4 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#43674F] bg-white dark:bg-[#32473D] text-xs font-medium text-gray-600 dark:text-gray-300 font-sans transition-colors duration-300">
+                        {selectedPost.tags.filter(t => t && t.trim() !== "").map((tag, index) => (
+                          <span key={`${tag}-${index}`} className="px-4 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#43674F] bg-white dark:bg-[#32473D] text-xs font-medium text-gray-600 dark:text-gray-300 font-sans transition-colors duration-300">
                             {tag}
                           </span>
                         ))}
