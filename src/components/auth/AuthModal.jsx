@@ -12,6 +12,7 @@ export function AuthModal({ isOpen, onClose }) {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [isVerificationSent, setIsVerificationSent] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,6 +33,7 @@ export function AuthModal({ isOpen, onClose }) {
         setError(null);
         setSuccess(null);
         setShowPassword(false);
+        setIsVerificationSent(false);
       }, 300);
     }
   }, [isOpen]);
@@ -73,8 +75,7 @@ export function AuthModal({ isOpen, onClose }) {
         }
       } else {
         await signUp(email, password, username, displayName);
-        setIsLogin(true);
-        setSuccess("Account created successfully! Please sign in.");
+        setIsVerificationSent(true);
       }
     } catch (err) {
       setError(err.message);
@@ -117,14 +118,44 @@ export function AuthModal({ isOpen, onClose }) {
             </button>
 
             <div className="p-8 sm:p-10">
-              <motion.div layout="position" className="text-center mb-8">
-                <h2 className="text-3xl font-heading text-[#5D8B66]">
-                  {isLogin ? "Welcome Back" : "Begin Your Journey"}
-                </h2>
-                <p className="text-gray-500 text-sm mt-2 font-sans">
-                  {isLogin ? "Sign in to access your secure space" : "Create an account to start feeling better"}
-                </p>
-              </motion.div>
+              {isVerificationSent ? (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-center flex flex-col items-center py-4"
+                >
+                  <div className="w-20 h-20 bg-[#E8F2EA] rounded-full flex items-center justify-center mb-6">
+                    <Mail className="w-10 h-10 text-[#5D8B66]" />
+                  </div>
+                  <h2 className="text-2xl font-heading text-[#5D8B66] mb-3">
+                    Periksa Email Anda
+                  </h2>
+                  <p className="text-gray-500 font-sans text-[15px] mb-8 leading-relaxed">
+                    Kami telah mengirimkan tautan verifikasi ke email <br/>
+                    <strong className="text-gray-800">{email}</strong>.<br/>
+                    Silakan periksa kotak masuk atau spam Anda dan klik tautan tersebut untuk mengaktifkan akun.
+                  </p>
+                  <Button 
+                    type="button"
+                    onClick={() => {
+                      setIsVerificationSent(false);
+                      setIsLogin(true);
+                    }}
+                    className="w-full bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-sm hover:brightness-110 text-white py-4 rounded-2xl font-medium text-[16px] transition-all"
+                  >
+                    Saya Sudah Verifikasi, Login
+                  </Button>
+                </motion.div>
+              ) : (
+                <>
+                  <motion.div layout="position" className="text-center mb-8">
+                    <h2 className="text-3xl font-heading text-[#5D8B66]">
+                      {isLogin ? "Welcome Back" : "Begin Your Journey"}
+                    </h2>
+                    <p className="text-gray-500 text-sm mt-2 font-sans">
+                      {isLogin ? "Sign in to access your secure space" : "Create an account to start feeling better"}
+                    </p>
+                  </motion.div>
 
               {error && (
                 <motion.div 
@@ -234,6 +265,8 @@ export function AuthModal({ isOpen, onClose }) {
                   {isLogin ? "Sign up here" : "Sign in here"}
                 </button>
               </motion.div>
+                </>
+              )}
             </div>
           </motion.div>
         </div>
