@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 export function JournalingStreakWidget() {
   const { t } = useTranslation();
   const { user } = useAuthStore();
-  const [streak, setStreak] = useState(1);
+  const [streak, setStreak] = useState(0);
 
   useEffect(() => {
     async function calculateStreak() {
@@ -21,7 +21,7 @@ export function JournalingStreakWidget() {
         .limit(365);
 
       if (error || !entries || entries.length === 0) {
-        setStreak(1); // Default to 1 for new users as a starting motivation
+        setStreak(0); // Default to 0 for new users
         return;
       }
 
@@ -45,7 +45,7 @@ export function JournalingStreakWidget() {
       } else if (entryDates.has(yesterdayStr)) {
         checkDate = new Date(yesterday);
       } else {
-        setStreak(1);
+        setStreak(0);
         return;
       }
 
@@ -60,7 +60,7 @@ export function JournalingStreakWidget() {
         }
       }
 
-      setStreak(Math.max(1, currentStreak));
+      setStreak(currentStreak);
     }
 
     calculateStreak();

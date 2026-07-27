@@ -13,6 +13,7 @@ export function KomiCompanion({ constraintsRef }) {
   
   const { user } = useAuthStore();
   const [moodScore, setMoodScore] = useState(3); // Default 3 (Neutral)
+  const [isFrozen, setIsFrozen] = useState(false);
   
   // Micro-feature States
   const [mousePos, setMousePos] = useState({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
@@ -55,27 +56,41 @@ export function KomiCompanion({ constraintsRef }) {
     "Komi ikut bahagia melihatmu senang! 💚"
   ];
 
-  // Load mood
+  // Load data
   useEffect(() => {
-    async function loadMood() {
+    async function loadData() {
       if (!user) return;
       const today = new Date().toISOString().split('T')[0];
-      const { data } = await supabase
+      
+      const { data: moodData } = await supabase
         .from('mood_entries')
         .select('mood_score')
         .eq('user_id', user.id)
         .eq('entry_date', today)
         .maybeSingle();
 
-      if (data && data.mood_score) {
-        setMoodScore(data.mood_score);
+      if (moodData && moodData.mood_score) {
+        setMoodScore(moodData.mood_score);
       }
-    }
-    loadMood();
 
-    const handler = () => loadMood();
+      // Check if user has journaled today
+      const { count } = await supabase
+        .from('journal_entries')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('entry_date', today);
+      
+      setIsFrozen(count === 0);
+    }
+    loadData();
+
+    const handler = () => loadData();
     window.addEventListener('mood-updated', handler);
-    return () => window.removeEventListener('mood-updated', handler);
+    window.addEventListener('journal-updated', handler);
+    return () => {
+      window.removeEventListener('mood-updated', handler);
+      window.removeEventListener('journal-updated', handler);
+    };
   }, [user]);
 
   // Mood based styling
@@ -94,7 +109,22 @@ export function KomiCompanion({ constraintsRef }) {
   };
   let moodFace = "normal";
 
-  if (moodScore <= 2) {
+  if (isFrozen) {
+    themeColors = {
+      highlight: "#E0F7FA",
+      base: "#80DEEA",
+      shadow: "#006064",
+      glow: "#B2EBF2",
+      stemStart: "#B2EBF2",
+      stemEnd: "#00838F",
+      limbsDark: "#006064",
+      limbsLight: "#4DD0E1",
+      blush: "#B2EBF2",
+      faceDark: "#004D40",
+      faceLight: "#00695C"
+    };
+    moodFace = "frozen";
+  } else if (moodScore <= 2) {
     themeColors = { 
       highlight: "#82B1FF", 
       base: "#448AFF", 
@@ -131,7 +161,18 @@ export function KomiCompanion({ constraintsRef }) {
     const messageInterval = setInterval(() => {
       // 30% chance to show a message every 10 seconds
       if (Math.random() > 0.7 && !showMessage) {
-        const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+        let randomMsg;
+        if (isFrozen) {
+          const frozenMsgs = [
+            "Komi kedinginan... 🥶",
+            "Tulis jurnal hari ini untuk menghangatkanku!",
+            "Brrr... aku beku...",
+            "Tolong cairkan es ini dengan jurnalmu ❄️"
+          ];
+          randomMsg = frozenMsgs[Math.floor(Math.random() * frozenMsgs.length)];
+        } else {
+          randomMsg = messages[Math.floor(Math.random() * messages.length)];
+        }
         setMessage(randomMsg);
         setShowMessage(true);
 
@@ -143,7 +184,7 @@ export function KomiCompanion({ constraintsRef }) {
     }, 10000);
 
     return () => clearInterval(messageInterval);
-  }, [showMessage, isSleeping]);
+  }, [showMessage, isSleeping, isFrozen]);
 
   // AFK Timer & Eye Tracking
   useEffect(() => {
@@ -283,14 +324,24 @@ export function KomiCompanion({ constraintsRef }) {
         >
           {/* Thought Cloud Bubble (Positioned to the left to avoid scrollbar) */}
           <AnimatePresence>
-            {(showMessage || isHovered) && !isDragging && (
+            {(showMessage || isHovered || isFrozen) && !isDragging && (
               <motion.div
                 initial={{ opacity: 0, x: -10, y: 10, scale: 0.8 }}
                 animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -5, y: 5, scale: 0.8 }}
-                className="absolute bottom-[90%] right-[80%] mb-4 w-max min-w-[140px] max-w-[220px] bg-white/95 backdrop-blur-sm border border-gray-100 text-gray-800 text-[13.5px] font-normal px-5 py-3 rounded-[30px] shadow-[0_8px_25px_rgba(0,0,0,0.1)] text-center pointer-events-none z-50 origin-bottom-right"
+                onClick={() => {
+                  if (isFrozen) navigate('/journaling');
+                }}
+                className={`absolute bottom-[90%] right-[80%] mb-4 w-max min-w-[140px] max-w-[220px] bg-white/95 backdrop-blur-sm border border-gray-100 text-gray-800 text-[13.5px] font-normal px-5 py-3 rounded-[30px] shadow-[0_8px_25px_rgba(0,0,0,0.1)] text-center z-50 origin-bottom-right transition-transform ${isFrozen ? 'pointer-events-auto cursor-pointer hover:scale-105 hover:bg-blue-50 active:scale-95' : 'pointer-events-none'}`}
               >
-                {isHovered && !showMessage ? "Double click to Chat! 💬" : message}
+                {isFrozen ? (
+                  <span>
+                    Komi kedinginan... 🥶<br/>
+                    <span className="font-bold text-[#448AFF] hover:text-blue-700 underline decoration-blue-300 decoration-2 underline-offset-2 transition-colors">
+                      Tulis Jurnal Sekarang
+                    </span> ❄️
+                  </span>
+                ) : (isHovered && !showMessage ? "Double click to Chat! 💬" : message)}
                 
                 {/* Thought Cloud Tail (Circles leading down to head) */}
                 <div className="absolute -bottom-3 right-6 w-5 h-5 bg-white/95 rounded-full border border-gray-100 border-t-0 border-l-0 shadow-sm z-[-1]"></div>
@@ -399,6 +450,24 @@ export function KomiCompanion({ constraintsRef }) {
                 <path d="M68 50 Q75 60 85 50" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
                 <path d="M52 90 Q55 85 60 90 T68 90" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
               </g>
+            ) : moodFace === "frozen" ? (
+              <g className="frozen-eyes">
+                <circle cx="42" cy="72" r="6" fill={themeColors.faceDark} />
+                <circle cx="78" cy="72" r="6" fill={themeColors.faceDark} />
+                <circle cx="44" cy="70" r="2.5" fill="white" />
+                <circle cx="80" cy="70" r="2.5" fill="white" />
+                {/* Teardrops */}
+                <path d="M42 80 Q37 88 42 92 Q47 88 42 80" fill="#E0F7FA" opacity="0.9" />
+                <path d="M78 80 Q73 88 78 92 Q83 88 78 80" fill="#E0F7FA" opacity="0.9" />
+                {/* Sad/Cold mouth */}
+                <path d="M55 90 Q60 83 65 90" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
+                {/* Cold eyebrows */}
+                <path d="M35 55 Q45 45 52 50" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
+                <path d="M68 50 Q75 45 85 55" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
+                {/* Blush */}
+                <ellipse cx="38" cy="80" rx="5" ry="2.5" fill={themeColors.blush} className="transition-colors duration-1000" opacity="0.5" />
+                <ellipse cx="82" cy="80" rx="5" ry="2.5" fill={themeColors.blush} className="transition-colors duration-1000" opacity="0.5" />
+              </g>
             ) : moodFace === "happy" ? (
               <g className="happy-eyes">
                 {isSleeping ? (
@@ -492,6 +561,18 @@ export function KomiCompanion({ constraintsRef }) {
               </g>
             )}
           </g>
+
+          {/* Ice Block Overlay */}
+          {isFrozen && (
+            <g className="ice-block">
+              {/* Ice polygon covering the whole body */}
+              <path d="M 20 0 L 100 10 L 115 60 L 100 145 L 20 140 L -5 80 Z" fill="white" opacity="0.25" stroke="#B2EBF2" strokeWidth="3" strokeLinejoin="round" />
+              {/* Highlights on ice */}
+              <path d="M 25 10 L 90 20 L 105 60" fill="none" stroke="white" strokeWidth="5" opacity="0.6" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M 5 80 L 25 130" fill="none" stroke="white" strokeWidth="3" opacity="0.6" strokeLinecap="round" />
+              <path d="M 80 130 L 95 90" fill="none" stroke="white" strokeWidth="2" opacity="0.4" strokeLinecap="round" />
+            </g>
+          )}
 
           {/* Interaction Shadow at the bottom */}
           <ellipse cx="60" cy="135" rx="25" ry="4" fill="#5D8B66" opacity="0.4" />

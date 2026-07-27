@@ -22,7 +22,7 @@ import { useTranslation } from "react-i18next";
 export function Sidebar({ onOpenSettings }) {
   const location = useLocation();
   const { user } = useAuthStore();
-  const [streak, setStreak] = useState(1);
+  const [streak, setStreak] = useState(0);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { t } = useTranslation();
 
@@ -47,7 +47,7 @@ export function Sidebar({ onOpenSettings }) {
         .limit(365);
 
       if (!entries || entries.length === 0) {
-        setStreak(1);
+        setStreak(0);
         return;
       }
 
@@ -65,7 +65,7 @@ export function Sidebar({ onOpenSettings }) {
       } else if (entryDates.has(yesterdayStr)) {
         checkDate = new Date(yesterday);
       } else {
-        setStreak(1);
+        setStreak(0);
         return;
       }
 
@@ -74,7 +74,7 @@ export function Sidebar({ onOpenSettings }) {
         count++;
         checkDate.setDate(checkDate.getDate() - 1);
       }
-      setStreak(Math.max(1, count));
+      setStreak(count);
     }
 
     calculateStreak();
