@@ -6,10 +6,13 @@ import { useAuthStore } from "../../stores/useAuthStore";
 import { supabase } from "../../services/supabase";
 import { Button } from "../ui/Button";
 
-export function AuthModal({ isOpen, onClose }) {
-  const [isLogin, setIsLogin] = useState(true);
+export function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
+  const [isLogin, setIsLogin] = useState(initialMode === 'login');
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [isResetMode, setIsResetMode] = useState(initialMode === 'recovery');
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [isVerificationSent, setIsVerificationSent] = useState(false);
@@ -23,11 +26,25 @@ export function AuthModal({ isOpen, onClose }) {
 
   // Reset state when modal opens/closes
   useEffect(() => {
-    if (!isOpen) {
-      setTimeout(() => {
+    let timeoutId;
+    if (isOpen) {
+      if (initialMode === 'recovery') {
+        setIsResetMode(true);
+        setIsLogin(false);
+        setIsForgotPassword(false);
+      } else {
+        setIsLogin(initialMode === 'login');
+        setIsResetMode(false);
+        setIsForgotPassword(false);
+      }
+    } else {
+      timeoutId = setTimeout(() => {
         setIsLogin(true);
+        setIsForgotPassword(false);
+        setIsResetMode(false);
         setEmail("");
         setPassword("");
+        setConfirmPassword("");
         setUsername("");
         setDisplayName("");
         setError(null);
@@ -36,7 +53,11 @@ export function AuthModal({ isOpen, onClose }) {
         setIsVerificationSent(false);
       }, 300);
     }
-  }, [isOpen]);
+    
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [isOpen, initialMode]);
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -57,7 +78,32 @@ export function AuthModal({ isOpen, onClose }) {
     setIsLoading(true);
 
     try {
-      if (isLogin) {
+      if (isResetMode) {
+        if (password !== confirmPassword) throw new Error("Passwords do not match.");
+        if (password.length < 6) throw new Error("Password must be at least 6 characters.");
+        
+        const { error: updateError } = await supabase.auth.updateUser({ password });
+        if (updateError) throw updateError;
+        
+        await supabase.auth.signOut();
+        setSuccess("Password updated! Please login with your new password.");
+        setTimeout(() => {
+          setIsResetMode(false);
+          setIsLogin(true);
+          setPassword("");
+          setConfirmPassword("");
+          setSuccess(null);
+          window.location.hash = "";
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }, 3000);
+      } else if (isForgotPassword) {
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + "/?type=recovery",
+        });
+        if (resetError) throw resetError;
+        setSuccess("Check your email for the password reset link!");
+        setTimeout(() => setIsForgotPassword(false), 3000);
+      } else if (isLogin) {
         const data = await signIn(email, password);
         onClose();
         
@@ -154,10 +200,10 @@ export function AuthModal({ isOpen, onClose }) {
                 <>
                   <motion.div layout="position" className="text-center mb-8">
                     <h2 className="text-3xl font-heading text-[#5D8B66]">
-                      {isLogin ? "Welcome Back" : "Begin Your Journey"}
+                      {isResetMode ? "Set New Password" : isForgotPassword ? "Reset Password" : isLogin ? "Welcome Back" : "Begin Your Journey"}
                     </h2>
                     <p className="text-gray-500 text-sm mt-2 font-sans">
-                      {isLogin ? "Sign in to access your secure space" : "Create an account to start feeling better"}
+                      {isResetMode ? "Please enter your new password below" : isForgotPassword ? "Enter your email to receive a reset link" : isLogin ? "Sign in to access your secure space" : "Create an account to start feeling better"}
                     </p>
                   </motion.div>
 
@@ -182,7 +228,7 @@ export function AuthModal({ isOpen, onClose }) {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <AnimatePresence mode="popLayout">
-                  {!isLogin && (
+                  {!isResetMode && !isForgotPassword && !isLogin && (
                     <motion.div
                       layout
                       initial={{ opacity: 0, height: 0, filter: "blur(4px)" }}
@@ -217,36 +263,66 @@ export function AuthModal({ isOpen, onClose }) {
                   )}
                 </AnimatePresence>
 
-                <motion.div layout="position" className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input 
-                    type="email" 
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-12 pr-5 py-4 bg-[#F4F7F5] border-none rounded-2xl focus:bg-white focus:ring-2 focus:ring-[#5D8B66]/30 outline-none transition-all font-sans text-[15px] placeholder:text-gray-400"
-                    placeholder="Email Address"
-                  />
-                </motion.div>
+                {!isResetMode && (
+                  <motion.div layout="position" className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input 
+                      type="email" 
+                      required={!isResetMode}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full pl-12 pr-5 py-4 bg-[#F4F7F5] border-none rounded-2xl focus:bg-white focus:ring-2 focus:ring-[#5D8B66]/30 outline-none transition-all font-sans text-[15px] placeholder:text-gray-400"
+                      placeholder="Email Address"
+                    />
+                  </motion.div>
+                )}
 
-                <motion.div layout="position" className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input 
-                    type={showPassword ? "text" : "password"} 
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-12 pr-12 py-4 bg-[#F4F7F5] border-none rounded-2xl focus:bg-white focus:ring-2 focus:ring-[#5D8B66]/30 outline-none transition-all font-sans text-[15px] placeholder:text-gray-400"
-                    placeholder="Password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                </motion.div>
+                {!isForgotPassword && (
+                  <motion.div layout="position" className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input 
+                      type={showPassword ? "text" : "password"} 
+                      required={!isForgotPassword}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full pl-12 pr-12 py-4 bg-[#F4F7F5] border-none rounded-2xl focus:bg-white focus:ring-2 focus:ring-[#5D8B66]/30 outline-none transition-all font-sans text-[15px] placeholder:text-gray-400"
+                      placeholder={isResetMode ? "New Password" : "Password"}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </motion.div>
+                )}
+
+                {isResetMode && (
+                  <motion.div layout="position" className="relative mt-4">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input 
+                      type={showPassword ? "text" : "password"} 
+                      required={isResetMode}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full pl-12 pr-12 py-4 bg-[#F4F7F5] border-none rounded-2xl focus:bg-white focus:ring-2 focus:ring-[#5D8B66]/30 outline-none transition-all font-sans text-[15px] placeholder:text-gray-400"
+                      placeholder="Confirm New Password"
+                    />
+                  </motion.div>
+                )}
+
+                {isLogin && !isForgotPassword && (
+                  <motion.div layout="position" className="flex justify-end mt-1">
+                    <button 
+                      type="button" 
+                      onClick={() => setIsForgotPassword(true)}
+                      className="text-[#5D8B66] text-[13px] font-medium font-sans hover:underline"
+                    >
+                      Forgot password?
+                    </button>
+                  </motion.div>
+                )}
 
                 <motion.div layout="position">
                   <Button 
@@ -254,21 +330,38 @@ export function AuthModal({ isOpen, onClose }) {
                     className="w-full mt-2 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white py-4 rounded-2xl font-medium text-[16px] transition-all duration-300"
                     disabled={isLoading}
                   >
-                    {isLoading ? "Processing..." : (isLogin ? "Sign In" : "Create Account")}
+                    {isLoading ? "Processing..." : (isResetMode ? "Update Password" : isForgotPassword ? "Send Reset Link" : isLogin ? "Sign In" : "Create Account")}
                   </Button>
                 </motion.div>
               </form>
 
-              <motion.div layout="position" className="mt-8 text-center text-[15px] font-sans text-gray-500">
-                {isLogin ? "Don't have an account? " : "Already have an account? "}
-                <button 
-                  type="button" 
-                  onClick={() => setIsLogin(!isLogin)}
-                  className="text-[#5D8B66] font-medium hover:underline transition-all"
-                >
-                  {isLogin ? "Sign up here" : "Sign in here"}
-                </button>
-              </motion.div>
+              {!isResetMode && (
+                <motion.div layout="position" className="mt-8 text-center text-[15px] font-sans text-gray-500">
+                  {isForgotPassword ? (
+                    <>
+                      Remember your password?{" "}
+                      <button 
+                        type="button" 
+                        onClick={() => setIsForgotPassword(false)}
+                        className="text-[#5D8B66] font-medium hover:underline transition-all"
+                      >
+                        Back to sign in
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      {isLogin ? "Don't have an account? " : "Already have an account? "}
+                      <button 
+                        type="button" 
+                        onClick={() => setIsLogin(!isLogin)}
+                        className="text-[#5D8B66] font-medium hover:underline transition-all"
+                      >
+                        {isLogin ? "Sign up here" : "Sign in here"}
+                      </button>
+                    </>
+                  )}
+                </motion.div>
+              )}
                 </>
               )}
             </div>

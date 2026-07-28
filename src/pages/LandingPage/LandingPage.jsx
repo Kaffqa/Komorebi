@@ -117,23 +117,31 @@ export default function LandingPage() {
   const [activeStep, setActiveStep] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
+  const [activeFaq, setActiveFaq] = useState(null);
   const location = useLocation();
 
   const scrollContainerRef = useRef(null);
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    if (params.get('login') === 'true') {
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const searchParams = new URLSearchParams(location.search);
+    
+    if (hashParams.get('type') === 'recovery' || searchParams.get('type') === 'recovery' || window.location.href.includes('type=recovery')) {
+      setAuthMode('recovery');
+      setIsAuthModalOpen(true);
+    } else if (searchParams.get('login') === 'true') {
+      setAuthMode('login');
       setIsAuthModalOpen(true);
       window.history.replaceState({}, document.title, window.location.pathname);
     }
-  }, [location.search]);
+  }, [location.search, location.hash]);
 
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar onOpenAuth={() => setIsAuthModalOpen(true)} />
-      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+      <Navbar onOpenAuth={() => { setAuthMode('login'); setIsAuthModalOpen(true); }} />
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} initialMode={authMode} />
 
       {/* Hero Section */}
       <section className="relative px-4 md:px-8 pt-24 pb-12 max-w-[1650px] mx-auto">
