@@ -13,6 +13,7 @@ import {
   UploadCloud
 } from "lucide-react";
 import { Skeleton } from "../../components/ui/Skeleton";
+import { ImageCropper } from "../../components/ui/ImageCropper";
 
 const SPECIALIST_TITLES = ["Psikiater", "Psikolog Klinis", "Konsultan Psikiater"];
 
@@ -21,6 +22,8 @@ export default function SpecialistManagement() {
   const [loading, setLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [imageToCrop, setImageToCrop] = useState(null);
+  const [originalFileName, setOriginalFileName] = useState("");
   
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -147,7 +150,6 @@ export default function SpecialistManagement() {
 
   const handleImageUpload = async (event) => {
     try {
-      setIsUploading(true);
       const file = event.target.files[0];
       if (!file) return;
 
@@ -163,13 +165,33 @@ export default function SpecialistManagement() {
         return;
       }
 
-      const fileExt = file.name.split('.').pop();
+      setOriginalFileName(file.name);
+      
+      const reader = new FileReader();
+      reader.addEventListener('load', () => {
+        setImageToCrop(reader.result);
+      });
+      reader.readAsDataURL(file);
+      
+      // Reset input so the same file can be selected again
+      event.target.value = '';
+    } catch (error) {
+      console.error("Error reading image:", error);
+      alert("Failed to read image.");
+    }
+  };
+
+  const handleCropComplete = async (croppedBlob) => {
+    setImageToCrop(null);
+    try {
+      setIsUploading(true);
+      const fileExt = originalFileName.split('.').pop() || 'jpeg';
       const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
       const filePath = `${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('specialist_avatars')
-        .upload(filePath, file, { cacheControl: '3600', upsert: false });
+        .upload(filePath, croppedBlob, { cacheControl: '3600', upsert: false });
 
       if (uploadError) throw uploadError;
 
@@ -179,8 +201,8 @@ export default function SpecialistManagement() {
 
       setFormData({ ...formData, avatar_url: data.publicUrl });
     } catch (error) {
-      console.error("Error uploading image:", error);
-      alert("Failed to upload image. Make sure you have created the 'specialist_avatars' storage bucket.");
+      console.error("Error uploading cropped image:", error);
+      alert("Failed to upload image.");
     } finally {
       setIsUploading(false);
     }
@@ -390,43 +412,53 @@ export default function SpecialistManagement() {
                   </div>
 
                   <div className="mb-6">
-                    <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2 font-sans pl-1">Avatar URL</label>
-                    <div className="flex gap-3">
-                      <div className="relative flex-1">
-                        <input 
-                          type="url" 
-                          value={formData.avatar_url} 
-                          onChange={(e) => setFormData({...formData, avatar_url: e.target.value})} 
-                          className="w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-[#5D8B66]/30 focus:border-[#5D8B66] font-sans text-[15px] transition-all pr-10" 
-                          placeholder="https://..." 
-                        />
-                        {formData.avatar_url && (
-                          <div className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md overflow-hidden bg-white shadow-sm border border-gray-200">
-                            <img src={formData.avatar_url} alt="Preview" className="w-full h-full object-cover" />
+                    <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3 font-sans pl-1">Avatar / Photo</label>
+                    <div className="flex gap-4 items-center">
+                      {/* Large Image Preview */}
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-2xl bg-gray-50 border border-gray-200 overflow-hidden shadow-sm flex items-center justify-center">
+                        {formData.avatar_url ? (
+                          <img src={formData.avatar_url} alt="Preview" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="text-gray-300 flex flex-col items-center">
+                            <UploadCloud className="w-6 h-6 mb-1" />
+                            <span className="text-[9px] font-bold uppercase">No Image</span>
                           </div>
                         )}
                       </div>
                       
-                      <div className="relative">
-                        <input
-                          type="file"
-                          accept="image/jpeg,image/png,image/webp"
-                          onChange={handleImageUpload}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
-                          disabled={isUploading}
-                        />
-                        <button
-                          type="button"
-                          disabled={isUploading}
-                          className="h-full px-5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-100 rounded-2xl font-bold font-sans transition-colors flex items-center justify-center gap-2 whitespace-nowrap shadow-sm disabled:opacity-50"
-                        >
-                          {isUploading ? (
-                            <div className="w-5 h-5 border-2 border-indigo-600/30 border-t-indigo-600 rounded-full animate-spin"></div>
-                          ) : (
-                            <UploadCloud className="w-5 h-5" />
-                          )}
-                          <span>{isUploading ? "Uploading..." : "Upload File"}</span>
-                        </button>
+                      <div className="flex-1 flex gap-3">
+                        <div className="relative flex-1">
+                          <input 
+                            type="url" 
+                            value={formData.avatar_url} 
+                            onChange={(e) => setFormData({...formData, avatar_url: e.target.value})} 
+                            className="w-full px-5 h-[48px] bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-[#5D8B66]/30 focus:border-[#5D8B66] font-sans text-[14px] sm:text-[15px] transition-all" 
+                            placeholder="https://..." 
+                          />
+                        </div>
+                        
+                        <div className="relative shrink-0">
+                          <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            onChange={handleImageUpload}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10"
+                            disabled={isUploading}
+                          />
+                          <button
+                            type="button"
+                            disabled={isUploading}
+                            className="h-[48px] px-5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-100 rounded-2xl font-bold font-sans transition-colors flex items-center justify-center gap-2 whitespace-nowrap shadow-sm disabled:opacity-50 text-[14px] sm:text-[15px]"
+                          >
+                            {isUploading ? (
+                              <div className="w-5 h-5 border-2 border-indigo-600/30 border-t-indigo-600 rounded-full animate-spin"></div>
+                            ) : (
+                              <UploadCloud className="w-5 h-5" />
+                            )}
+                            <span className="hidden sm:inline">{isUploading ? "Uploading..." : "Upload File"}</span>
+                            <span className="sm:hidden">{isUploading ? "..." : "Upload"}</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -495,6 +527,14 @@ export default function SpecialistManagement() {
           </div>
         )}
       </AnimatePresence>
+
+      {imageToCrop && (
+        <ImageCropper 
+          imageSrc={imageToCrop} 
+          onCropComplete={handleCropComplete} 
+          onCancel={() => setImageToCrop(null)} 
+        />
+      )}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { useOutlet, useLocation, useNavigate, Link } from "react-router";
 import { Sidebar } from "./Sidebar";
 import { SettingsModal } from "./SettingsModal";
-import { Menu, Bell, Settings, Sun, CloudSun, MoonStar, Plus, Heart, MessageCircle, Info, Calendar, Check, CheckCircle2 } from "lucide-react";
+import { Menu, Bell, Settings, Sun, CloudSun, MoonStar, Plus, Heart, MessageCircle, Info, Calendar, Check, CheckCircle2, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../utils/cn";
@@ -21,6 +21,7 @@ export function AppLayout() {
   const navigate = useNavigate();
   const currentOutlet = useOutlet();
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showProfileImage, setShowProfileImage] = useState(false);
 
   // Close sidebar on mobile when navigating
   useEffect(() => {
@@ -368,13 +369,16 @@ export function AppLayout() {
               >
                 <Settings className="w-5 h-5" />
               </button>
-              <div className="w-10 h-10 rounded-lg bg-[#7DA085] flex items-center justify-center text-white overflow-hidden shadow-sm border border-[#7DA085]/60">
+              <button 
+                onClick={() => setShowProfileImage(true)}
+                className="w-10 h-10 rounded-lg bg-[#7DA085] flex items-center justify-center text-white overflow-hidden shadow-sm border border-[#7DA085]/60 hover:ring-2 hover:ring-[#7DA085]/40 transition-all cursor-pointer"
+              >
                  {profile?.avatar_url ? (
                    <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
                  ) : (
                    <img src={`https://api.dicebear.com/9.x/notionists/svg?seed=${profile?.username || 'Komorebi'}`} alt="Profile" className="w-full h-full object-cover bg-[#5D8B66]/10" />
                  )}
-              </div>
+              </button>
            </div>
         </div>
 
@@ -400,6 +404,39 @@ export function AppLayout() {
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
       />
+
+      {/* Profile Image Modal */}
+      <AnimatePresence>
+        {showProfileImage && (
+          <div className="fixed inset-0 z-[150] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-pointer"
+              onClick={() => setShowProfileImage(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="relative z-10 max-w-xl w-full aspect-square bg-transparent rounded-2xl overflow-hidden shadow-2xl pointer-events-none flex items-center justify-center"
+            >
+               {profile?.avatar_url ? (
+                 <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-contain pointer-events-auto rounded-[32px]" />
+               ) : (
+                 <img src={`https://api.dicebear.com/9.x/notionists/svg?seed=${profile?.username || 'Komorebi'}`} alt="Profile" className="w-full h-full object-contain bg-white/5 pointer-events-auto rounded-[32px]" />
+               )}
+            </motion.div>
+            <button 
+              onClick={() => setShowProfileImage(false)}
+              className="absolute top-6 right-6 sm:top-8 sm:right-8 z-20 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Komi Companion Pet (Hidden during onboarding) */}
       {!showOnboarding && <KomiCompanion constraintsRef={mainContentRef} />}
