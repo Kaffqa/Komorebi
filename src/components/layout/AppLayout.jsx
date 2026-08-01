@@ -10,6 +10,7 @@ import { supabase } from "../../services/supabase";
 import { KomiCompanion } from "../widgets/KomiCompanion";
 import { KomiOnboardingTour } from "../widgets/KomiOnboardingTour";
 import Logo from "../../assets/logo.svg";
+import LogoNoFrame from "../../assets/logo1.svg";
 import { useTranslation } from "react-i18next";
 
 export function AppLayout() {
@@ -240,7 +241,8 @@ export function AppLayout() {
       <div className="flex flex-1 flex-col overflow-hidden w-full">
         {/* Mobile header */}
         <div className="md:hidden flex h-16 shrink-0 items-center justify-between px-4 bg-white dark:bg-komorebi-dark-card border-b border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300">
-          <img src={Logo} alt="Komorebi" className="h-6 object-contain" />
+          <img src={LogoNoFrame} alt="Komorebi" className="h-10 object-contain dark:hidden" />
+          <img src={Logo} alt="Komorebi" className="h-10 object-contain hidden dark:block" />
           <div className="flex items-center gap-2">
             {location.pathname === "/forum" && (
               <button 

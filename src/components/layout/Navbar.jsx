@@ -58,7 +58,7 @@ export function Navbar({ onOpenAuth }) {
           )}
         >
         <Link to="/" className="flex items-center gap-2">
-          <img src={Logo} alt="Komorebi Logo" className="h-6 w-auto" />
+          <img src={Logo} alt="Komorebi Logo" className="h-8 w-auto" />
           <span className="text-white text-xl font-sans font-bold tracking-wide">
             Komorebi
           </span>

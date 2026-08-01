@@ -60,7 +60,7 @@ export function AssessmentHistoryWidget() {
         {/* Left Side: Graphic / Image */}
         <div className="w-full sm:w-[220px] md:w-[280px] flex-shrink-0 aspect-[16/9] sm:aspect-[16/11] rounded-[16px] overflow-hidden relative bg-[#F4F7F5] dark:bg-[#2A3F33] flex items-center justify-center border border-gray-100 dark:border-transparent transition-colors duration-300">
           <img 
-            src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=400&q=80" 
+            src="https://images.unsplash.com/photo-1785590645848-0195ef2076ce?auto=format&fit=crop&w=400&q=80" 
             alt="Assessment Graphic" 
             className="w-full h-full object-cover"
           />

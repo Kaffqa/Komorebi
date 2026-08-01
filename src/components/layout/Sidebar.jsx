@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { cn } from "../../utils/cn";
 import Logo from "../../assets/logo.svg";
+import LogoNoFrame from "../../assets/logo1.svg";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { supabase } from "../../services/supabase";
 import { getLocalDateString } from "../../utils/date";
@@ -97,7 +98,8 @@ export function Sidebar({ onOpenSettings }) {
           "flex items-center gap-3 overflow-hidden transition-all duration-300",
           isCollapsed ? "md:w-0 md:opacity-0 md:pointer-events-none" : "w-auto opacity-100"
         )}>
-          <img src={Logo} alt="Komorebi Logo" className="w-7 h-7 flex-shrink-0" />
+          <img src={LogoNoFrame} alt="Komorebi Logo" className="w-9 h-9 flex-shrink-0 dark:hidden" />
+          <img src={Logo} alt="Komorebi Logo" className="w-9 h-9 flex-shrink-0 hidden dark:block" />
           <span className="text-xl font-bold font-sans text-[#5D8B66] dark:text-[#7DA085] whitespace-nowrap">Komorebi</span>
         </Link>
         <button 
