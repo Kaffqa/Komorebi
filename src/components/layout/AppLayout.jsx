@@ -74,8 +74,8 @@ export function AppLayout() {
     const hour = new Date().getHours();
     const iconClass = "p-1.5 bg-[#7DA085]/10 border border-[#7DA085]/20 rounded-xl text-[#5D8B66] shadow-sm";
     
-    if (hour < 12) return { text: t('topbar.greeting.morning'), icon: <div className={iconClass}><Sun className="w-5 h-5" /></div> };
-    if (hour < 18) return { text: t('topbar.greeting.afternoon'), icon: <div className={iconClass}><CloudSun className="w-5 h-5" /></div> };
+    if (hour >= 4 && hour < 12) return { text: t('topbar.greeting.morning'), icon: <div className={iconClass}><Sun className="w-5 h-5" /></div> };
+    if (hour >= 12 && hour < 18) return { text: t('topbar.greeting.afternoon'), icon: <div className={iconClass}><CloudSun className="w-5 h-5" /></div> };
     return { text: t('topbar.greeting.evening'), icon: <div className={iconClass}><MoonStar className="w-5 h-5" /></div> };
   };
   const greeting = getGreeting();

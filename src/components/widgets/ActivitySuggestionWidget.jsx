@@ -15,7 +15,7 @@ export function ActivitySuggestionWidget() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const calmingActivities = [
-    { id: 1, title: "Guided Meditation", desc: "Take 10 minutes to focus on your breathing and release tension.", image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=150&q=80" },
+    { id: 1, title: "Guided Meditation", desc: "Take 10 minutes to focus on your breathing and release tension.", image: "https://images.unsplash.com/vector-1785690304093-66d9be696abf?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
     { id: 2, title: "Slow Jogging", desc: "A gentle, low-pressure run to clear your mind and naturally release tension.", image: "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=150&q=80" },
     { id: 3, title: "Listening To Podcast", desc: "Let an engaging story or a comforting voice gently shift your focus.", image: "https://images.unsplash.com/photo-1593697821252-0c9137d9fc45?auto=format&fit=crop&w=150&q=80" },
     { id: 10, title: "Deep Breathing", desc: "Practice 4-7-8 breathing technique to quickly lower your stress levels.", image: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=150&q=80" },

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { supabase } from '../../services/supabase';
+import { getLocalDateString } from '../../utils/date';
 
 export function KomiCompanion({ constraintsRef }) {
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ export function KomiCompanion({ constraintsRef }) {
   useEffect(() => {
     async function loadData() {
       if (!user) return;
-      const today = new Date().toISOString().split('T')[0];
+      const today = getLocalDateString();
       
       const { data: moodData } = await supabase
         .from('mood_entries')
