@@ -41,7 +41,9 @@ export default function SpecialistManagement() {
     phone: "",
     email: "",
     expertise: "",
-    status: "Available"
+    status: "Available",
+    lat: "",
+    lng: ""
   });
 
   useEffect(() => {
@@ -87,7 +89,9 @@ export default function SpecialistManagement() {
         phone: "",
         email: "",
         expertise: "",
-        status: "Available"
+        status: "Available",
+        lat: "",
+        lng: ""
       });
     }
     setIsModalOpen(true);
@@ -480,12 +484,23 @@ export default function SpecialistManagement() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2 font-sans pl-1">Location</label>
+                      <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2 font-sans pl-1">Location (City)</label>
                       <input type="text" value={formData.location} onChange={(e) => setFormData({...formData, location: e.target.value})} className="w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-[#5D8B66]/30 focus:border-[#5D8B66] font-sans text-[15px] transition-all" placeholder="e.g. Jakarta Selatan" />
                     </div>
                     <div>
                       <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2 font-sans pl-1">Hospital / Clinic</label>
                       <input type="text" value={formData.hospital} onChange={(e) => setFormData({...formData, hospital: e.target.value})} className="w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-[#5D8B66]/30 focus:border-[#5D8B66] font-sans text-[15px] transition-all" placeholder="e.g. RS Pondok Indah" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2 font-sans pl-1">Latitude (Map)</label>
+                      <input type="number" step="any" value={formData.lat} onChange={(e) => setFormData({...formData, lat: e.target.value})} className="w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-[#5D8B66]/30 focus:border-[#5D8B66] font-sans text-[15px] transition-all" placeholder="e.g. -6.261493" />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2 font-sans pl-1">Longitude (Map)</label>
+                      <input type="number" step="any" value={formData.lng} onChange={(e) => setFormData({...formData, lng: e.target.value})} className="w-full px-5 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-[#5D8B66]/30 focus:border-[#5D8B66] font-sans text-[15px] transition-all" placeholder="e.g. 106.810600" />
                     </div>
                   </div>
 

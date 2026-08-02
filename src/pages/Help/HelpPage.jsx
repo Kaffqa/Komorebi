@@ -1,8 +1,151 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, SlidersHorizontal, ThumbsUp, Briefcase, X, MapPin, Shield, Phone, Mail, ExternalLink } from "lucide-react";
+import { Search, SlidersHorizontal, ThumbsUp, Briefcase, X, MapPin, Shield, Phone, Mail, ExternalLink, LocateFixed } from "lucide-react";
 import { supabase } from "../../services/supabase";
 import { Skeleton } from "../../components/ui/Skeleton";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+import "leaflet-routing-machine";
+
+// Fix for default marker icon in leaflet
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+// Custom Markers to match theme
+const createMarkerIcon = (bgColor) => L.divIcon({
+  className: 'custom-pin',
+  html: `<div style="
+    background-color: ${bgColor};
+    width: 32px;
+    height: 32px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    border: 3px solid white;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  ">
+    <div style="width: 12px; height: 12px; background: white; border-radius: 50%;"></div>
+  </div>`,
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32]
+});
+
+const specialistMarkerIcon = createMarkerIcon('#5D8B66'); // Primary Theme Green
+
+// Pulsing dot for user
+const userMarkerIcon = L.divIcon({
+  className: 'user-location-dot',
+  html: `<div style="
+    width: 16px;
+    height: 16px;
+    background-color: #5D8B66;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 0 rgba(93, 139, 102, 0.7);
+    animation: pulse-green 2s infinite;
+  "></div>
+  <style>
+    @keyframes pulse-green {
+      0% { box-shadow: 0 0 0 0 rgba(93, 139, 102, 0.7); }
+      70% { box-shadow: 0 0 0 12px rgba(93, 139, 102, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(93, 139, 102, 0); }
+    }
+  </style>`,
+  iconSize: [16, 16],
+  iconAnchor: [8, 8],
+  popupAnchor: [0, -8]
+});
+
+// Helper function for distance calculation
+const getDistance = (lat1, lon1, lat2, lon2) => {
+  const R = 6371; // km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const aVal = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(aVal), Math.sqrt(1-aVal));
+  return R * c;
+};
+
+// Routing Component
+function MapRouting({ source, destination }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!source || !destination || !map) return;
+    
+    const routingControl = L.Routing.control({
+      waypoints: [
+        L.latLng(source.lat, source.lng),
+        L.latLng(destination.lat, destination.lng)
+      ],
+      routeWhileDragging: false,
+      addWaypoints: false,
+      show: false,
+      fitSelectedRoutes: false,
+      lineOptions: {
+        styles: [{ color: "#5D8B66", weight: 5, opacity: 0.8 }]
+      },
+      createMarker: function() { return null; } // Cegah marker ganda dari OSRM
+    }).addTo(map);
+
+    // Error handling jika rute tidak ditemukan
+    routingControl.on('routingerror', function(e) {
+      console.warn("Routing error:", e.error);
+      alert("Maaf, rute darat tidak ditemukan atau server navigasi sedang sibuk. Peta akan kembali menampilkan garis lurus.");
+    });
+
+    // Zoom peta secara manual dan presisi ke titik User & Dokter
+    const bounds = L.latLngBounds([
+      [source.lat, source.lng],
+      [destination.lat, destination.lng]
+    ]);
+    map.fitBounds(bounds, { padding: [50, 50] });
+
+    const container = routingControl.getContainer();
+    if (container) {
+      container.style.display = 'none';
+    }
+
+    return () => {
+      try {
+        map.removeControl(routingControl);
+      } catch (e) {}
+    };
+  }, [map, source, destination]);
+
+  return null;
+}
+
+// Komponen Tombol Recenter
+function MapRecenterButton({ location }) {
+  const map = useMap();
+  return (
+    <div className="absolute bottom-4 right-4 z-[1000]">
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          map.flyTo([location.lat, location.lng], 13, { duration: 1.5 });
+        }}
+        className="bg-white dark:bg-komorebi-dark-card border border-gray-100 dark:border-komorebi-dark-border shadow-lg rounded-full w-11 h-11 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-[#5D8B66] dark:hover:text-[#7DA085] hover:bg-gray-50 dark:hover:bg-gray-800 transition-all active:scale-95"
+        title="Kembali ke Lokasi Saya"
+      >
+        <LocateFixed className="w-5 h-5" />
+      </button>
+    </div>
+  );
+}
 
 const SPECIALISTS = [
   {
@@ -18,6 +161,8 @@ const SPECIALISTS = [
     phone: "+62 812-3456-7890",
     email: "dr.rina@example.com",
     location: "Jakarta Selatan",
+    lat: -6.261493,
+    lng: 106.810600,
     hospital: "RS Pondok Indah",
     bio: "Dr. Rina Kusuma adalah psikiater bersertifikat dengan pengalaman lebih dari 15 tahun dalam menangani gangguan kecemasan, depresi, dan trauma. Beliau menerapkan pendekatan holistik yang menggabungkan terapi farmakologi dengan psikoterapi untuk hasil yang optimal.",
   },
@@ -34,6 +179,8 @@ const SPECIALISTS = [
     phone: "+62 813-9876-5432",
     email: "dr.budi@example.com",
     location: "Jakarta Pusat",
+    lat: -6.180511,
+    lng: 106.828383,
     hospital: "Klinik Jiwa Sehat",
     bio: "Dr. Budi Santoso adalah psikolog klinis yang berfokus pada Cognitive Behavioral Therapy (CBT). Beliau membantu klien mengidentifikasi dan mengubah pola pikir negatif yang memengaruhi emosi dan perilaku mereka.",
   },
@@ -50,6 +197,8 @@ const SPECIALISTS = [
     phone: "+62 811-2233-4455",
     email: "dr.sari@example.com",
     location: "Bandung",
+    lat: -6.914744,
+    lng: 107.609810,
     hospital: "RS Hasan Sadikin",
     bio: "Dr. Sari Dewi adalah konsultan psikiater senior yang mengkhususkan diri dalam psikiatri anak dan remaja. Dengan pengalaman 20 tahun, beliau menangani berbagai permasalahan perkembangan mental anak.",
   },
@@ -66,6 +215,8 @@ const SPECIALISTS = [
     phone: "+62 856-7890-1234",
     email: "dr.arief@example.com",
     location: "Yogyakarta",
+    lat: -7.797068,
+    lng: 110.370529,
     hospital: "Klinik Sejiwa",
     bio: "Dr. Arief Wicaksono adalah psikolog klinis yang berfokus pada trauma dan proses berduka. Beliau menggunakan pendekatan EMDR dan mindfulness-based therapy untuk membantu klien melewati pengalaman traumatis.",
   },
@@ -82,6 +233,8 @@ const SPECIALISTS = [
     phone: "+62 878-5566-7788",
     email: "dr.maya@example.com",
     location: "Surabaya",
+    lat: -7.250445,
+    lng: 112.768845,
     hospital: "RS Siloam Surabaya",
     bio: "Dr. Maya Putri adalah psikiater yang berpengalaman menangani gangguan bipolar dan gangguan mood lainnya. Beliau menerapkan pendekatan berbasis bukti dalam perawatan psikiatri dan sangat terampil dalam manajemen obat.",
   },
@@ -98,12 +251,14 @@ const SPECIALISTS = [
     phone: "+62 821-9988-7766",
     email: "dr.hendra@example.com",
     location: "Semarang",
+    lat: -6.966667,
+    lng: 110.416664,
     hospital: "Klinik Pulih Sehat",
     bio: "Dr. Hendra Wijaya adalah psikolog klinis yang fokus pada masalah kecanduan dan pemulihan. Beliau menggunakan terapi motivasi dan program 12 langkah yang telah terbukti efektif.",
   },
 ];
 
-const FILTER_OPTIONS = ["All", "Psikiater", "Psikolog Klinis", "Konsultan Psikiater", "In Your Area", "Online Session"];
+const FILTER_OPTIONS = ["All", "In Your Area", "Psikiater", "Psikolog Klinis", "Konsultan Psikiater", "Online Session"];
 
 export default function HelpPage() {
   const [specialists, setSpecialists] = useState([]);
@@ -111,10 +266,46 @@ export default function HelpPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
   const [selectedSpecialist, setSelectedSpecialist] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [routeTarget, setRouteTarget] = useState(null);
   
   // Sort State
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [activeSort, setActiveSort] = useState("Default");
+
+  // Geolocation effect for "In Your Area"
+  useEffect(() => {
+    if (activeFilter === "In Your Area") {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            let lat = position.coords.latitude;
+            let lng = position.coords.longitude;
+            
+            // Safety Check: If the browser's IP/VPN throws the user outside of Indonesia (e.g. to China/Korea)
+            // we will force the location to Surakarta for this demo so the map doesn't break.
+            // Indonesia is roughly between lat 6 to -11 and lng 95 to 141.
+            if (lat > 6 || lat < -11 || lng < 95 || lng > 141) {
+              lat = -7.556111; // Surakarta
+              lng = 110.831667;
+            }
+
+            setUserLocation({ lat, lng });
+          },
+          (error) => {
+            console.error("Error getting location:", error);
+            // Default to Surakarta if blocked
+            setUserLocation({ lat: -7.556111, lng: 110.831667 });
+          }
+        );
+      } else {
+        setUserLocation({ lat: -7.556111, lng: 110.831667 });
+      }
+    } else {
+      // Optional: reset user location when filter changes
+      setRouteTarget(null);
+    }
+  }, [activeFilter]);
 
   useEffect(() => {
     async function fetchSpecialists() {
@@ -128,7 +319,17 @@ export default function HelpPage() {
         if (error) throw error;
         
         if (data && data.length > 0) {
-          setSpecialists(data);
+          // Merge mock coordinates if DB lacks lat/lng
+          const mergedData = data.map(dbSpecialist => {
+            if (!dbSpecialist.lat || !dbSpecialist.lng) {
+              const mock = SPECIALISTS.find(m => m.name === dbSpecialist.name);
+              if (mock) {
+                return { ...dbSpecialist, lat: mock.lat, lng: mock.lng };
+              }
+            }
+            return dbSpecialist;
+          });
+          setSpecialists(mergedData);
         } else {
           setSpecialists(SPECIALISTS); // Fallback to hardcoded if DB is empty
         }
@@ -154,6 +355,13 @@ export default function HelpPage() {
     
     return matchesSearch && matchesFilter;
   }).sort((a, b) => {
+    if (activeFilter === "In Your Area" && userLocation && a.lat && b.lat) {
+      // Sort by distance if In Your Area is selected
+      const distA = getDistance(userLocation.lat, userLocation.lng, a.lat, a.lng);
+      const distB = getDistance(userLocation.lat, userLocation.lng, b.lat, b.lng);
+      return distA - distB;
+    }
+
     if (activeSort === "Highest Rating") {
       return parseInt(b.rating) - parseInt(a.rating);
     }
@@ -254,80 +462,216 @@ export default function HelpPage() {
         </div>
       </div>
 
-      {/* Specialist Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {loading ? (
-          <>
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="bg-white dark:bg-komorebi-dark-card rounded-[20px] p-4 border border-gray-100 dark:border-komorebi-dark-border shadow-sm flex flex-col h-[320px]">
-                <Skeleton className="w-full h-[180px] rounded-xl mb-4" />
-                <Skeleton className="w-48 h-5 mb-2" />
-                <Skeleton className="w-32 h-4 mb-4" />
-                <div className="flex items-center justify-between mt-auto">
-                  <div className="flex gap-2">
-                    <Skeleton className="w-16 h-8 rounded-full" />
-                    <Skeleton className="w-20 h-8 rounded-full" />
-                  </div>
-                  <Skeleton className="w-16 h-4" />
-                </div>
-              </div>
-            ))}
-          </>
-        ) : filteredSpecialists.length === 0 ? (
-          <div className="col-span-full text-center py-16 bg-white dark:bg-komorebi-dark-card rounded-2xl border border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300">
-            <Search className="w-10 h-10 text-gray-200 dark:text-gray-600 mx-auto mb-3" />
-            <p className="text-gray-400 font-sans">No specialists found.</p>
-          </div>
-        ) : (
-          filteredSpecialists.map((specialist, idx) => (
-            <motion.div
-              key={specialist.id}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05 }}
-              onClick={() => setSelectedSpecialist(specialist)}
-              className="bg-white dark:bg-komorebi-dark-card rounded-[20px] p-4 border border-gray-100 dark:border-komorebi-dark-border shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:shadow-md transition-all cursor-pointer group flex flex-col duration-300"
-            >
-              {/* Image */}
-              <div className="w-full aspect-[4/3] rounded-xl overflow-hidden bg-gray-100 dark:bg-komorebi-dark-bg mb-4 shrink-0 transition-colors duration-300">
-                <img
-                  src={specialist.avatar_url || `https://api.dicebear.com/9.x/notionists/svg?seed=${specialist.name}`}
-                  alt={specialist.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+      {/* Main Content Area */}
+      {activeFilter === "In Your Area" ? (
+        <div className="flex flex-col lg:flex-row gap-6 animate-in fade-in zoom-in-95 duration-500">
+          {/* Map View - Responsive Height */}
+          <div className="w-full lg:flex-1 h-[280px] sm:h-[350px] lg:h-[700px] rounded-2xl overflow-hidden border border-gray-100 dark:border-komorebi-dark-border shadow-sm bg-gray-50 dark:bg-komorebi-dark-card shrink-0 relative transition-all duration-300">
+            
+            {/* Clear Route Button Overlay */}
+            <AnimatePresence>
+              {routeTarget && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000]"
+                >
+                  <button 
+                    onClick={() => setRouteTarget(null)}
+                    className="bg-white dark:bg-komorebi-dark-card border border-gray-200 dark:border-komorebi-dark-border shadow-[0_4px_12px_rgba(0,0,0,0.08)] rounded-full px-5 py-2.5 flex items-center gap-2 text-[13px] font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-all font-sans active:scale-95"
+                  >
+                    <X className="w-4 h-4" />
+                    Hapus Rute
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {userLocation ? (
+              <MapContainer 
+                center={[userLocation.lat, userLocation.lng]} 
+                zoom={12} 
+                style={{ height: '100%', width: '100%', zIndex: 0 }}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
+                
+                {/* User Location Marker */}
+                <Marker position={[userLocation.lat, userLocation.lng]} icon={userMarkerIcon}>
+                  <Popup>Lokasi Anda Saat Ini</Popup>
+                </Marker>
+
+                {/* Draw Route if Target exists */}
+                {routeTarget && (
+                  <MapRouting source={userLocation} destination={routeTarget} />
+                )}
+
+                {/* Recenter Button */}
+                <MapRecenterButton location={userLocation} />
+
+                {/* Specialist Markers */}
+                {filteredSpecialists.map((specialist) => (
+                  specialist.lat && specialist.lng && (
+                    <Marker 
+                      key={specialist.id} 
+                      position={[specialist.lat, specialist.lng]}
+                      icon={specialistMarkerIcon}
+                      eventHandlers={{
+                        click: () => {
+                          setSelectedSpecialist(specialist);
+                        },
+                      }}
+                    >
+                      <Popup>
+                        <div className="text-center font-sans">
+                          <strong className="block mb-1">{specialist.name}</strong>
+                          <span className="text-sm text-gray-500">{specialist.hospital}</span>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  )
+                ))}
+              </MapContainer>
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center">
+                <MapPin className="w-10 h-10 text-gray-300 dark:text-gray-600 mb-4 animate-bounce" />
+                <p className="text-gray-500 dark:text-gray-400 font-sans">Menunggu akses lokasi...</p>
               </div>
+            )}
+          </div>
 
-              {/* Info */}
-              <div className="flex flex-col flex-1 px-1">
-                <h3 className="text-[17px] font-bold text-gray-900 dark:text-white font-sans leading-tight mb-1 transition-colors duration-300">
-                  {specialist.name}
-                </h3>
-                <p className="text-[13px] text-gray-500 dark:text-gray-400 font-sans mb-5 transition-colors duration-300">
-                  {specialist.title}
-                </p>
+          {/* List View inside Split */}
+          <div className="w-full lg:w-[420px] shrink-0 h-[500px] lg:h-[700px] overflow-y-auto pr-2 pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <div className="flex flex-col gap-4">
+              {filteredSpecialists.map((specialist, idx) => {
+                const distance = (userLocation && specialist.lat) 
+                  ? getDistance(userLocation.lat, userLocation.lng, specialist.lat, specialist.lng).toFixed(1)
+                  : null;
 
-                {/* Meta row */}
-                <div className="flex items-center justify-between mt-auto">
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#43674F] bg-white dark:bg-[#32473D] text-[11px] font-medium text-gray-600 dark:text-gray-300 font-sans transition-colors duration-300">
-                      <ThumbsUp className="w-3.5 h-3.5" />
-                      {specialist.rating}
+                return (
+                <motion.div
+                  key={specialist.id}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  onClick={() => setSelectedSpecialist(specialist)}
+                  className="bg-white dark:bg-komorebi-dark-card rounded-[20px] p-4 border border-gray-100 dark:border-komorebi-dark-border shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:shadow-md transition-all cursor-pointer group flex flex-col duration-300"
+                >
+                  <div className="flex gap-4 mb-3">
+                    <div className="w-[80px] h-[80px] rounded-xl overflow-hidden bg-gray-100 dark:bg-komorebi-dark-bg shrink-0 transition-colors duration-300">
+                      <img
+                        src={specialist.avatar_url || `https://api.dicebear.com/9.x/notionists/svg?seed=${specialist.name}`}
+                        alt={specialist.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
                     </div>
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#43674F] bg-white dark:bg-[#32473D] text-[11px] font-medium text-gray-600 dark:text-gray-300 font-sans transition-colors duration-300">
-                      <Briefcase className="w-3.5 h-3.5" />
-                      {specialist.experience}
+                    <div className="flex flex-col justify-center">
+                      <h3 className="text-[15px] font-bold text-gray-900 dark:text-white font-sans leading-tight mb-1 transition-colors duration-300 line-clamp-1">
+                        {specialist.name}
+                      </h3>
+                      <p className="text-[12px] text-gray-500 dark:text-gray-400 font-sans mb-1 transition-colors duration-300">
+                        {specialist.title}
+                      </p>
+                      <div className="flex items-center gap-1.5 text-[11px] font-medium text-[#5D8B66] font-sans">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#5D8B66]"></div>
+                        {specialist.status}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-[11px] font-medium text-gray-500 font-sans">
-                    <div className="w-2 h-2 rounded-full bg-[#5D8B66]"></div>
-                    {specialist.status}
+                  <div className="flex items-center justify-between mt-auto">
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[#B5CCBD] dark:border-[#43674F] bg-white dark:bg-[#32473D] text-[10px] font-medium text-gray-600 dark:text-gray-300 font-sans transition-colors duration-300">
+                      <MapPin className="w-3 h-3" />
+                      {specialist.location}
+                    </div>
+                    {distance && (
+                      <span className="text-[11px] font-bold text-[#5D8B66] dark:text-[#7DA085] font-sans">
+                        📍 {distance} km
+                      </span>
+                    )}
+                  </div>
+                </motion.div>
+              )})}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-in fade-in duration-500">
+          {loading ? (
+            <>
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="bg-white dark:bg-komorebi-dark-card rounded-[20px] p-4 border border-gray-100 dark:border-komorebi-dark-border shadow-sm flex flex-col h-[320px]">
+                  <Skeleton className="w-full h-[180px] rounded-xl mb-4" />
+                  <Skeleton className="w-48 h-5 mb-2" />
+                  <Skeleton className="w-32 h-4 mb-4" />
+                  <div className="flex items-center justify-between mt-auto">
+                    <div className="flex gap-2">
+                      <Skeleton className="w-16 h-8 rounded-full" />
+                      <Skeleton className="w-20 h-8 rounded-full" />
+                    </div>
+                    <Skeleton className="w-16 h-4" />
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))
-        )}
-      </div>
+              ))}
+            </>
+          ) : filteredSpecialists.length === 0 ? (
+            <div className="col-span-full text-center py-16 bg-white dark:bg-komorebi-dark-card rounded-2xl border border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300">
+              <Search className="w-10 h-10 text-gray-200 dark:text-gray-600 mx-auto mb-3" />
+              <p className="text-gray-400 font-sans">No specialists found.</p>
+            </div>
+          ) : (
+            filteredSpecialists.map((specialist, idx) => (
+              <motion.div
+                key={specialist.id}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                onClick={() => setSelectedSpecialist(specialist)}
+                className="bg-white dark:bg-komorebi-dark-card rounded-[20px] p-4 border border-gray-100 dark:border-komorebi-dark-border shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:shadow-md transition-all cursor-pointer group flex flex-col duration-300"
+              >
+                {/* Image */}
+                <div className="w-full aspect-[4/3] rounded-xl overflow-hidden bg-gray-100 dark:bg-komorebi-dark-bg mb-4 shrink-0 transition-colors duration-300">
+                  <img
+                    src={specialist.avatar_url || `https://api.dicebear.com/9.x/notionists/svg?seed=${specialist.name}`}
+                    alt={specialist.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+
+                {/* Info */}
+                <div className="flex flex-col flex-1 px-1">
+                  <h3 className="text-[17px] font-bold text-gray-900 dark:text-white font-sans leading-tight mb-1 transition-colors duration-300">
+                    {specialist.name}
+                  </h3>
+                  <p className="text-[13px] text-gray-500 dark:text-gray-400 font-sans mb-5 transition-colors duration-300">
+                    {specialist.title}
+                  </p>
+
+                  {/* Meta row */}
+                  <div className="flex items-center justify-between mt-auto">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#43674F] bg-white dark:bg-[#32473D] text-[11px] font-medium text-gray-600 dark:text-gray-300 font-sans transition-colors duration-300">
+                        <ThumbsUp className="w-3.5 h-3.5" />
+                        {specialist.rating}
+                      </div>
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#B5CCBD] dark:border-[#43674F] bg-white dark:bg-[#32473D] text-[11px] font-medium text-gray-600 dark:text-gray-300 font-sans transition-colors duration-300">
+                        <Briefcase className="w-3.5 h-3.5" />
+                        {specialist.experience}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-gray-500 font-sans">
+                      <div className="w-2 h-2 rounded-full bg-[#5D8B66]"></div>
+                      {specialist.status}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))
+          )}
+        </div>
+      )}
 
       {/* Specialist Detail Modal */}
       <AnimatePresence>
@@ -445,7 +789,22 @@ export default function HelpPage() {
                     <Phone className="w-4 h-4" />
                     Hubungi Sekarang
                   </a>
-                  <div className="flex gap-2.5">
+
+                  {/* Directions Button (Only show if location is available) */}
+                  {userLocation && selectedSpecialist.lat && (
+                    <button
+                      onClick={() => {
+                        setRouteTarget(selectedSpecialist);
+                        setSelectedSpecialist(null);
+                      }}
+                      className="w-full py-3 bg-[#EAF0EC] border border-[#B5CCBD] hover:bg-[#D4E2D8] active:scale-[0.99] text-[#32473D] rounded-full text-[13px] font-bold transition-all duration-300 font-sans flex items-center justify-center gap-2"
+                    >
+                      <MapPin className="w-4 h-4" />
+                      Lihat Rute Perjalanan
+                    </button>
+                  )}
+                  
+                  <div className="flex gap-2.5 mt-1">
                     <a
                       href={`mailto:${selectedSpecialist.email}`}
                       className="flex-1 py-3 border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg hover:bg-gray-50 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 rounded-full text-[13px] font-semibold transition-colors font-sans flex items-center justify-center gap-2"
