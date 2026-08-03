@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Activity } from "lucide-react";
+import { X, Activity, ChevronDown, Play } from "lucide-react";
 import { useNavigate } from "react-router";
 import { supabase } from "../../services/supabase";
 import { useAuthStore } from "../../stores/useAuthStore";
@@ -16,29 +16,29 @@ export function ActivitySuggestionWidget() {
 
   const calmingActivities = [
     { id: 1, title: "Guided Meditation", desc: "Take 10 minutes to focus on your breathing and release tension.", image: "https://images.unsplash.com/vector-1785690304093-66d9be696abf?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
-    { id: 2, title: "Slow Jogging", desc: "A gentle, low-pressure run to clear your mind and naturally release tension.", image: "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=150&q=80" },
-    { id: 3, title: "Listening To Podcast", desc: "Let an engaging story or a comforting voice gently shift your focus.", image: "https://images.unsplash.com/photo-1593697821252-0c9137d9fc45?auto=format&fit=crop&w=150&q=80" },
-    { id: 10, title: "Deep Breathing", desc: "Practice 4-7-8 breathing technique to quickly lower your stress levels.", image: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=150&q=80" },
-    { id: 11, title: "Warm Bath", desc: "A simple way to physically relax your muscles and let go of the day's worries.", image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=150&q=80" },
-    { id: 12, title: "Ambient Music", desc: "Put on some lo-fi or nature sounds to calm your nervous system.", image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=150&q=80" }
+    { id: 2, title: "Slow Jogging", desc: "A gentle, low-pressure run to clear your mind and naturally release tension.", image: "https://images.unsplash.com/vector-1785734405408-482623ce3576?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+    { id: 3, title: "Listening To Podcast", desc: "Let an engaging story or a comforting voice gently shift your focus.", image: "https://images.unsplash.com/vector-1785734427887-01744fe64696?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+    { id: 10, title: "Deep Breathing", desc: "Practice 4-7-8 breathing technique to quickly lower your stress levels.", image: "https://images.unsplash.com/vector-1785734481291-b9f8be7500a5?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+    { id: 11, title: "Warm Bath", desc: "A simple way to physically relax your muscles and let go of the day's worries.", image: "https://images.unsplash.com/vector-1785734548377-200e6b421411?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+    { id: 12, title: "Ambient Music", desc: "Put on some lo-fi or nature sounds to calm your nervous system.", image: "https://images.unsplash.com/vector-1785734604452-83972c53fc25?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" }
   ];
 
   const productiveActivities = [
-    { id: 4, title: "Learn a New Skill", desc: "Use your high energy to pick up a new hobby or watch a tutorial.", image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=150&q=80" },
-    { id: 5, title: "Organize Workspace", desc: "Declutter your environment to keep your mind sharp and motivated.", image: "https://images.unsplash.com/photo-1585409677983-0f6c41ca9c3b?auto=format&fit=crop&w=150&q=80" },
-    { id: 6, title: "Reading A Book", desc: "Dive deep into a topic you've been wanting to explore.", image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=150&q=80" },
-    { id: 13, title: "Plan Your Week", desc: "Write down your top priorities and schedule them to maintain focus and momentum.", image: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=150&q=80" },
-    { id: 14, title: "Creative Project", desc: "Use your energy to draw, write, or build something you've been putting off.", image: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=150&q=80" },
-    { id: 15, title: "Tackle a Challenge", desc: "Use your peak energy to complete the hardest task on your to-do list.", image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=150&q=80" }
+    { id: 4, title: "Learn a New Skill", desc: "Use your high energy to pick up a new hobby or watch a tutorial.", image: "https://images.unsplash.com/vector-1785734757801-bee28e18bb36?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+    { id: 5, title: "Organize Workspace", desc: "Declutter your environment to keep your mind sharp and motivated.", image: "https://images.unsplash.com/vector-1785734898202-c858e75ed664?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+    { id: 6, title: "Reading A Book", desc: "Dive deep into a topic you've been wanting to explore.", image: "https://images.unsplash.com/vector-1785734911585-510dee0a4d40?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+    { id: 13, title: "Plan Your Week", desc: "Write down your top priorities and schedule them to maintain focus and momentum.", image: "https://images.unsplash.com/vector-1785734903614-5656448aa630?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+    { id: 14, title: "Creative Project", desc: "Use your energy to draw, write, or build something you've been putting off.", image: "https://images.unsplash.com/vector-1785734917550-c084eab0a332?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+    { id: 15, title: "Tackle a Challenge", desc: "Use your peak energy to complete the hardest task on your to-do list.", image: "https://images.unsplash.com/vector-1785734935413-289696d4df74?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" }
   ];
 
   const balancedActivities = [
-    { id: 7, title: "Light Stretching", desc: "Keep your body moving gently to maintain your equilibrium.", image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=150&q=80" },
-    { id: 8, title: "Call a Friend", desc: "Catch up with someone you care about.", image: "https://images.unsplash.com/photo-1516726817505-f5ed825624d8?auto=format&fit=crop&w=150&q=80" },
-    { id: 9, title: "Journaling", desc: "Reflect on your day and write down a few thoughts.", image: "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=150&q=80" },
-    { id: 16, title: "Nature Walk", desc: "Spend 15 minutes walking outside to refresh your mind and get some fresh air.", image: "https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?auto=format&fit=crop&w=150&q=80" },
-    { id: 17, title: "Mindful Break", desc: "Step away from your screen and fully focus on enjoying your favorite beverage.", image: "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=150&q=80" },
-    { id: 18, title: "Digital Detox", desc: "Disconnect from social media for an hour to center yourself.", image: "https://images.unsplash.com/photo-1510442650500-93217e634e4c?auto=format&fit=crop&w=150&q=80" }
+    { id: 7, title: "Light Stretching", desc: "Keep your body moving gently to maintain your equilibrium.", image: "https://images.unsplash.com/vector-1785734635762-2ba4b5285041?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+    { id: 8, title: "Call a Friend", desc: "Catch up with someone you care about.", image: "https://images.unsplash.com/vector-1785734647996-edba79e1cf3d?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+    { id: 9, title: "Journaling", desc: "Reflect on your day and write down a few thoughts.", image: "https://images.unsplash.com/vector-1785734692939-292035056aed?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+    { id: 16, title: "Nature Walk", desc: "Spend 15 minutes walking outside to refresh your mind and get some fresh air.", image: "https://images.unsplash.com/vector-1785734705149-161149da282d?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+    { id: 17, title: "Mindful Break", desc: "Step away from your screen and fully focus on enjoying your favorite beverage.", image: "https://images.unsplash.com/vector-1785734730061-d6e44591553a?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+    { id: 18, title: "Digital Detox", desc: "Disconnect from social media for an hour to center yourself.", image: "https://images.unsplash.com/vector-1785734752702-2704f246eefb?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" }
   ];
 
   const fetchAndSuggest = useCallback(async () => {
@@ -105,21 +105,39 @@ export function ActivitySuggestionWidget() {
         </button>
       </div>
       
-      <div className="space-y-3 overflow-y-auto pr-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-        {activities.slice(0, 3).map((activity) => (
-          <div 
-            key={activity.id} 
-            className="flex items-center p-3 rounded-[16px] border border-gray-100 dark:border-transparent hover:border-gray-200 dark:hover:border-[#32473D] hover:bg-gray-50 dark:hover:bg-black/20 transition-all cursor-pointer group"
-          >
-            <div className="w-[60px] h-[60px] rounded-[12px] overflow-hidden flex-shrink-0">
-              <img src={activity.image} alt={activity.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+      <div className="relative flex-1">
+        <div className="max-h-[285px] space-y-3 overflow-y-auto pr-1 pb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          {activities.map((activity) => (
+            <div 
+              key={activity.id} 
+              onClick={() => handleStartActivity(activity)}
+              className="flex items-center p-3 rounded-[16px] border border-gray-100 dark:border-transparent hover:border-[#B5CCBD] dark:hover:border-[#43674F] hover:bg-gray-50 dark:hover:bg-[#2A3F33] transition-all cursor-pointer group shadow-sm hover:shadow-md"
+            >
+              <div className="w-[60px] h-[60px] rounded-[12px] overflow-hidden flex-shrink-0">
+                <img src={activity.image} alt={activity.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              </div>
+              <div className="ml-4 flex-1 transition-all duration-300">
+                <h4 className="font-semibold text-black dark:text-gray-200 text-[14px] font-sans leading-tight mb-1 transition-colors duration-300 group-hover:text-[#5D8B66] dark:group-hover:text-[#7DA085]">{activity.title}</h4>
+                <p className="text-[12px] text-gray-400 dark:text-komorebi-dark-muted font-sans leading-[1.4] line-clamp-2 transition-colors duration-300">{activity.desc}</p>
+              </div>
+              
+              {/* Quick Action Play Button (Appears on Hover) */}
+              <div className="ml-2 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 flex items-center shrink-0">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),0_2px_4px_rgba(0,0,0,0.1)] text-white">
+                  <Play className="w-3.5 h-3.5 fill-current" />
+                  <span className="text-[12px] font-light tracking-wide">Mulai</span>
+                </div>
+              </div>
             </div>
-            <div className="ml-4 flex-1">
-              <h4 className="font-semibold text-black dark:text-gray-200 text-[14px] font-sans leading-tight mb-1 transition-colors duration-300">{activity.title}</h4>
-              <p className="text-[12px] text-gray-400 dark:text-komorebi-dark-muted font-sans leading-[1.4] line-clamp-2 transition-colors duration-300">{activity.desc}</p>
-            </div>
+          ))}
+        </div>
+        
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white dark:from-komorebi-dark-card to-transparent pointer-events-none flex items-end justify-center pb-1 z-10">
+          <div className="bg-white/80 dark:bg-black/40 backdrop-blur-md rounded-full p-1 shadow-[0_2px_8px_rgba(0,0,0,0.08)] mb-1 animate-bounce border border-gray-100 dark:border-gray-700">
+            <ChevronDown className="w-4 h-4 text-gray-500 dark:text-gray-400" />
           </div>
-        ))}
+        </div>
       </div>
 
       <AnimatePresence>
@@ -159,7 +177,7 @@ export function ActivitySuggestionWidget() {
               </div>
 
               <div className="p-6 sm:p-8 overflow-y-auto space-y-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                {activities.map((activity) => (
+                {[...calmingActivities, ...balancedActivities, ...productiveActivities].map((activity) => (
                   <div key={activity.id} className="flex flex-col sm:flex-row gap-6 p-4 rounded-2xl bg-white dark:bg-komorebi-dark-bg border border-gray-100 dark:border-transparent hover:shadow-md transition-shadow">
                     <div className="w-full sm:w-[120px] h-[160px] sm:h-[120px] rounded-xl overflow-hidden flex-shrink-0">
                       <img src={activity.image} alt={activity.title} className="w-full h-full object-cover" />

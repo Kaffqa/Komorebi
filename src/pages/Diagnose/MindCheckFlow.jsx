@@ -231,13 +231,7 @@ export default function MindCheckFlow() {
                 {/* Subscale badge */}
                 <div className="flex justify-center mb-4">
                   <span
-                    className={`text-[11px] font-semibold uppercase tracking-wider px-3 py-1 rounded-full ${
-                      currentQuestion.subscale === "depression"
-                        ? "bg-blue-50 text-blue-600"
-                        : currentQuestion.subscale === "anxiety"
-                        ? "bg-purple-50 text-purple-600"
-                        : "bg-orange-50 text-orange-600"
-                    }`}
+                    className="text-[11px] font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-[#7DA085]/10 text-[#5D8B66] dark:bg-[#7DA085]/20 dark:text-[#7DA085]"
                   >
                     {currentQuestion.subscale === "depression"
                       ? "Depresi"

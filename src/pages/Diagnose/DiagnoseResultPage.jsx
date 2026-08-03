@@ -12,6 +12,7 @@ import {
   calculateDASS21Scores,
 } from "../../data/diagnoseQuestions";
 import { Skeleton } from "../../components/ui/Skeleton";
+import { MindTree } from "../../components/widgets/MindTree";
 
 export default function DiagnoseResultPage() {
   const { id } = useParams();
@@ -158,24 +159,7 @@ export default function DiagnoseResultPage() {
     },
   ];
 
-  // Donut chart parameters
-  const donutRadius = 76;
-  const donutCircumference = 2 * Math.PI * donutRadius;
-  const gap = 38; // Leaves a visual gap after strokeWidth (38 - 24 = 14px)
-  
-  let L1 = 0;
-  let L2 = 0;
-  let currentGap = 0;
-  
-  if (healthPct >= 100) {
-    L1 = donutCircumference;
-  } else if (healthPct <= 0) {
-    L2 = donutCircumference;
-  } else {
-    currentGap = gap;
-    L1 = Math.max(1, (healthPct / 100) * (donutCircumference - 2 * currentGap));
-    L2 = Math.max(1, donutCircumference - 2 * currentGap - L1);
-  }
+  // Donut chart logic removed in favor of MindTree
 
   return (
     <div className="w-full max-w-7xl mx-auto animate-in fade-in duration-500 pb-10">
@@ -250,63 +234,26 @@ export default function DiagnoseResultPage() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="relative w-[220px] h-[220px] mb-6"
+              className="relative w-full max-w-[280px] mb-6"
             >
-              <svg viewBox="0 0 200 200" className="w-full h-full -rotate-90">
-                {/* Empty circle segment */}
-                {L2 > 0 && (
-                  <motion.circle
-                    cx="100"
-                    cy="100"
-                    r={donutRadius}
-                    fill="none"
-                    stroke="var(--tw-colors-komorebi-dark-bg, #EEF3F0)"
-                    strokeWidth={24}
-                    strokeLinecap="round"
-                    strokeDasharray={`${L2} ${donutCircumference}`}
-                    strokeDashoffset={-(L1 + currentGap)}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.8 }}
-                    className="stroke-[#EEF3F0] dark:stroke-komorebi-dark-bg transition-colors duration-300"
-                  />
-                )}
-                {/* Filled circle segment */}
-                {L1 > 0 && (
-                  <motion.circle
-                    cx="100"
-                    cy="100"
-                    r={donutRadius}
-                    fill="none"
-                    stroke="#43674F"
-                    strokeWidth={24}
-                    strokeLinecap="round"
-                    strokeDasharray={`${L1} ${donutCircumference}`}
-                    initial={{ strokeDashoffset: L1 }}
-                    animate={{ strokeDashoffset: 0 }}
-                    transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
-                  />
-                )}
-              </svg>
-              {/* Center text */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1 }}
-                  className="text-[36px] font-medium text-black dark:text-white font-sans leading-none transition-colors duration-300"
-                >
-                  {healthPct}%
-                </motion.span>
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.2 }}
-                  className="text-[14px] text-gray-500 dark:text-gray-400 font-medium font-sans mt-1 transition-colors duration-300"
-                >
-                  Accuracy
-                </motion.span>
-              </div>
+              <MindTree 
+                depressionLevel={subscales.depression?.level || "Normal"} 
+                anxietyLevel={subscales.anxiety?.level || "Normal"} 
+                stressLevel={subscales.stress?.level || "Normal"} 
+              />
+              
+              {/* Floating Wellness Badge (Overlapping Bottom Left) */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1, type: "spring" }}
+                className="absolute bottom-2 left-2 bg-white dark:bg-komorebi-dark-bg border border-gray-100 dark:border-gray-700 shadow-[0_4px_12px_rgba(0,0,0,0.1)] rounded-full px-3 py-1.5 flex items-center gap-1.5 z-30"
+              >
+                <div className={`w-1.5 h-1.5 rounded-full ${healthPct >= 50 ? 'bg-[#5D8B66]' : 'bg-[#C9854F]'}`} />
+                <span className="text-[11px] font-bold text-gray-700 dark:text-gray-200">
+                  {healthPct}% Wellness
+                </span>
+              </motion.div>
             </motion.div>
 
             {/* Disclaimer */}

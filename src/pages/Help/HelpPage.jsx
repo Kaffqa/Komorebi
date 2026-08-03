@@ -119,8 +119,15 @@ function MapRouting({ source, destination }) {
 
     return () => {
       try {
-        map.removeControl(routingControl);
-      } catch (e) {}
+        if (routingControl) {
+          // Clear waypoints to abort any pending OSRM requests and prevent async draw errors
+          const plan = routingControl.getPlan();
+          if (plan) plan.setWaypoints([]);
+          map.removeControl(routingControl);
+        }
+      } catch (e) {
+        console.warn("Safe cleanup routing:", e);
+      }
     };
   }, [map, source, destination]);
 
