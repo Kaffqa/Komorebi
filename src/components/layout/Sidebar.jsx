@@ -19,11 +19,11 @@ import { useAuthStore } from "../../stores/useAuthStore";
 import { supabase } from "../../services/supabase";
 import { getLocalDateString } from "../../utils/date";
 import { useTranslation } from "react-i18next";
+import { useStreak } from "../../hooks/useStreak";
 
 export function Sidebar({ onOpenSettings }) {
   const location = useLocation();
   const { user } = useAuthStore();
-  const [streak, setStreak] = useState(0);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { t } = useTranslation();
 
@@ -35,55 +35,7 @@ export function Sidebar({ onOpenSettings }) {
     { name: t("sidebar.sharing"), href: "/forum", icon: UsersRound, fillOnActive: true, tourId: "nav-sharing" },
     { name: t("sidebar.help"), href: "/help", icon: HelpCircle, fillOnActive: false, tourId: "nav-help" },
   ];
-
-  useEffect(() => {
-    async function calculateStreak() {
-      if (!user) return;
-
-      const { data: entries } = await supabase
-        .from('journal_entries')
-        .select('entry_date')
-        .eq('user_id', user.id)
-        .order('entry_date', { ascending: false })
-        .limit(365);
-
-      if (!entries || entries.length === 0) {
-        setStreak(0);
-        return;
-      }
-
-      const entryDates = new Set(entries.map(e => e.entry_date));
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const todayStr = getLocalDateString(today);
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayStr = getLocalDateString(yesterday);
-
-      let checkDate;
-      if (entryDates.has(todayStr)) {
-        checkDate = new Date(today);
-      } else if (entryDates.has(yesterdayStr)) {
-        checkDate = new Date(yesterday);
-      } else {
-        setStreak(0);
-        return;
-      }
-
-      let count = 0;
-      while (entryDates.has(getLocalDateString(checkDate))) {
-        count++;
-        checkDate.setDate(checkDate.getDate() - 1);
-      }
-      setStreak(count);
-    }
-
-    calculateStreak();
-
-    const handler = () => calculateStreak();
-    window.addEventListener('journal-updated', handler);
-    return () => window.removeEventListener('journal-updated', handler);
-  }, [user]);
+  const streak = useStreak();
 
   return (
     <div className={cn(

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { supabase } from '../../services/supabase';
 import { getLocalDateString } from '../../utils/date';
+import { useStreak } from '../../hooks/useStreak';
 
 export function KomiCompanion({ constraintsRef }) {
   const navigate = useNavigate();
@@ -13,7 +14,14 @@ export function KomiCompanion({ constraintsRef }) {
   const [isDragging, setIsDragging] = useState(false);
   
   const { user } = useAuthStore();
+  const streak = useStreak();
   const [moodScore, setMoodScore] = useState(3); // Default 3 (Neutral)
+  
+  // Determine Stage
+  let stage = 1;
+  if (streak >= 14) stage = 4;
+  else if (streak >= 7) stage = 3;
+  else if (streak >= 3) stage = 2;
   const [isFrozen, setIsFrozen] = useState(false);
   
   // Micro-feature States
@@ -112,35 +120,65 @@ export function KomiCompanion({ constraintsRef }) {
 
   if (isFrozen) {
     themeColors = {
-      highlight: "#E0F7FA",
-      base: "#80DEEA",
-      shadow: "#006064",
-      glow: "#B2EBF2",
-      stemStart: "#B2EBF2",
-      stemEnd: "#00838F",
-      limbsDark: "#006064",
-      limbsLight: "#4DD0E1",
-      blush: "#B2EBF2",
-      faceDark: "#004D40",
-      faceLight: "#00695C"
+      highlight: "#FFFFFF",
+      base: "#BBDEFB",
+      shadow: "#1976D2",
+      glow: "#E3F2FD",
+      stemStart: "#E3F2FD",
+      stemEnd: "#1976D2",
+      limbsDark: "#0D47A1",
+      limbsLight: "#64B5F6",
+      blush: "#FFFFFF",
+      faceDark: "#0D47A1",
+      faceLight: "#1565C0"
     };
     moodFace = "frozen";
-  } else if (moodScore <= 2) {
+  } else if (moodScore === 1) { // Bad (Red)
     themeColors = { 
-      highlight: "#82B1FF", 
-      base: "#448AFF", 
-      shadow: "#1A237E", 
-      glow: "#448AFF",
-      stemStart: "#82B1FF",
-      stemEnd: "#1A237E",
-      limbsDark: "#283593",
-      limbsLight: "#5C6BC0",
-      blush: "#82B1FF",
-      faceDark: "#08103A",
-      faceLight: "#1A237E"
+      highlight: "#E53935", 
+      base: "#C62828", 
+      shadow: "#8E0000", 
+      glow: "#D32F2F",
+      stemStart: "#E53935",
+      stemEnd: "#8E0000",
+      limbsDark: "#7F0000",
+      limbsLight: "#D32F2F",
+      blush: "#FF8A80",
+      faceDark: "#3E0000",
+      faceLight: "#8E0000"
+    };
+    moodFace = isHovered ? "normal" : "angry";
+  } else if (moodScore === 2) { // Not Bad (Brown/Dry)
+    themeColors = { 
+      highlight: "#BCAAA4", 
+      base: "#8D6E63", 
+      shadow: "#4E342E", 
+      glow: "#A1887F",
+      stemStart: "#D7CCC8",
+      stemEnd: "#5D4037",
+      limbsDark: "#3E2723",
+      limbsLight: "#795548",
+      blush: "#D7CCC8",
+      faceDark: "#26140F",
+      faceLight: "#5D4037"
     };
     moodFace = isHovered ? "happy" : "sad";
-  } else if (moodScore >= 4) {
+  } else if (moodScore === 4) { // Good (Bright Green)
+    themeColors = { 
+      highlight: "#CCFF90", 
+      base: "#B2FF59", 
+      shadow: "#64DD17", 
+      glow: "#B2FF59",
+      stemStart: "#F4FF81",
+      stemEnd: "#76FF03",
+      limbsDark: "#33691E",
+      limbsLight: "#76FF03",
+      blush: "#F4FF81",
+      faceDark: "#1B5E20",
+      faceLight: "#33691E"
+    };
+    moodFace = "happy";
+  } else if (moodScore === 5) { // Very Good (Yellow/Gold)
     themeColors = { 
       highlight: "#FFF59D", 
       base: "#FDD835", 
@@ -290,6 +328,26 @@ export function KomiCompanion({ constraintsRef }) {
     navigate('/chat');
   };
 
+  // Shape Shifting Evolution Paths
+  const shapePaths = {
+    1: { // Seed
+      body: "M 60 10 C 105 15, 105 90, 60 90 C 15 90, 15 15, 60 10 Z",
+      specular: "M 60 10 C 15 15, 15 90, 60 90 C 40 90, 35 45, 60 20 Z"
+    },
+    2: { // Leaf
+      body: "M 60 10 C 110 35, 120 95, 80 120 Q 60 130, 40 120 C 0 95, 10 35, 60 10 Z",
+      specular: "M 60 10 C 10 35, 0 95, 40 120 Q 50 125, 60 125 C 25 105, 20 40, 60 15 Z"
+    },
+    3: { // Lotus Blossom
+      body: "M 60 10 Q 75 30, 90 20 C 130 50, 110 120, 80 120 Q 60 130, 40 120 C 10 120, -10 50, 30 20 Q 45 30, 60 10 Z",
+      specular: "M 60 10 Q 45 30, 30 20 C -10 50, 10 120, 40 120 Q 50 125, 60 125 C 25 105, 10 40, 60 15 Z"
+    },
+    4: { // Avocado Shape (Fatter top)
+      body: "M 60 15 C 75 15, 85 25, 85 40 C 85 60, 105 70, 105 95 C 105 120, 85 135, 60 135 C 35 135, 15 120, 15 95 C 15 70, 35 60, 35 40 C 35 25, 45 15, 60 15 Z",
+      specular: "M 60 15 C 45 15, 35 25, 35 40 C 35 60, 15 70, 15 95 C 15 120, 35 135, 60 135 C 35 120, 25 70, 60 20 Z"
+    }
+  };
+
   return (
     <div className="fixed z-[99] bottom-4 right-4 md:bottom-10 md:right-10 w-16 h-16 md:w-24 md:h-24 scale-[0.65] md:scale-100 origin-bottom-right">
       <motion.div
@@ -359,9 +417,10 @@ export function KomiCompanion({ constraintsRef }) {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: -20 }}
-                exit={{ opacity: 0 }}
+                exit={{ opacity: 0, transition: { duration: 0.3, repeat: 0 } }}
                 transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
-                className="absolute -top-8 right-2 text-2xl font-bold text-[#A8D8B6] select-none pointer-events-none drop-shadow-md z-50"
+                className="absolute -top-8 right-2 text-2xl font-bold select-none pointer-events-none drop-shadow-md z-50 transition-colors duration-1000"
+                style={{ color: themeColors.base }}
               >
                 Zzz
               </motion.div>
@@ -395,7 +454,7 @@ export function KomiCompanion({ constraintsRef }) {
         ></div>
         
         {/* The Character (3D Leaf Shape) */}
-        <svg width="88" height="110" viewBox="0 -10 120 150" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative drop-shadow-[0_15px_25px_rgba(42,74,49,0.5)] transition-all duration-1000">
+        <svg width="88" height="110" viewBox="0 -10 120 150" fill="none" xmlns="http://www.w3.org/2000/svg" className={`relative drop-shadow-[0_15px_25px_rgba(42,74,49,0.5)] transition-all duration-1000 ${stage === 1 ? 'scale-[0.85] translate-y-3' : 'scale-100'}`}>
           <defs>
             <radialGradient id="leafGradient" cx="35%" cy="30%" r="70%" fx="35%" fy="30%">
               <stop offset="0%" stopColor={themeColors.highlight} className="transition-colors duration-1000" />
@@ -409,17 +468,69 @@ export function KomiCompanion({ constraintsRef }) {
             </linearGradient>
           </defs>
 
-          {/* Stem/Vine on top */}
-          <path d="M60 10 C50 -5, 35 -5, 30 10 C25 25, 45 25, 45 15" stroke="url(#leafStem)" strokeWidth="6" strokeLinecap="round" fill="none" />
+          {/* Stage 4 Halo */}
+          {stage >= 4 && (
+            <g className="halo transition-all duration-1000">
+              <ellipse cx="60" cy="-5" rx="35" ry="12" fill="none" stroke="#FFD54F" strokeWidth="3" opacity="0.7" />
+              <ellipse cx="60" cy="-5" rx="30" ry="9" fill="none" stroke="#FFF59D" strokeWidth="2" opacity="0.9" />
+            </g>
+          )}
 
-          {/* Main 3D Leaf Body (Plump Teardrop with rounded bottom) */}
-          <path d="M 60 10 C 110 35, 120 95, 80 120 Q 60 130, 40 120 C 0 95, 10 35, 60 10 Z" fill="url(#leafGradient)" />
+          {/* Stem/Vine on top */}
+          {stage !== 4 && (
+            <path d="M60 10 C50 -5, 35 -5, 30 10 C25 25, 45 25, 45 15" stroke="url(#leafStem)" strokeWidth="6" strokeLinecap="round" fill="none" />
+          )}
+
+          {/* Stage 3 Flower */}
+          {stage === 3 && (
+            <g className="flower transition-all duration-1000" transform="translate(35, 5) scale(0.9)">
+              <circle cx="0" cy="-8" r="6" fill="#FF8A80" />
+              <circle cx="8" cy="-2" r="6" fill="#FF8A80" />
+              <circle cx="5" cy="7" r="6" fill="#FF8A80" />
+              <circle cx="-5" cy="7" r="6" fill="#FF8A80" />
+              <circle cx="-8" cy="-2" r="6" fill="#FF8A80" />
+              <circle cx="0" cy="0" r="4" fill="#FFD180" />
+            </g>
+          )}
+
+          {/* Main Body (Dynamic Shape-Shifting) */}
+          <motion.path 
+            d={shapePaths[stage].body}
+            initial={{ d: shapePaths[stage].body }}
+            fill="url(#leafGradient)" 
+            animate={{ d: shapePaths[stage].body }}
+            transition={{ duration: 1.5, type: "spring", bounce: 0.4 }}
+          />
           
-          {/* 3D Glossy Specular Highlight (Left edge crescent) */}
-          <path d="M 60 10 C 10 35, 0 95, 40 120 Q 50 125, 60 125 C 25 105, 20 40, 60 15 Z" fill="white" opacity="0.35" />
+          {/* 3D Glossy Specular Highlight */}
+          <motion.path 
+            d={shapePaths[stage].specular}
+            initial={{ d: shapePaths[stage].specular }}
+            fill="white" 
+            opacity="0.35" 
+            animate={{ d: shapePaths[stage].specular }}
+            transition={{ duration: 1.5, type: "spring", bounce: 0.4 }}
+          />
+
+          {/* Avocado Pit (Only Stage 4) */}
+          <AnimatePresence>
+            {stage === 4 && (
+              <motion.circle 
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0 }}
+                transition={{ duration: 1, type: "spring", delay: 0.2 }}
+                cx="60" cy="98" r="24"
+                fill={themeColors.shadow} 
+                stroke={themeColors.faceDark} 
+                strokeWidth="2" 
+                className="transition-colors duration-1000 shadow-inner"
+              />
+            )}
+          </AnimatePresence>
           
-          {/* Leaf Organic Veins (Subtle) */}
-          <g stroke="#132B18" strokeWidth="2.5" strokeLinecap="round" opacity="0.15" fill="none">
+          {/* Leaf Organic Veins (Subtle) - Only for Stage 2 */}
+          <g stroke="#132B18" strokeWidth="2.5" strokeLinecap="round" opacity={stage === 2 ? 0.15 : 0} fill="none" className="transition-opacity duration-1000">
             {/* Top Central Vein */}
             <path d="M 60 10 Q 59 25 60 45" />
             {/* Top Left Veins */}
@@ -436,15 +547,30 @@ export function KomiCompanion({ constraintsRef }) {
           </g>
 
           {/* Legs */}
-          <path d="M40 125 Q45 138 35 138" stroke={themeColors.limbsDark} className="transition-colors duration-1000" strokeWidth="6" strokeLinecap="round" />
-          <path d="M80 125 Q75 138 85 138" stroke={themeColors.limbsDark} className="transition-colors duration-1000" strokeWidth="6" strokeLinecap="round" />
+          {stage > 1 && (
+            <>
+              <path d="M40 125 Q45 138 35 138" stroke={themeColors.limbsDark} className="transition-colors duration-1000" strokeWidth="6" strokeLinecap="round" />
+              <path d="M80 125 Q75 138 85 138" stroke={themeColors.limbsDark} className="transition-colors duration-1000" strokeWidth="6" strokeLinecap="round" />
+            </>
+          )}
 
           {/* Arms (Small and cute) */}
-          <path d="M15 85 Q0 95 15 105" stroke={themeColors.limbsLight} className="transition-colors duration-1000" strokeWidth="5" strokeLinecap="round" fill="none" />
-          <path d="M105 85 Q120 95 105 105" stroke={themeColors.limbsLight} className="transition-colors duration-1000" strokeWidth="5" strokeLinecap="round" fill="none" />
+          {stage > 1 && (
+            <>
+              <path d="M15 85 Q0 95 15 105" stroke={themeColors.limbsLight} className="transition-colors duration-1000" strokeWidth="5" strokeLinecap="round" fill="none" />
+              <path d="M105 85 Q120 95 105 105" stroke={themeColors.limbsLight} className="transition-colors duration-1000" strokeWidth="5" strokeLinecap="round" fill="none" />
+            </>
+          )}
 
           {/* Face */}
-          <g className="face-group">
+          <motion.g 
+            className="face-group"
+            animate={{ 
+              y: stage === 1 ? -25 : (stage >= 4 ? -22 : 0),
+              scale: stage === 1 ? 0.9 : (stage >= 4 ? 0.85 : 1)
+            }}
+            transition={{ duration: 1.5, type: "spring" }}
+          >
             {isDragging ? (
               // Dizzy Eyes (Swirls or X_X)
               <g className="dizzy-eyes">
@@ -519,6 +645,33 @@ export function KomiCompanion({ constraintsRef }) {
                   <path d="M55 95 Q60 88 65 95" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
                 )}
               </g>
+            ) : moodFace === "angry" ? (
+              <g className="angry-eyes">
+                {isSleeping ? (
+                  <>
+                    <path d="M40 72 L50 75" stroke={themeColors.faceDark} strokeWidth="4" strokeLinecap="round" />
+                    <path d="M70 75 L80 72" stroke={themeColors.faceDark} strokeWidth="4" strokeLinecap="round" />
+                  </>
+                ) : (
+                  <>
+                    <circle cx="48" cy="74" r="4.5" fill={themeColors.faceDark} />
+                    <circle cx="72" cy="74" r="4.5" fill={themeColors.faceDark} />
+                    <circle cx="49" cy="72" r="2" fill="white" />
+                    <circle cx="71" cy="72" r="2" fill="white" />
+                  </>
+                )}
+                {/* Angry eyebrows pointing down hard */}
+                <path d="M35 62 L52 70" stroke={themeColors.faceDark} strokeWidth="4" strokeLinecap="round" />
+                <path d="M85 62 L68 70" stroke={themeColors.faceDark} strokeWidth="4" strokeLinecap="round" />
+                {/* Angry mouth */}
+                {isSleeping ? (
+                  <circle cx="60" cy="90" r="2.5" fill={themeColors.faceLight} />
+                ) : (
+                  <path d="M55 92 L60 88 L65 92" stroke={themeColors.faceDark} strokeWidth="3" strokeLinecap="round" fill="none" />
+                )}
+                {/* Angry vein symbol */}
+                <path d="M78 45 L82 42 L85 48 L82 51 Z M82 42 L86 40 L89 46 M82 51 L85 54 L88 48" stroke={themeColors.faceLight} strokeWidth="1.5" fill="none" opacity="0.6"/>
+              </g>
             ) : (
               <g className="normal-eyes">
                 {isSleeping ? (
@@ -564,24 +717,38 @@ export function KomiCompanion({ constraintsRef }) {
                 <path d="M68 58 Q75 50 85 55" stroke={themeColors.faceLight} strokeWidth="3" strokeLinecap="round" fill="none" />
               </g>
             )}
-          </g>
+          </motion.g>
 
           {/* Ice Block Overlay */}
-          {isFrozen && (
-            <g className="ice-block">
-              {/* Ice polygon covering the whole body */}
-              <path d="M 20 0 L 100 10 L 115 60 L 100 145 L 20 140 L -5 80 Z" fill="white" opacity="0.25" stroke="#B2EBF2" strokeWidth="3" strokeLinejoin="round" />
-              {/* Highlights on ice */}
-              <path d="M 25 10 L 90 20 L 105 60" fill="none" stroke="white" strokeWidth="5" opacity="0.6" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M 5 80 L 25 130" fill="none" stroke="white" strokeWidth="3" opacity="0.6" strokeLinecap="round" />
-              <path d="M 80 130 L 95 90" fill="none" stroke="white" strokeWidth="2" opacity="0.4" strokeLinecap="round" />
-            </g>
-          )}
+          <AnimatePresence>
+            {isFrozen && (
+              <motion.path 
+                d={shapePaths[stage].body}
+                initial={{ opacity: 0, scale: 0.8, d: shapePaths[stage].body }}
+                animate={{ opacity: 0.4, scale: 1.15, d: shapePaths[stage].body }}
+                exit={{ opacity: 0, scale: 0.8, d: shapePaths[stage].body }}
+                transition={{ duration: 1.5, type: "spring", bounce: 0.4 }}
+                fill="white" 
+                stroke="#FFFFFF" 
+                strokeWidth="4" 
+                className="pointer-events-none drop-shadow-[0_0_15px_rgba(227,242,253,0.8)]"
+                style={{ originX: "50%", originY: "50%" }}
+              />
+            )}
+          </AnimatePresence>
 
           {/* Interaction Shadow at the bottom */}
           <ellipse cx="60" cy="135" rx="25" ry="4" fill="#5D8B66" opacity="0.4" />
         </svg>
 
+        {/* Stage 4 Floating Fireflies */}
+        {stage >= 4 && (
+          <>
+            <motion.div animate={{ y: [-10, -30, -10], x: [0, 10, 0], opacity: [0.2, 0.8, 0.2] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} className="absolute top-0 left-2 w-2 h-2 bg-yellow-300 rounded-full blur-[1px]"></motion.div>
+            <motion.div animate={{ y: [0, -25, 0], x: [0, -15, 0], opacity: [0.3, 0.9, 0.3] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="absolute top-10 right-0 w-2.5 h-2.5 bg-yellow-200 rounded-full blur-[1px]"></motion.div>
+          </>
+        )}
+        
         {/* Small floating particles */}
         <motion.div animate={{ y: [-5, -20], opacity: [0, 1, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 0.5 }} className="absolute top-4 left-4 w-2 h-2 bg-green-300 rounded-full"></motion.div>
         <motion.div animate={{ y: [-5, -30], opacity: [0, 1, 0] }} transition={{ duration: 2.5, repeat: Infinity, delay: 1 }} className="absolute top-10 right-4 w-3 h-3 bg-emerald-200 rounded-full blur-[1px]"></motion.div>
