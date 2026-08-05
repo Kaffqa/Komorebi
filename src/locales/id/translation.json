@@ -166,5 +166,8 @@
       "severe": "Anda sedang menghadapi tantangan emosional yang signifikan. Kami sangat menyarankan Anda berkonsultasi dengan profesional.",
       "extremely_severe": "Anda mengalami tingkat tekanan yang sangat tinggi. Harap segera cari bantuan profesional."
     }
+  },
+  "common": {
+    "start": "Mulai"
   }
 }

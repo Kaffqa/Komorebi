@@ -291,11 +291,44 @@ export function KomiOnboardingTour({ onComplete }) {
 
   const getBubbleStyle = () => {
     if (isCenter || isMobile) {
+      let topVal = isMobile ? 'auto' : `${komiPos.y + 90}px`;
+      let bottomVal = isMobile ? '24px' : 'auto';
+
+      if (isMobile && targetRect && !isCenter) {
+        const spaceAbove = targetRect.top;
+        const spaceBelow = window.innerHeight - (targetRect.top + targetRect.height);
+        const bubbleHeight = 240; // Estimasi tinggi maksimum kotak pesan + jarak
+
+        if (spaceBelow >= spaceAbove) {
+          // Taruh di bawah elemen
+          if (spaceBelow < bubbleHeight) {
+            // Jika tidak muat, paksa mentok bawah layar
+            topVal = 'auto';
+            bottomVal = '24px';
+          } else {
+            // Tempel presisi di bawah elemen
+            topVal = `${targetRect.top + targetRect.height + 16}px`;
+            bottomVal = 'auto';
+          }
+        } else {
+          // Taruh di atas elemen
+          if (spaceAbove < bubbleHeight + 60) {
+            // Jika tidak muat, paksa mentok atas layar (sisakan 80px untuk Komi di atas bubble)
+            topVal = '80px';
+            bottomVal = 'auto';
+          } else {
+            // Tempel presisi di atas elemen
+            topVal = 'auto';
+            bottomVal = `${window.innerHeight - targetRect.top + 16}px`;
+          }
+        }
+      }
+
       return {
         position: 'fixed',
         left: '50%',
-        bottom: isMobile ? '24px' : 'auto',
-        top: isMobile ? 'auto' : komiPos.y + 90,
+        bottom: bottomVal,
+        top: topVal,
         maxWidth: '380px',
         width: 'calc(100vw - 32px)',
       };
@@ -342,23 +375,25 @@ export function KomiOnboardingTour({ onComplete }) {
           )}
         </div>
 
-        {/* Komi Character (Animated/Flying) */}
-        <motion.div
-          animate={{
-            x: isCenter ? komiPos.x - 60 : komiPos.x - 50,
-            y: isCenter ? komiPos.y - 75 : komiPos.y - 40,
-          }}
-          transition={{ type: "spring", stiffness: 80, damping: 18, mass: 1.2 }}
-          className="fixed z-[10002]"
-          style={{ top: 0, left: 0, pointerEvents: 'none' }}
-        >
+        {/* Komi Character (Animated/Flying) - Only for Desktop or Center Step */}
+        {(!isMobile || isCenter) && (
           <motion.div
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+            animate={{
+              x: isCenter ? komiPos.x - 60 : komiPos.x - 50,
+              y: isCenter ? komiPos.y - 75 : komiPos.y - 40,
+            }}
+            transition={{ type: "spring", stiffness: 80, damping: 18, mass: 1.2 }}
+            className="fixed z-[10002]"
+            style={{ top: 0, left: 0, pointerEvents: 'none' }}
           >
-            <MiniKomi size={isCenter ? 120 : 80} />
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <MiniKomi size={isCenter ? 120 : 80} />
+            </motion.div>
           </motion.div>
-        </motion.div>
+        )}
 
         {/* Speech Bubble / Info Card */}
         <motion.div
@@ -367,9 +402,21 @@ export function KomiOnboardingTour({ onComplete }) {
           animate={{ opacity: 1, y: 0, scale: 1, x: (isCenter || isMobile) ? "-50%" : 0 }}
           exit={{ opacity: 0, y: -10, scale: 0.9, x: (isCenter || isMobile) ? "-50%" : 0 }}
           transition={{ delay: 0.3, duration: 0.4, ease: "easeOut" }}
-          className="z-[10003]"
+          className="z-[10003] relative"
           style={{ ...getBubbleStyle(), pointerEvents: 'auto' }}
         >
+          {/* Komi Riding on Bubble (Mobile Only) */}
+          {isMobile && !isCenter && (
+            <div className="absolute -top-[65px] left-1/2 -translate-x-1/2 pointer-events-none z-10">
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <MiniKomi size={75} />
+              </motion.div>
+            </div>
+          )}
+
           <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] shadow-2xl border border-gray-100 dark:border-transparent overflow-hidden relative transition-colors duration-300">
             {/* Progress bar (Absolute to guarantee perfect clipping by parent) */}
             <div className="absolute top-0 left-0 right-0 h-1.5 bg-gray-100 dark:bg-komorebi-dark-bg transition-colors duration-300">

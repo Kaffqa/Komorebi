@@ -125,7 +125,7 @@ export function ActivitySuggestionWidget() {
               <div className="ml-2 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 flex items-center shrink-0">
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),0_2px_4px_rgba(0,0,0,0.1)] text-white">
                   <Play className="w-3.5 h-3.5 fill-current" />
-                  <span className="text-[12px] font-light tracking-wide">Mulai</span>
+                  <span className="text-[12px] font-light tracking-wide">{t('common.start', 'Start')}</span>
                 </div>
               </div>
             </div>

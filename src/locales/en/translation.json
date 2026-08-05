@@ -166,5 +166,8 @@
       "severe": "You're going through significant emotional challenges. We strongly recommend consulting a professional.",
       "extremely_severe": "You're experiencing very high levels of distress. Please seek professional help immediately."
     }
+  },
+  "common": {
+    "start": "Start"
   }
 }
