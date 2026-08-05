@@ -169,5 +169,65 @@
   },
   "common": {
     "start": "Mulai"
+  },
+  "helpPage": {
+    "outOfRange": "Di Luar Jangkauan",
+    "outOfRangeDesc": "Saat ini belum ada praktisi yang tersedia dalam radius {{radius}} km dari lokasi Anda. Berikut adalah daftar rekomendasi praktisi terbaik dari kota lain.",
+    "comingSoon": "Segera Hadir!",
+    "comingSoonDesc": "Fitur konsultasi langsung di dalam aplikasi saat ini sedang dalam tahap akhir pengembangan. Nantikan segera pembaruan dari kami!",
+    "gotIt": "Mengerti"
+  },
+  "mindCheckFlow": {
+    "title": "Mind Check-In",
+    "description": "Anda akan menjawab 21 pertanyaan singkat untuk mengukur tingkat kesehatan mental Anda saat ini. Jawab dengan jujur berdasarkan pengalaman Anda dalam 1 minggu terakhir.",
+    "questions": "Pertanyaan",
+    "minutes": "Menit",
+    "standard": "Standar Internasional",
+    "disclaimer": "Hasil ini bersifat informatif dan bukan diagnosis medis. Jika gejala Anda berlanjut, silakan konsultasi dengan profesional kesehatan mental.",
+    "startNow": "Mulai Sekarang"
+  },
+  "helpPage": {
+    "outOfRange": "Di Luar Jangkauan",
+    "outOfRangeDesc": "Saat ini tidak ada praktisi yang tersedia dalam radius {{radius}} km dari lokasi Anda. Berikut adalah daftar praktisi yang direkomendasikan dari kota lain.",
+    "comingSoon": "Segera Hadir!",
+    "comingSoonDesc": "Jadwal konsultasi akan segera dibuka! Mohon pantau terus pembaruan aplikasi kami.",
+    "gotIt": "Mengerti",
+    "nearbySpecialists": "Praktisi Terdekat"
+  },
+  "dass21": {
+    "options": {
+      "never": { "label": "Tidak pernah", "desc": "Tidak sesuai dengan saya sama sekali" },
+      "sometimes": { "label": "Kadang-kadang", "desc": "Sesuai dengan saya sampai tingkat tertentu" },
+      "often": { "label": "Sering", "desc": "Sesuai dengan saya sampai tingkat yang cukup besar" },
+      "almostAlways": { "label": "Sangat sering", "desc": "Sangat sesuai dengan saya" }
+    },
+    "subscale": {
+      "depression": "Depresi",
+      "anxiety": "Kecemasan",
+      "stress": "Stres"
+    },
+    "questions": {
+      "q1": "Saya merasa sulit untuk bersantai atau menenangkan diri.",
+      "q2": "Saya menyadari mulut saya terasa kering.",
+      "q3": "Saya merasa tidak bisa merasakan perasaan positif sama sekali.",
+      "q4": "Saya mengalami kesulitan bernapas (misalnya napas cepat, sesak tanpa aktivitas fisik).",
+      "q5": "Saya merasa sulit untuk memulai sesuatu atau mengambil inisiatif.",
+      "q6": "Saya cenderung bereaksi berlebihan terhadap situasi tertentu.",
+      "q7": "Saya mengalami gemetar (misalnya pada tangan).",
+      "q8": "Saya merasa menggunakan banyak energi untuk merasa cemas.",
+      "q9": "Saya khawatir terhadap situasi di mana saya mungkin panik dan mempermalukan diri sendiri.",
+      "q10": "Saya merasa tidak ada hal yang bisa saya harapkan lagi.",
+      "q11": "Saya merasa gelisah dan tidak bisa diam.",
+      "q12": "Saya merasa sulit untuk rileks.",
+      "q13": "Saya merasa sedih dan tertekan.",
+      "q14": "Saya tidak bisa mentoleransi hal-hal yang menghalangi saya menyelesaikan sesuatu.",
+      "q15": "Saya merasa hampir panik.",
+      "q16": "Saya tidak antusias terhadap apa pun.",
+      "q17": "Saya merasa tidak berharga sebagai seorang manusia.",
+      "q18": "Saya merasa sangat mudah tersinggung.",
+      "q19": "Saya menyadari detak jantung saya cepat padahal tidak melakukan aktivitas fisik.",
+      "q20": "Saya merasa ketakutan tanpa alasan yang jelas.",
+      "q21": "Saya merasa bahwa hidup ini tidak ada maknanya."
+    }
   }
 }

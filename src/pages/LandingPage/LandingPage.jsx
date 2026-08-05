@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation } from "react-router";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "../../components/layout/Navbar";
 import { Button } from "../../components/ui/Button";
@@ -119,9 +120,27 @@ export default function LandingPage() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState("login");
   const [activeFaq, setActiveFaq] = useState(null);
-  const location = useLocation();
+
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
 
   const scrollContainerRef = useRef(null);
+
+  const handleTestimonialScroll = () => {
+    if (!scrollContainerRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+    setShowLeftArrow(scrollLeft > 10);
+    // Use a small buffer to account for rounding errors on high-DPI screens
+    setShowRightArrow(Math.ceil(scrollLeft + clientWidth) < scrollWidth - 10);
+  };
+
+  useEffect(() => {
+    handleTestimonialScroll(); // Initial check
+    window.addEventListener('resize', handleTestimonialScroll);
+    return () => window.removeEventListener('resize', handleTestimonialScroll);
+  }, []);
+
+  const location = useLocation();
 
   useEffect(() => {
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -450,25 +469,60 @@ export default function LandingPage() {
           </p>
         </div>
         
-        <div 
-          ref={scrollContainerRef}
-          className="flex overflow-x-auto gap-6 pb-8 items-stretch [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-        >
-          {testimonialsData.map((item, idx) => (
-            <div key={idx} className="w-[280px] sm:w-[320px] md:w-[350px] lg:w-[380px] h-auto shrink-0 bg-white rounded-[24px] shadow-sm border border-gray-100 flex flex-col overflow-hidden">
-              <div className="w-full aspect-[5/4] relative shrink-0 rounded-t-[24px] overflow-hidden">
-                <img src={item.image} alt={`Review ${idx + 1}`} className="w-full h-full object-cover object-[center_15%] rounded-t-[24px]" />
+        <div className="relative">
+          {/* Left Arrow */}
+          <AnimatePresence>
+            {showLeftArrow && (
+              <motion.button
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                onClick={() => scrollContainerRef.current.scrollBy({ left: -320, behavior: 'smooth' })}
+                className="hidden md:block absolute -left-[30px] md:-left-[50px] top-[40%] -translate-y-1/2 z-10 p-2 text-gray-300 hover:text-[#5D8B66] transition-colors"
+                aria-label="Scroll left"
+              >
+                <ChevronLeft className="w-8 h-8 md:w-10 md:h-10" strokeWidth={1.5} />
+              </motion.button>
+            )}
+          </AnimatePresence>
+
+          <div 
+            ref={scrollContainerRef}
+            onScroll={handleTestimonialScroll}
+            className="flex overflow-x-auto gap-6 pb-8 items-stretch [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          >
+            {testimonialsData.map((item, idx) => (
+              <div key={idx} className="w-[280px] sm:w-[320px] md:w-[350px] lg:w-[380px] h-auto shrink-0 bg-white rounded-[24px] shadow-sm border border-gray-100 flex flex-col overflow-hidden">
+                <div className="w-full aspect-[5/4] relative shrink-0 rounded-t-[24px] overflow-hidden">
+                  <img src={item.image} alt={`Review ${idx + 1}`} className="w-full h-full object-cover object-[center_15%] rounded-t-[24px]" />
+                </div>
+                <div className="p-5 md:p-6 flex flex-col flex-1 justify-between gap-3">
+                  <p className="text-[#5D8B66] text-[14px] md:text-[15px] font-sans font-normal leading-relaxed">
+                    {item.text}
+                  </p>
+                  <p className="text-gray-400 text-[13px] md:text-[14px] font-light">
+                    — {item.author}
+                  </p>
+                </div>
               </div>
-              <div className="p-5 md:p-6 flex flex-col flex-1 justify-between gap-3">
-                <p className="text-[#5D8B66] text-[14px] md:text-[15px] font-sans font-normal leading-relaxed">
-                  {item.text}
-                </p>
-                <p className="text-gray-400 text-[13px] md:text-[14px] font-light">
-                  — {item.author}
-                </p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Right Arrow */}
+          <AnimatePresence>
+            {showRightArrow && (
+              <motion.button
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                onClick={() => scrollContainerRef.current.scrollBy({ left: 320, behavior: 'smooth' })}
+                className="hidden md:block absolute -right-[30px] md:-right-[50px] top-[40%] -translate-y-1/2 z-10 p-2 text-gray-300 hover:text-[#5D8B66] transition-colors"
+                aria-label="Scroll right"
+              >
+                <ChevronRight className="w-8 h-8 md:w-10 md:h-10" strokeWidth={1.5} />
+              </motion.button>
+            )}
+          </AnimatePresence>
         </div>
       </section>
 
@@ -493,19 +547,19 @@ export default function LandingPage() {
           <div className="w-full px-4 lg:px-12 xl:px-16">
             {/* Stats Section */}
             <div className="pt-8 md:pt-12 pb-10 grid grid-cols-2 md:flex md:flex-row md:justify-between items-start gap-y-8 gap-x-4 md:gap-0 w-full">
-              <div className="flex flex-col items-start text-left">
+              <div className="flex flex-col items-center text-center">
                 <h3 className="text-[#5D8B66] text-4xl md:text-5xl lg:text-[56px] font-sans font-medium mb-3">25,000+</h3>
                 <p className="text-gray-400 text-[13px] md:text-[15px] font-sans font-medium">Assessments Completed</p>
               </div>
-              <div className="flex flex-col items-start text-left">
+              <div className="flex flex-col items-center text-center">
                 <h3 className="text-[#5D8B66] text-4xl md:text-5xl lg:text-[56px] font-sans font-medium mb-3">500+</h3>
                 <p className="text-gray-400 text-[13px] md:text-[15px] font-sans font-medium">Licensed Psychologists & Psychiatrists</p>
               </div>
-              <div className="flex flex-col items-start text-left">
+              <div className="flex flex-col items-center text-center">
                 <h3 className="text-[#5D8B66] text-4xl md:text-5xl lg:text-[56px] font-sans font-medium mb-3">4.9/5</h3>
                 <p className="text-gray-400 text-[13px] md:text-[15px] font-sans font-medium">Patient Care Rating</p>
               </div>
-              <div className="flex flex-col items-start text-left md:items-end md:text-right">
+              <div className="flex flex-col items-center text-center">
                 <h3 className="text-[#5D8B66] text-4xl md:text-5xl lg:text-[56px] font-sans font-medium mb-3">92%</h3>
                 <p className="text-gray-400 text-[13px] md:text-[15px] font-sans font-medium">Accurate Initial Match Rate</p>
               </div>

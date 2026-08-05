@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router';
 import { useAuthStore } from '../../stores/useAuthStore';
+import { useKomiStore } from '../../stores/useKomiStore';
 import { supabase } from '../../services/supabase';
 import { getLocalDateString } from '../../utils/date';
 import { useStreak } from '../../hooks/useStreak';
@@ -14,6 +15,7 @@ export function KomiCompanion({ constraintsRef }) {
   const [isDragging, setIsDragging] = useState(false);
   
   const { user } = useAuthStore();
+  const { isVisible } = useKomiStore();
   const streak = useStreak();
   const [moodScore, setMoodScore] = useState(3); // Default 3 (Neutral)
   
@@ -347,6 +349,7 @@ export function KomiCompanion({ constraintsRef }) {
       specular: "M 60 15 C 45 15, 35 25, 35 40 C 35 60, 15 70, 15 95 C 15 120, 35 135, 60 135 C 35 120, 25 70, 60 20 Z"
     }
   };
+  if (!isVisible) return null;
 
   return (
     <div className="fixed z-[99] bottom-4 right-4 md:bottom-10 md:right-10 w-16 h-16 md:w-24 md:h-24 scale-[0.65] md:scale-100 origin-bottom-right">

@@ -169,5 +169,65 @@
   },
   "common": {
     "start": "Start"
+  },
+  "helpPage": {
+    "outOfRange": "Out of Range",
+    "outOfRangeDesc": "There are currently no practitioners available within a {{radius}} km radius from your location. Here is a list of recommended practitioners from other cities.",
+    "comingSoon": "Coming Soon!",
+    "comingSoonDesc": "The direct in-app consultation feature is currently in its final stages of development. Stay tuned for updates from us!",
+    "gotIt": "Got It"
+  },
+  "mindCheckFlow": {
+    "title": "Mind Check-In",
+    "description": "You will answer 21 short questions to measure your current mental health level. Answer honestly based on your experience over the past 1 week.",
+    "questions": "Questions",
+    "minutes": "Minutes",
+    "standard": "International Standard",
+    "disclaimer": "These results are informational and not a medical diagnosis. If your symptoms persist, please consult a mental health professional.",
+    "startNow": "Start Now"
+  },
+  "helpPage": {
+    "outOfRange": "Out of Range",
+    "outOfRangeDesc": "There are currently no practitioners available within a {{radius}} km radius from your location. Here is a list of recommended practitioners from other cities.",
+    "comingSoon": "Coming Soon!",
+    "comingSoonDesc": "Consultation scheduling will open shortly! Please stay tuned for updates on our app.",
+    "gotIt": "Got It",
+    "nearbySpecialists": "Nearby Practitioners"
+  },
+  "dass21": {
+    "options": {
+      "never": { "label": "Never", "desc": "Did not apply to me at all" },
+      "sometimes": { "label": "Sometimes", "desc": "Applied to me to some degree, or some of the time" },
+      "often": { "label": "Often", "desc": "Applied to me to a considerable degree or a good part of time" },
+      "almostAlways": { "label": "Almost Always", "desc": "Applied to me very much or most of the time" }
+    },
+    "subscale": {
+      "depression": "Depression",
+      "anxiety": "Anxiety",
+      "stress": "Stress"
+    },
+    "questions": {
+      "q1": "I found it hard to wind down.",
+      "q2": "I was aware of dryness of my mouth.",
+      "q3": "I couldn't seem to experience any positive feeling at all.",
+      "q4": "I experienced breathing difficulty (e.g. excessively rapid breathing, breathlessness in the absence of physical exertion).",
+      "q5": "I found it difficult to work up the initiative to do things.",
+      "q6": "I tended to over-react to situations.",
+      "q7": "I experienced trembling (e.g. in the hands).",
+      "q8": "I felt that I was using a lot of nervous energy.",
+      "q9": "I was worried about situations in which I might panic and make a fool of myself.",
+      "q10": "I felt that I had nothing to look forward to.",
+      "q11": "I found myself getting agitated.",
+      "q12": "I found it difficult to relax.",
+      "q13": "I felt down-hearted and blue.",
+      "q14": "I was intolerant of anything that kept me from getting on with what I was doing.",
+      "q15": "I felt I was close to panic.",
+      "q16": "I was unable to become enthusiastic about anything.",
+      "q17": "I felt I wasn't worth much as a person.",
+      "q18": "I felt that I was rather touchy.",
+      "q19": "I was aware of the action of my heart in the absence of physical exertion.",
+      "q20": "I felt scared without any good reason.",
+      "q21": "I felt that life was meaningless."
+    }
   }
 }

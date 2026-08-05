@@ -284,7 +284,31 @@ export default function ChatPage() {
       // Clear state to prevent resending on reload
       window.history.replaceState({}, document.title);
     }
-  }, [loading, location.state, conversationId, hasSentDiagnosis, isTyping]);
+  }, [conversationId, loading, hasSentDiagnosis, isTyping, location.state]);
+
+  // Global keydown listener for auto-focusing the chat input
+  useEffect(() => {
+    const handleGlobalKeyDown = (e) => {
+      // Don't intercept if user is already typing in an input/textarea
+      if (
+        document.activeElement.tagName === "INPUT" ||
+        document.activeElement.tagName === "TEXTAREA" ||
+        document.activeElement.isContentEditable
+      ) {
+        return;
+      }
+      
+      // If it's a printable character (length 1) and no modifier keys (Ctrl/Alt/Meta)
+      if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
+  }, []);
 
   // Clear chat
   const handleClearChat = async () => {
@@ -534,6 +558,7 @@ export default function ChatPage() {
             <div className="flex-1 relative">
               <textarea
                 ref={inputRef}
+                autoFocus
                 value={input}
                 onChange={(e) => {
                   setInput(e.target.value);

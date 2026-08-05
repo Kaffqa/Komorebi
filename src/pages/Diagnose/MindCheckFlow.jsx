@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Loader2, Brain } from "lucide-react";
 import { useAuthStore } from "../../stores/useAuthStore";
+import { useKomiStore } from "../../stores/useKomiStore";
 import { supabase } from "../../services/supabase";
 import {
   QUESTIONS,
@@ -12,6 +14,7 @@ import {
 } from "../../data/diagnoseQuestions";
 
 export default function MindCheckFlow() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
@@ -20,6 +23,17 @@ export default function MindCheckFlow() {
   const [submitting, setSubmitting] = useState(false);
   const [assessmentId, setAssessmentId] = useState(null);
   const [started, setStarted] = useState(false);
+  const { setIsVisible } = useKomiStore();
+
+  useEffect(() => {
+    if (started) {
+      setIsVisible(false);
+    } else {
+      setIsVisible(true);
+    }
+    
+    return () => setIsVisible(true);
+  }, [started, setIsVisible]);
 
   // Fetch DASS-21 assessment ID
   useEffect(() => {
@@ -132,13 +146,10 @@ export default function MindCheckFlow() {
             </div>
 
             <h1 className="text-[28px] lg:text-[32px] font-bold text-black dark:text-white font-sans mb-3 transition-colors duration-300">
-              Mind Check-In
+              {t('mindCheckFlow.title')}
             </h1>
             <p className="text-[15px] text-gray-500 font-sans leading-relaxed mb-8 max-w-md">
-              Anda akan menjawab <strong>21 pertanyaan</strong> singkat untuk
-              mengukur tingkat kesehatan mental Anda saat ini. Jawab
-              dengan jujur berdasarkan pengalaman Anda dalam{" "}
-              <strong>1 minggu terakhir</strong>.
+              {t('mindCheckFlow.description')}
             </p>
 
             {/* Info cards */}
@@ -146,28 +157,26 @@ export default function MindCheckFlow() {
               <div className="bg-[#F7FAF8] dark:bg-komorebi-dark-bg rounded-[16px] p-4 transition-colors duration-300">
                 <p className="text-[24px] font-bold text-[#5D8B66] dark:text-[#7DA085]">21</p>
                 <p className="text-[12px] text-gray-500 dark:text-gray-400 font-sans mt-1">
-                  Pertanyaan
+                  {t('mindCheckFlow.questions')}
                 </p>
               </div>
               <div className="bg-[#F7FAF8] dark:bg-komorebi-dark-bg rounded-[16px] p-4 transition-colors duration-300">
                 <p className="text-[24px] font-bold text-[#5D8B66] dark:text-[#7DA085]">5-10</p>
                 <p className="text-[12px] text-gray-500 dark:text-gray-400 font-sans mt-1">
-                  Menit
+                  {t('mindCheckFlow.minutes')}
                 </p>
               </div>
               <div className="bg-[#F7FAF8] dark:bg-komorebi-dark-bg rounded-[16px] p-4 transition-colors duration-300">
                 <p className="text-[24px] font-bold text-[#5D8B66] dark:text-[#7DA085]">DASS-21</p>
                 <p className="text-[12px] text-gray-500 dark:text-gray-400 font-sans mt-1">
-                  Standar Internasional
+                  {t('mindCheckFlow.standard')}
                 </p>
               </div>
             </div>
 
             <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/50 rounded-[16px] p-4 mb-8 w-full transition-colors duration-300">
               <p className="text-[13px] text-amber-700 dark:text-amber-500 font-sans leading-relaxed">
-                ⚠️ Hasil ini bersifat informatif dan <strong>bukan</strong>{" "}
-                diagnosis medis. Jika gejala Anda berlanjut, silakan konsultasi
-                dengan profesional kesehatan mental.
+                ⚠️ {t('mindCheckFlow.disclaimer')}
               </p>
             </div>
 
@@ -175,7 +184,7 @@ export default function MindCheckFlow() {
               onClick={() => setStarted(true)}
               className="bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white px-10 py-3.5 rounded-full text-[15px] font-semibold transition-all duration-300"
             >
-              Mulai Sekarang
+              {t('mindCheckFlow.startNow')}
             </button>
           </div>
         </div>
@@ -234,16 +243,16 @@ export default function MindCheckFlow() {
                     className="text-[11px] font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-[#7DA085]/10 text-[#5D8B66] dark:bg-[#7DA085]/20 dark:text-[#7DA085]"
                   >
                     {currentQuestion.subscale === "depression"
-                      ? "Depresi"
+                      ? t('dass21.subscale.depression')
                       : currentQuestion.subscale === "anxiety"
-                      ? "Kecemasan"
-                      : "Stres"}
+                      ? t('dass21.subscale.anxiety')
+                      : t('dass21.subscale.stress')}
                   </span>
                 </div>
 
                 {/* Question text */}
                 <h2 className="text-[20px] lg:text-[24px] font-bold text-black dark:text-white font-sans text-center mb-8 leading-snug transition-colors duration-300">
-                  {currentQuestion.text}
+                  {t(`dass21.questions.q${currentQuestion.id}`)}
                 </h2>
 
                 {/* Answer Options */}
@@ -278,10 +287,10 @@ export default function MindCheckFlow() {
                                 isSelected ? "text-[#5D8B66] dark:text-[#7DA085]" : "text-black dark:text-gray-200"
                               }`}
                             >
-                              {option.label}
+                              {t(`dass21.options.${["never", "sometimes", "often", "almostAlways"][option.value]}.label`)}
                             </p>
                             <p className="text-[12px] text-gray-400 dark:text-gray-500 font-sans mt-0.5 transition-colors duration-300">
-                              {option.description}
+                              {t(`dass21.options.${["never", "sometimes", "often", "almostAlways"][option.value]}.desc`)}
                             </p>
                           </div>
                         </div>

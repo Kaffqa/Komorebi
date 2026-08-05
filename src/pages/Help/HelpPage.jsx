@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, SlidersHorizontal, ThumbsUp, Briefcase, X, MapPin, Shield, Phone, Mail, ExternalLink, LocateFixed } from "lucide-react";
+import { Search, SlidersHorizontal, ThumbsUp, Briefcase, X, MapPin, Shield, Phone, Mail, ExternalLink, LocateFixed, Navigation, ChevronDown } from "lucide-react";
 import { supabase } from "../../services/supabase";
 import { Skeleton } from "../../components/ui/Skeleton";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
@@ -268,6 +269,7 @@ const SPECIALISTS = [
 const FILTER_OPTIONS = ["All", "In Your Area", "Psikiater", "Psikolog Klinis", "Konsultan Psikiater", "Online Session"];
 
 export default function HelpPage() {
+  const { t } = useTranslation();
   const [specialists, setSpecialists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -279,6 +281,7 @@ export default function HelpPage() {
   // Sort State
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [activeSort, setActiveSort] = useState("Default");
+  const [showComingSoon, setShowComingSoon] = useState(false);
 
   // Geolocation effect for "In Your Area"
   useEffect(() => {
@@ -351,7 +354,10 @@ export default function HelpPage() {
     fetchSpecialists();
   }, []);
 
-  const filteredSpecialists = specialists.filter((s) => {
+  const RADIUS_LIMIT_KM = 50;
+  let isOutOfRadiusFallback = false;
+
+  let baseFiltered = specialists.filter((s) => {
     const matchesSearch = !searchQuery || s.name.toLowerCase().includes(searchQuery.toLowerCase());
     
     // Filter logic based on role
@@ -361,7 +367,23 @@ export default function HelpPage() {
     }
     
     return matchesSearch && matchesFilter;
-  }).sort((a, b) => {
+  });
+
+  if (activeFilter === "In Your Area" && userLocation) {
+    const withinRadius = baseFiltered.filter(s => {
+      if (!s.lat) return false;
+      const dist = getDistance(userLocation.lat, userLocation.lng, s.lat, s.lng);
+      return dist <= RADIUS_LIMIT_KM;
+    });
+
+    if (withinRadius.length > 0) {
+      baseFiltered = withinRadius;
+    } else {
+      isOutOfRadiusFallback = true;
+    }
+  }
+
+  const filteredSpecialists = baseFiltered.sort((a, b) => {
     if (activeFilter === "In Your Area" && userLocation && a.lat && b.lat) {
       // Sort by distance if In Your Area is selected
       const distA = getDistance(userLocation.lat, userLocation.lng, a.lat, a.lng);
@@ -469,11 +491,30 @@ export default function HelpPage() {
         </div>
       </div>
 
+      {/* Alert Banner for Out of Radius Fallback */}
+      {activeFilter === "In Your Area" && isOutOfRadiusFallback && (
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 p-4 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-900/50 rounded-2xl flex items-start gap-3 transition-colors duration-300"
+        >
+          <div className="p-2 bg-orange-100 dark:bg-orange-900/50 rounded-full shrink-0 text-orange-600 dark:text-orange-400">
+            <MapPin className="w-4 h-4" />
+          </div>
+          <div>
+            <h4 className="text-[14px] font-bold text-orange-800 dark:text-orange-300 font-sans mb-1">{t('helpPage.outOfRange')}</h4>
+            <p className="text-[13px] text-orange-700 dark:text-orange-400/90 font-sans leading-relaxed">
+              {t('helpPage.outOfRangeDesc', { radius: RADIUS_LIMIT_KM })}
+            </p>
+          </div>
+        </motion.div>
+      )}
+
       {/* Main Content Area */}
       {activeFilter === "In Your Area" ? (
         <div className="flex flex-col lg:flex-row gap-6 animate-in fade-in zoom-in-95 duration-500">
           {/* Map View - Responsive Height */}
-          <div className="w-full lg:flex-1 h-[280px] sm:h-[350px] lg:h-[700px] rounded-2xl overflow-hidden border border-gray-100 dark:border-komorebi-dark-border shadow-sm bg-gray-50 dark:bg-komorebi-dark-card shrink-0 relative transition-all duration-300">
+          <div className="w-full lg:flex-1 h-[280px] sm:h-[350px] lg:h-[550px] rounded-2xl overflow-hidden border border-gray-100 dark:border-komorebi-dark-border shadow-sm bg-gray-50 dark:bg-komorebi-dark-card shrink-0 relative transition-all duration-300">
             
             {/* Clear Route Button Overlay */}
             <AnimatePresence>
@@ -551,9 +592,18 @@ export default function HelpPage() {
           </div>
 
           {/* List View inside Split */}
-          <div className="w-full lg:w-[420px] shrink-0 h-[500px] lg:h-[700px] overflow-y-auto pr-2 pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-            <div className="flex flex-col gap-4">
-              {filteredSpecialists.map((specialist, idx) => {
+          <div className="w-full lg:w-[480px] shrink-0 h-[500px] lg:h-[550px] bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col relative transition-colors duration-300">
+            
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-[20px] font-sans font-semibold text-black dark:text-white transition-colors duration-300">
+                {t('helpPage.nearbySpecialists')}
+              </h3>
+            </div>
+
+            <div className="relative flex-1">
+              <div className="absolute inset-0 overflow-y-auto pr-1 pb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <div className="flex flex-col gap-4">
+                  {filteredSpecialists.map((specialist, idx) => {
                 const distance = (userLocation && specialist.lat) 
                   ? getDistance(userLocation.lat, userLocation.lng, specialist.lat, specialist.lng).toFixed(1)
                   : null;
@@ -594,16 +644,27 @@ export default function HelpPage() {
                       {specialist.location}
                     </div>
                     {distance && (
-                      <span className="text-[11px] font-bold text-[#5D8B66] dark:text-[#7DA085] font-sans">
-                        📍 {distance} km
+                      <span className="flex items-center gap-1 text-[11px] font-bold text-[#5D8B66] dark:text-[#7DA085] font-sans">
+                        <Navigation className="w-3 h-3" /> {distance} km
                       </span>
                     )}
                   </div>
                 </motion.div>
-              )})}
+                )})}
+              </div>
             </div>
+            
+            {/* Scroll Indicator */}
+            {filteredSpecialists.length > 2 && (
+              <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white dark:from-komorebi-dark-card to-transparent pointer-events-none flex items-end justify-center pb-1 z-10 rounded-b-[24px]">
+                <div className="bg-white/80 dark:bg-black/40 backdrop-blur-md rounded-full p-1 shadow-[0_2px_8px_rgba(0,0,0,0.08)] mb-1 animate-bounce border border-gray-100 dark:border-gray-700">
+                  <ChevronDown className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                </div>
+              </div>
+            )}
           </div>
         </div>
+      </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-in fade-in duration-500">
           {loading ? (
@@ -789,19 +850,23 @@ export default function HelpPage() {
 
                 {/* Contact Buttons (Enhanced from previous design) */}
                 <div className="flex flex-col gap-2.5 mt-auto">
-                  <a
-                    href={`tel:${selectedSpecialist.phone}`}
+                  <button
+                    onClick={() => {
+                      setSelectedSpecialist(null);
+                      setShowComingSoon(true);
+                    }}
                     className="w-full py-3 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white rounded-full text-[13px] font-semibold transition-all duration-300 font-sans flex items-center justify-center gap-2"
                   >
                     <Phone className="w-4 h-4" />
-                    Hubungi Sekarang
-                  </a>
+                    Jadwalkan Konsultasi
+                  </button>
 
                   {/* Directions Button (Only show if location is available) */}
-                  {userLocation && selectedSpecialist.lat && (
+                  {selectedSpecialist.lat && (
                     <button
                       onClick={() => {
                         setRouteTarget(selectedSpecialist);
+                        setActiveFilter("In Your Area");
                         setSelectedSpecialist(null);
                       }}
                       className="w-full py-3 bg-[#EAF0EC] border border-[#B5CCBD] hover:bg-[#D4E2D8] active:scale-[0.99] text-[#32473D] rounded-full text-[13px] font-bold transition-all duration-300 font-sans flex items-center justify-center gap-2"
@@ -810,27 +875,48 @@ export default function HelpPage() {
                       Lihat Rute Perjalanan
                     </button>
                   )}
-                  
-                  <div className="flex gap-2.5 mt-1">
-                    <a
-                      href={`mailto:${selectedSpecialist.email}`}
-                      className="flex-1 py-3 border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg hover:bg-gray-50 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 rounded-full text-[13px] font-semibold transition-colors font-sans flex items-center justify-center gap-2"
-                    >
-                      <Mail className="w-4 h-4" />
-                      Email
-                    </a>
-                    <a
-                      href={`https://wa.me/${selectedSpecialist.phone.replace(/[^0-9]/g, '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 py-3 border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg hover:bg-gray-50 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 rounded-full text-[13px] font-semibold transition-colors font-sans flex items-center justify-center gap-2"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      WhatsApp
-                    </a>
-                  </div>
                 </div>
               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showComingSoon && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              onClick={() => setShowComingSoon(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-[400px] bg-white dark:bg-komorebi-dark-card rounded-[24px] shadow-2xl p-6 md:p-8 flex flex-col items-center text-center overflow-hidden"
+            >
+              <div className="w-16 h-16 rounded-full bg-[#5D8B66]/10 flex items-center justify-center mb-5">
+                <div className="text-[#5D8B66]">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+              <h3 className="text-xl md:text-2xl font-bold font-sans text-gray-800 dark:text-white mb-3">
+                {t('helpPage.comingSoon')}
+              </h3>
+              <p className="text-gray-500 dark:text-gray-400 font-sans text-[14px] leading-relaxed mb-8">
+                {t('helpPage.comingSoonDesc')}
+              </p>
+              <button
+                onClick={() => setShowComingSoon(false)}
+                className="w-full py-3 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white rounded-full text-[13px] font-semibold transition-all duration-300 font-sans flex items-center justify-center gap-2"
+              >
+                {t('helpPage.gotIt')}
+              </button>
             </motion.div>
           </div>
         )}
