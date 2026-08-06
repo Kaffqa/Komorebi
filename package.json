@@ -28,6 +28,7 @@
     "date-fns": "^4.4.0",
     "framer-motion": "^12.42.2",
     "groq-sdk": "^1.3.0",
+    "html2canvas": "^1.4.1",
     "i18next": "^26.3.6",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.8",

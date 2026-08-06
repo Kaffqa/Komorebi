@@ -4,6 +4,7 @@ import { supabase } from "../../services/supabase";
 import { dispatchMoodUpdate } from "../../hooks/useMoodEvent";
 import { useTranslation } from "react-i18next";
 import useToastStore from "../../stores/useToastStore";
+import { getLocalDateString } from "../../utils/date";
 
 export function MoodInputWidget() {
   const { t } = useTranslation();
@@ -30,7 +31,7 @@ export function MoodInputWidget() {
   useEffect(() => {
     async function loadTodayMood() {
       if (!user) return;
-      const today = new Date().toISOString().split('T')[0];
+      const today = getLocalDateString();
       const { data } = await supabase
         .from('mood_entries')
         .select('mood_score, note')
@@ -51,7 +52,7 @@ export function MoodInputWidget() {
     setIsLoading(true);
     setIsSuccess(false);
     
-    const today = new Date().toISOString().split('T')[0];
+    const today = getLocalDateString();
     
     try {
       // Check if entry exists for today

@@ -166,3 +166,38 @@ export function getKomiHappyGreeting(userName) {
   ];
   return happyGreetings[Math.floor(Math.random() * happyGreetings.length)];
 }
+
+/**
+ * Extract user's favorite activities from chat logs using AI
+ */
+export async function extractFavoriteActivities(chatLogsText) {
+  if (!chatLogsText || chatLogsText.trim() === "") return ["Resting", "Listening to Music", "Reflecting"];
+  
+  const currentApi = API_KEYS[currentKeyIndex];
+  const prompt = `Based on the following chat logs between a user and a mental health assistant, extract up to 3 of the user's favorite activities, hobbies, or things they enjoy doing. Return the result strictly as a valid JSON array of short strings (max 3 words per string) (e.g. ["Reading", "Walking", "Gaming"]). Do not include markdown formatting or other text, just the raw JSON array. If you cannot find any, return a generic self-care activity array like ["Listening to music", "Taking a walk", "Resting"]. \n\nChat logs:\n${chatLogsText.substring(0, 3000)}`;
+
+  try {
+    if (currentApi.provider === "groq") {
+      const groq = new Groq({ apiKey: currentApi.key, dangerouslyAllowBrowser: true });
+      const response = await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.1,
+      });
+      const text = response.choices[0]?.message?.content || "[]";
+      return JSON.parse(text.replace(/```json/g, "").replace(/```/g, "").trim());
+    } else {
+      const ai = new GoogleGenAI({ apiKey: currentApi.key });
+      const response = await ai.models.generateContent({
+        model: "gemini-2.0-flash",
+        contents: prompt,
+        config: { temperature: 0.1 }
+      });
+      const text = response.text || "[]";
+      return JSON.parse(text.replace(/```json/g, "").replace(/```/g, "").trim());
+    }
+  } catch (error) {
+    console.error("Error extracting favorite activities:", error);
+    return ["Taking a walk", "Listening to music", "Journaling"];
+  }
+}
