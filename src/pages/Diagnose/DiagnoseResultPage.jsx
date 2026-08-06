@@ -1,28 +1,30 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Share2, Download, MessageSquare, Loader2, Check, BookOpen } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowLeft, Share2, MessageSquare, Loader2, Check, BookOpen } from "lucide-react";
 import { useAuthStore } from "../../stores/useAuthStore";
+import useToastStore from "../../stores/useToastStore";
 import { supabase } from "../../services/supabase";
 import {
   getSeverityLabel,
   getSeverityEmoji,
   SEVERITY_DESCRIPTIONS,
   SUBSCALE_INFO,
-  calculateDASS21Scores,
 } from "../../data/diagnoseQuestions";
 import { Skeleton } from "../../components/ui/Skeleton";
 import { MindTree } from "../../components/widgets/MindTree";
+import { useTranslation } from "react-i18next";
 
 export default function DiagnoseResultPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const { user } = useAuthStore();
   const navigate = useNavigate();
+  const { addToast } = useToastStore();
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [hasSaved, setHasSaved] = useState(false);
-  const [showToast, setShowToast] = useState("");
 
   useEffect(() => {
     async function fetchResult() {
@@ -121,12 +123,12 @@ export default function DiagnoseResultPage() {
   if (!result) {
     return (
       <div className="w-full max-w-7xl mx-auto text-center py-20">
-        <p className="text-gray-400 text-[15px] font-sans">Result not found.</p>
+        <p className="text-gray-400 text-[15px] font-sans">{t('diagnoseResult.not_found')}</p>
         <button
           onClick={() => navigate("/expert")}
           className="mt-4 text-[#5D8B66] text-[14px] font-medium hover:underline"
         >
-          Back to Diagnose
+          {t('diagnoseResult.back')}
         </button>
       </div>
     );
@@ -169,7 +171,7 @@ export default function DiagnoseResultPage() {
         className="flex items-center gap-2 text-gray-400 hover:text-gray-600 text-[13px] font-medium transition-colors mb-4"
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to Mind Check-In
+        {t('diagnoseResult.back')}
       </button>
 
       <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-10 shadow-sm border border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300">
@@ -190,7 +192,7 @@ export default function DiagnoseResultPage() {
           <div className="flex-1">
             <div className="border border-gray-100 dark:border-komorebi-dark-border rounded-[20px] p-6 lg:p-8 transition-colors duration-300">
               <h2 className="text-[18px] font-bold text-black dark:text-white font-sans mb-6 transition-colors duration-300">
-                Understanding Your Health
+                {t('diagnoseResult.understanding')}
               </h2>
 
               <div className="space-y-6">
@@ -251,50 +253,33 @@ export default function DiagnoseResultPage() {
               >
                 <div className={`w-1.5 h-1.5 rounded-full ${healthPct >= 50 ? 'bg-[#5D8B66]' : 'bg-[#C9854F]'}`} />
                 <span className="text-[11px] font-bold text-gray-700 dark:text-gray-200">
-                  {healthPct}% Wellness
+                  {t('diagnoseResult.wellness', { pct: healthPct })}
                 </span>
               </motion.div>
             </motion.div>
 
             {/* Disclaimer */}
             <p className="text-[11px] text-gray-400 dark:text-gray-500 text-center font-light font-sans leading-relaxed mb-6 max-w-[260px] transition-colors duration-300">
-              These results are for informational purposes only. Please consult
-              a professional if your symptoms persist.
+              {t('diagnoseResult.disclaimer')}
             </p>
 
             {/* Action buttons */}
             <div className="flex items-center gap-3 w-full">
               <button
                 onClick={() => {
-                  const summaryText = `[DIAGNOSIS_SUMMARY]
-Hasil Mind Check-In terbaru:
-Tingkat: ${getSeverityLabel(severity)}
-Akurasi: ${healthPct}%
-Detail:
-- Depresi: ${subscales.depression?.level || "Normal"}
-- Kecemasan: ${subscales.anxiety?.level || "Normal"}
-- Stres: ${subscales.stress?.level || "Normal"}
-
-Bisakah kita bahas hasil ini?`;
+                  const summaryText = t('diagnoseResult.chat_payload', { level: getSeverityLabel(severity), pct: healthPct, dep: subscales.depression?.level || "Normal", anx: subscales.anxiety?.level || "Normal", str: subscales.stress?.level || "Normal" });
                   
                   navigate("/chat", { state: { diagnosisSummary: summaryText } });
                 }}
                 className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white py-3 rounded-full text-[14px] font-light transition-all duration-300"
               >
                 <MessageSquare className="w-4 h-4" />
-                Chat With Komi
+                {t('diagnoseResult.chat_btn')}
               </button>
               <button
                 onClick={() => {
-                  const shareTitle = `Mind Check-In: ${getSeverityLabel(severity)}`;
-                  const shareContent = `📊 Hasil Mind Check-In Saya\n\n` +
-                    `Tingkat: ${getSeverityLabel(severity)} ${getSeverityEmoji(severity)}\n` +
-                    `Akurasi: ${healthPct}%\n\n` +
-                    `Detail Breakdown:\n` +
-                    `• ${SUBSCALE_INFO.depression.name}: ${subscales.depression?.percentage || 0}% (${subscales.depression?.level || "Normal"})\n` +
-                    `• ${SUBSCALE_INFO.anxiety.name}: ${subscales.anxiety?.percentage || 0}% (${subscales.anxiety?.level || "Normal"})\n` +
-                    `• ${SUBSCALE_INFO.stress.name}: ${subscales.stress?.percentage || 0}% (${subscales.stress?.level || "Normal"})\n\n` +
-                    `Hasil ini hanya bersifat informatif dan bukan merupakan diagnosa medis profesional.`;
+                  const shareTitle = t('diagnoseResult.share_title', { level: getSeverityLabel(severity) });
+                  const shareContent = t('diagnoseResult.share_content', { level: getSeverityLabel(severity), pct: healthPct, dep: subscales.depression?.level || "Normal", anx: subscales.anxiety?.level || "Normal", str: subscales.stress?.level || "Normal" });
 
                   navigate("/forum/new", {
                     state: {
@@ -305,7 +290,7 @@ Bisakah kita bahas hasil ini?`;
                   });
                 }}
                 className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg hover:bg-[#7DA085]/10 dark:hover:bg-white/10 hover:border-[#7DA085]/30 dark:hover:border-[#5D8B66] transition-colors group"
-                title="Share to Forum"
+                title={t('diagnoseResult.share_tooltip_share')}
               >
                 <Share2 className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-[#5D8B66] dark:group-hover:text-[#7DA085]" />
               </button>
@@ -355,11 +340,10 @@ Bisakah kita bahas hasil ini?`;
                       if (error) throw error;
                     }
                     setHasSaved(true);
-                    setShowToast("Saved to Journal!");
-                    setTimeout(() => setShowToast(""), 3000);
+                    addToast(t('diagnoseResult.toast_success'), "success");
                   } catch (error) {
                     console.error("Error saving to journal:", error);
-                    alert("Gagal menyimpan. " + (error.message || ""));
+                    addToast(t('diagnoseResult.toast_err', { msg: error.message || '' }), "error");
                   } finally {
                     setIsSaving(false);
                   }
@@ -370,7 +354,7 @@ Bisakah kita bahas hasil ini?`;
                     ? "border-[#5D8B66]/30 bg-[#5D8B66]/10 cursor-default"
                     : "border-gray-200 dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg hover:bg-[#7DA085]/10 dark:hover:bg-white/10 hover:border-[#7DA085]/30 dark:hover:border-[#5D8B66] disabled:opacity-50"
                 }`}
-                title={hasSaved ? "Already Saved" : "Save to Journal"}
+                title={hasSaved ? t('diagnoseResult.share_tooltip_saved') : t('diagnoseResult.share_tooltip_save')}
               >
                 {isSaving ? (
                   <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />
@@ -384,21 +368,6 @@ Bisakah kita bahas hasil ini?`;
           </div>
         </div>
       </div>
-
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 40 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[9999] bg-[#5D8B66] text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 text-sm font-medium font-sans"
-          >
-            <Check className="w-4 h-4" />
-            {showToast}
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

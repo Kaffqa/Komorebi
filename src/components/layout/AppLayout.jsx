@@ -1,7 +1,7 @@
 import { useOutlet, useLocation, useNavigate, Link } from "react-router";
 import { Sidebar } from "./Sidebar";
 import { SettingsModal } from "./SettingsModal";
-import { Menu, Bell, Settings, Sun, CloudSun, MoonStar, Plus, Heart, MessageCircle, Info, Calendar, Check, CheckCircle2, X } from "lucide-react";
+import { Menu, Bell, Settings, Sun, CloudSun, MoonStar, Plus, Heart, MessageCircle, Info, Calendar, CheckCircle2, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../utils/cn";

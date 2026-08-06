@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, SlidersHorizontal, ThumbsUp, Briefcase, X, MapPin, Shield, Phone, Mail, ExternalLink, LocateFixed, Navigation, ChevronDown } from "lucide-react";
+import { Search, SlidersHorizontal, ThumbsUp, Briefcase, X, MapPin, Shield, Phone, LocateFixed, Navigation, ChevronDown } from "lucide-react";
 import { supabase } from "../../services/supabase";
 import { Skeleton } from "../../components/ui/Skeleton";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import "leaflet-routing-machine";
+import useToastStore from "../../stores/useToastStore";
 
 // Fix for default marker icon in leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -81,6 +82,7 @@ const getDistance = (lat1, lon1, lat2, lon2) => {
 // Routing Component
 function MapRouting({ source, destination }) {
   const map = useMap();
+  const { addToast } = useToastStore();
 
   useEffect(() => {
     if (!source || !destination || !map) return;
@@ -103,7 +105,7 @@ function MapRouting({ source, destination }) {
     // Error handling jika rute tidak ditemukan
     routingControl.on('routingerror', function(e) {
       console.warn("Routing error:", e.error);
-      alert("Maaf, rute darat tidak ditemukan atau server navigasi sedang sibuk. Peta akan kembali menampilkan garis lurus.");
+      addToast("Maaf, rute darat tidak ditemukan atau server navigasi sedang sibuk. Peta akan kembali menampilkan garis lurus.", "error");
     });
 
     // Zoom peta secara manual dan presisi ke titik User & Dokter

@@ -2,12 +2,14 @@ import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import LinkExtension from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import { supabase } from "../../services/supabase";
 import { useAuthStore } from "../../stores/useAuthStore";
+import useToastStore from "../../stores/useToastStore";
 import {
   Image as ImageIcon,
   Link as LinkIcon,
@@ -23,14 +25,12 @@ import {
   EyeOff,
   Mic,
   MicOff,
-  Play,
-  Pause,
   Trash2,
-  AlertCircle,
 } from "lucide-react";
 import { AudioPlayer } from "../../components/ui/AudioPlayer";
 
 export default function NewStoryPage() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
@@ -43,7 +43,7 @@ export default function NewStoryPage() {
   const [imageUrl, setImageUrl] = useState("");
   
   const [showTagMenu, setShowTagMenu] = useState(false);
-  const availableTags = ["Anxiety", "Depression", "Grief", "Self Improvement", "Mindfulness", "Venting"];
+  const availableTags = t('newStory.tags', { returnObjects: true }) || [];
   
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkInputUrl, setLinkInputUrl] = useState("");
@@ -61,12 +61,9 @@ export default function NewStoryPage() {
   
   const fileInputRef = useRef(null);
 
-  const [toast, setToast] = useState(null); // { text: string, type: 'error' | 'success' }
+  const { addToast } = useToastStore();
 
-  const showToast = (text, type = 'error') => {
-    setToast({ text, type });
-    setTimeout(() => setToast(null), 3500);
-  };
+  const showToast = (text, type = 'error') => addToast(text, type);
 
   const MAX_AUDIO_DURATION = 180; // 3 minutes
 
@@ -80,7 +77,7 @@ export default function NewStoryPage() {
         },
       }),
       Placeholder.configure({
-        placeholder: 'Body text...',
+        placeholder: t('newStory.placeholder_body'),
         emptyEditorClass: 'is-editor-empty before:content-[attr(data-placeholder)] before:float-left before:text-gray-400 before:pointer-events-none',
       }),
     ],
@@ -143,7 +140,7 @@ export default function NewStoryPage() {
       setTags(tags.filter((t) => t !== tag));
     } else {
       if (tags.length >= 3) {
-        showToast("Maximum 3 tags allowed.");
+        showToast(t('newStory.err_max_tags'));
         return;
       }
       setTags([...tags, tag]);
@@ -172,7 +169,7 @@ export default function NewStoryPage() {
       setImageUrl(data.publicUrl);
     } catch (error) {
       console.error('Error uploading image:', error);
-      showToast('Gagal mengupload gambar. Error: ' + error.message);
+      showToast(t('newStory.err_upload', { msg: error.message }));
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -226,7 +223,7 @@ export default function NewStoryPage() {
       }, 1000);
     } catch (err) {
       console.error("Microphone access denied:", err);
-      showToast("Tidak dapat mengakses mikrofon. Pastikan Anda memberikan izin akses.");
+      showToast(t('newStory.err_mic'));
     }
   };
 
@@ -272,7 +269,7 @@ export default function NewStoryPage() {
     const isEmpty = !htmlContent || htmlContent === '<p></p>' || htmlContent.trim() === '';
     
     if (!title.trim() || (isEmpty && !audioBlob && !imageUrl)) {
-      showToast("Title and content (or audio/image) cannot be empty.");
+      showToast(t('newStory.err_empty'));
       return;
     }
     
@@ -317,7 +314,7 @@ export default function NewStoryPage() {
     } catch (error) {
       console.error("Error publishing post:", error);
       setIsUploadingAudio(false);
-      showToast("Gagal menyimpan post. Error: " + error.message);
+      showToast(t('newStory.err_save', { msg: error.message }));
     } finally {
       setIsPublishing(false);
     }
@@ -329,27 +326,13 @@ export default function NewStoryPage() {
       animate={{ opacity: 1, y: 0 }}
       className="w-full pb-20 relative"
     >
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: -50, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: -20, x: "-50%" }}
-            className="fixed top-8 left-1/2 z-[9999] flex items-center gap-3 px-6 py-3 rounded-2xl shadow-xl border bg-white dark:bg-[#2A3831] border-red-100 dark:border-red-900/30 text-gray-800 dark:text-gray-200"
-          >
-            <AlertCircle className="w-5 h-5 text-red-500" />
-            <span className="font-sans font-medium text-[15px]">{toast.text}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <button 
         onClick={() => navigate("/forum")} 
         className="flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-sans font-medium mb-6 transition-colors w-fit"
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to Forum
+        {t('newStory.back')}
       </button>
 
       <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-10 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col min-h-[80vh] transition-colors duration-300">
@@ -357,7 +340,7 @@ export default function NewStoryPage() {
         {/* Title Input */}
         <input 
           type="text"
-          placeholder="Title"
+          placeholder={t('newStory.placeholder_title')}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="text-3xl font-bold font-sans text-gray-900 dark:text-white border-none outline-none placeholder-gray-300 dark:placeholder-gray-600 w-full mb-6 bg-transparent transition-colors duration-300"
@@ -379,7 +362,7 @@ export default function NewStoryPage() {
           <div className="flex items-center gap-2">
             <EyeOff className={`w-4 h-4 ${isAnonymous ? 'text-[#5F916F]' : 'text-gray-400 dark:text-gray-500'}`} />
             <span className={`text-sm font-medium font-sans ${isAnonymous ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
-              Post as Anonymous
+              {t('newStory.anonymous')}
             </span>
           </div>
         </div>
@@ -400,7 +383,7 @@ export default function NewStoryPage() {
             className="flex items-center gap-1.5 bg-white dark:bg-komorebi-dark-bg border border-[#B5CCBD] dark:border-komorebi-dark-border text-gray-600 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium font-sans hover:bg-gray-50 dark:hover:bg-white/5 transition-colors duration-300"
           >
             <Plus className="w-4 h-4" />
-            Add Tags
+            {t('newStory.add_tags')}
           </button>
           
           <AnimatePresence>
@@ -450,7 +433,7 @@ export default function NewStoryPage() {
               className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 shadow-2xl z-[10000] w-[90%] max-w-md border border-gray-100 dark:border-komorebi-dark-border"
             >
             <div className="flex justify-between items-center mb-5">
-              <h3 className="text-xl font-bold font-sans text-gray-900 dark:text-white">Insert Link</h3>
+              <h3 className="text-xl font-bold font-sans text-gray-900 dark:text-white">{t('newStory.link_modal.title')}</h3>
               <button 
                 onClick={() => setShowLinkModal(false)}
                 className="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors"
@@ -460,7 +443,7 @@ export default function NewStoryPage() {
             </div>
             
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">URL / Link Address</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('newStory.link_modal.label')}</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <LinkIcon className="h-5 w-5 text-gray-400" />
@@ -469,7 +452,7 @@ export default function NewStoryPage() {
                   type="text"
                   value={linkInputUrl}
                   onChange={(e) => setLinkInputUrl(e.target.value)}
-                  placeholder="example.com"
+                  placeholder={t('newStory.link_modal.placeholder')}
                   className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-komorebi-dark-bg border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5F916F]/50 text-gray-900 dark:text-white transition-all"
                   onKeyDown={(e) => e.key === 'Enter' && handleApplyLink()}
                   autoFocus
@@ -482,7 +465,7 @@ export default function NewStoryPage() {
                 onClick={() => setShowLinkModal(false)}
                 className="px-5 py-2.5 rounded-full border border-gray-200 dark:border-komorebi-dark-border text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button 
                 onClick={handleApplyLink}
@@ -525,8 +508,8 @@ export default function NewStoryPage() {
               <div className="w-9 h-9 rounded-full bg-[#5D8B66]/10 dark:bg-[#5D8B66]/20 flex items-center justify-center">
                 <Mic className="w-5 h-5 text-[#5D8B66]" />
               </div>
-              Record Voice Message
-              <span className="text-[11px] text-gray-400 ml-auto sm:ml-2">(max 3 min)</span>
+              {t('newStory.voice.record')}
+              <span className="text-[11px] text-gray-400 ml-auto sm:ml-2">{t('newStory.voice.max')}</span>
             </button>
           )}
 
@@ -538,7 +521,7 @@ export default function NewStoryPage() {
                 <div className="relative w-4 h-4 rounded-full bg-red-500 animate-pulse" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-semibold text-red-600 dark:text-red-400 font-sans">Recording...</p>
+                <p className="text-sm font-semibold text-red-600 dark:text-red-400 font-sans">{t('newStory.voice.recording')}</p>
                 <p className="text-xs text-red-500/70 dark:text-red-400/60 font-mono">{formatRecordTime(audioDuration)} / {formatRecordTime(MAX_AUDIO_DURATION)}</p>
               </div>
               <button
@@ -546,7 +529,7 @@ export default function NewStoryPage() {
                 className="px-5 py-2 rounded-full bg-red-500 hover:bg-red-600 text-white text-sm font-medium font-sans transition-colors shadow-sm flex items-center gap-2"
               >
                 <MicOff className="w-4 h-4 pointer-events-none" />
-                Stop
+                {t('newStory.voice.stop')}
               </button>
             </div>
           )}
@@ -556,14 +539,14 @@ export default function NewStoryPage() {
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium text-gray-700 dark:text-gray-300 font-sans flex items-center gap-2">
                   <Mic className="w-4 h-4 text-[#5D8B66]" />
-                  Voice Attached ({formatRecordTime(audioDuration)})
+                  {t('newStory.voice.attached', { time: formatRecordTime(audioDuration) })}
                 </p>
                 <button
                   onClick={deleteRecording}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-sans"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
-                  Remove
+                  {t('newStory.voice.remove')}
                 </button>
               </div>
               <AudioPlayer src={audioPreviewUrl} />
@@ -622,13 +605,13 @@ export default function NewStoryPage() {
               disabled={isPublishing}
               className="flex-1 sm:flex-none px-8 py-2.5 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white rounded-full font-medium font-sans transition-all duration-300 disabled:opacity-50"
             >
-              {isPublishing ? "Saving..." : "Save"}
+              {isPublishing ? t('newStory.saving') : t('newStory.save')}
             </button>
             <button 
               onClick={() => navigate("/forum")}
               className="flex-1 sm:flex-none px-8 py-2.5 border border-[#B5CCBD] dark:border-komorebi-dark-border bg-white dark:bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/10 rounded-full font-medium font-sans transition-colors duration-300"
             >
-              Drafts
+              {t('newStory.drafts')}
             </button>
           </div>
         </div>

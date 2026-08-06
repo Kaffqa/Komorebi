@@ -9,14 +9,15 @@ export function CurrentStressWidget() {
   const { user } = useAuthStore();
   const [stressScore, setStressScore] = useState(3);
   const debounceRef = useRef(null);
+  const stressLabelsForSlider = t('journaling.current_stress.labels', { returnObjects: true }) || ["Very Low", "Low", "Moderate", "High", "Very High"];
+
   const stressIcons = [
-    <img key="1" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f604.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Very Low" />,
-    <img key="2" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f642.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Low" />,
-    <img key="3" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f610.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Neutral" />,
-    <img key="4" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f615.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="High" />,
-    <img key="5" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f61e.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Very High" />
+    <img key="1" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f604.png" className="w-6 h-6 object-contain drop-shadow-sm" alt={stressLabelsForSlider[0]} />,
+    <img key="2" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f642.png" className="w-6 h-6 object-contain drop-shadow-sm" alt={stressLabelsForSlider[1]} />,
+    <img key="3" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f610.png" className="w-6 h-6 object-contain drop-shadow-sm" alt={stressLabelsForSlider[2]} />,
+    <img key="4" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f615.png" className="w-6 h-6 object-contain drop-shadow-sm" alt={stressLabelsForSlider[3]} />,
+    <img key="5" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f61e.png" className="w-6 h-6 object-contain drop-shadow-sm" alt={stressLabelsForSlider[4]} />
   ];
-  const stressLabelsForSlider = t('journaling.current_stress.labels', { returnObjects: true });
 
   // Load today's stress from journal_entries
   useEffect(() => {

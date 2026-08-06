@@ -5,6 +5,7 @@ import { useThemeStore } from './stores/useThemeStore'
 import { ProtectedRoute, AdminRoute } from './components/auth/ProtectedRoute'
 import { AppLayout } from './components/layout/AppLayout'
 import { AdminLayout } from './components/layout/AdminLayout'
+import ToastContainer from './components/ui/ToastContainer'
 
 import { lazy } from 'react'
 import LandingPage from './pages/LandingPage/LandingPage'
@@ -49,6 +50,7 @@ function App() {
         <div className="w-10 h-10 border-4 border-komorebi-green/30 border-t-komorebi-green rounded-full animate-spin"></div>
       </div>
     }>
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         

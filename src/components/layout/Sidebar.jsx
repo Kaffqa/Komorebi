@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router";
 import { motion } from "framer-motion";
 import { 
@@ -17,7 +17,6 @@ import Logo from "../../assets/logo.svg";
 import LogoNoFrame from "../../assets/logo1.svg";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { supabase } from "../../services/supabase";
-import { getLocalDateString } from "../../utils/date";
 import { useTranslation } from "react-i18next";
 import { useStreak } from "../../hooks/useStreak";
 

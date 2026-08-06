@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../services/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldAlert, Search, Trash2, CheckCircle, Ban, AlertTriangle, Eye, Loader2, X } from 'lucide-react';
+import { ShieldAlert, Trash2, CheckCircle, Ban, AlertTriangle, X } from 'lucide-react';
 import { Skeleton } from '../../components/ui/Skeleton';
+import useToastStore from '../../stores/useToastStore';
 
 export default function ForumModeration() {
   const [reports, setReports] = useState([]);
@@ -10,6 +11,7 @@ export default function ForumModeration() {
   const [activeTab, setActiveTab] = useState('pending'); // pending, resolved, dismissed
   const [selectedReport, setSelectedReport] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const { addToast } = useToastStore();
   const [confirmModal, setConfirmModal] = useState({ 
     isOpen: false, 
     actionType: null, 
@@ -73,7 +75,7 @@ export default function ForumModeration() {
       await fetchReports();
     } catch (err) {
       console.error('Error taking action:', err);
-      alert('Failed to perform action.');
+      addToast('Failed to perform action.', 'error');
     } finally {
       setActionLoading(false);
     }

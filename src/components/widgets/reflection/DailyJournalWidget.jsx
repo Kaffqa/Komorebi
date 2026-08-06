@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Plus, X, ChevronDown, BookOpen } from 'lucide-react';
-import { Check, Loader2, MessageSquare, ChevronRight, Tags, Lightbulb, RefreshCw } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Plus, X, BookOpen } from 'lucide-react';
+import { Lightbulb, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { supabase } from '../../../services/supabase';
@@ -8,21 +8,14 @@ import { dispatchJournalUpdate } from '../../../hooks/useMoodEvent';
 import { getLocalDateString } from '../../../utils/date';
 import { useTranslation } from 'react-i18next';
 import { Skeleton } from '../../ui/Skeleton';
-
-const TAG_SUGGESTIONS = ["Anxiety", "Work", "Family", "Health", "Social", "Self-Care", "Stress", "Gratitude", "Sleep", "Exercise"];
-
-const CBT_PROMPTS = [
-  "Apa satu hal kecil yang berhasil kamu syukuri hari ini?",
-  "Sebutkan satu pikiran negatifmu, dan mari cari bukti bahwa pikiran itu belum tentu benar.",
-  "Jika sahabatmu sedang merasa sepertimu saat ini, apa yang akan kamu katakan padanya?",
-  "Apa satu hal yang berada di luar kendalimu hari ini, dan bagaimana kamu bisa merelakannya?",
-  "Tuliskan tiga kekuatan atau kelebihan dirimu yang membantumu bertahan sejauh ini.",
-  "Apa satu hal yang bisa kamu lakukan esok hari untuk membuat dirimu merasa sedikit lebih baik?"
-];
+import useToastStore from '../../../stores/useToastStore';
 
 export function DailyJournalWidget() {
   const { t } = useTranslation();
+  const CBT_PROMPTS = t('journaling.daily_journal.prompts', { returnObjects: true });
+  const TAG_SUGGESTIONS = t('journaling.daily_journal.tags', { returnObjects: true });
   const { user } = useAuthStore();
+  const { addToast } = useToastStore();
   const [content, setContent] = useState("");
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
@@ -146,7 +139,7 @@ export function DailyJournalWidget() {
       setTimeout(() => setIsSaved(false), 3000);
     } catch (error) {
       console.error("Error saving journal:", error);
-      alert("Failed to save journal: " + (error.message || "Please try again."));
+      addToast(t('journaling.daily_journal.save_error') + " " + (error.message || ""), 'error');
     } finally {
       setIsSaving(false);
     }
@@ -223,15 +216,15 @@ export function DailyJournalWidget() {
                     <Lightbulb className="w-5 h-5 text-[#5D8B66] dark:text-[#7DA085]" />
                   </div>
                   <div>
-                    <h4 className="text-[13px] font-sans font-semibold text-[#5D8B66] dark:text-[#7DA085] uppercase tracking-wider mb-1">Guided Prompt</h4>
+                    <h4 className="text-[13px] font-sans font-semibold text-[#5D8B66] dark:text-[#7DA085] uppercase tracking-wider mb-1">{t('journaling.daily_journal.guided_prompt')}</h4>
                     <p className="text-[14px] font-sans text-gray-700 dark:text-gray-200 font-medium leading-relaxed">{activePrompt}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
-                  <button onClick={handleShufflePrompt} className="p-2 hover:bg-[#7DA085]/20 text-[#5D8B66] rounded-xl transition-colors" title="Ganti Pertanyaan">
+                  <button onClick={handleShufflePrompt} className="p-2 hover:bg-[#7DA085]/20 text-[#5D8B66] rounded-xl transition-colors" title={t('journaling.daily_journal.change_prompt', 'Change Prompt')}>
                     <RefreshCw className="w-4 h-4" />
                   </button>
-                  <button onClick={() => setActivePrompt(null)} className="p-2 hover:bg-[#7DA085]/20 text-[#5D8B66] rounded-xl transition-colors" title="Tutup">
+                  <button onClick={() => setActivePrompt(null)} className="p-2 hover:bg-[#7DA085]/20 text-[#5D8B66] rounded-xl transition-colors" title={t('common.close', 'Close')}>
                     <X className="w-4 h-4" />
                   </button>
                 </div>
@@ -253,7 +246,7 @@ export function DailyJournalWidget() {
               className="absolute bottom-8 right-4 flex items-center gap-2 bg-white/80 dark:bg-[#1c2620]/80 backdrop-blur-md border border-gray-200 dark:border-[#32473D] hover:border-[#7DA085] hover:text-[#5D8B66] text-gray-500 dark:text-gray-400 px-4 py-2 rounded-xl text-[13px] font-medium transition-all duration-300 shadow-sm hover:shadow"
             >
               <Lightbulb className="w-4 h-4" />
-              Bantu aku mulai menulis
+              {t('journaling.daily_journal.help_me_write')}
             </button>
           )}
         </div>

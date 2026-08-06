@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { ChevronRight, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // Mini Komi SVG (reusable leaf character)
 function MiniKomi({ size = 120, className = "" }) {
@@ -46,104 +47,105 @@ function MiniKomi({ size = 120, className = "" }) {
 
 export function KomiOnboardingTour({ onComplete }) {
   const { profile } = useAuthStore();
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const [targetRect, setTargetRect] = useState(null);
   const [komiPos, setKomiPos] = useState({ x: 0, y: 0 });
   const [isReady, setIsReady] = useState(false);
   const overlayRef = useRef(null);
 
-  const userName = profile?.display_name || "Teman";
+  const userName = profile?.display_name || t('onboarding.fallback_name', 'Teman');
 
   const allTourSteps = useMemo(() => [
     {
       id: "welcome",
       target: null,
       position: "center",
-      title: `Halo, ${userName}`,
-      message: `Selamat datang di Komorebi! Aku Komi, teman virtualmu. Aku akan menemanimu menjelajahi platform ini. Yuk, ikuti tur singkatnya!`,
-      buttonText: "Ayo Mulai!"
+      title: t('onboarding.step1.title', { name: userName || t('onboarding.fallback_name') }),
+      message: t('onboarding.step1.desc'),
+      buttonText: t('onboarding.step1.btn')
     },
     {
       id: "mood-input",
       target: "[data-tour-id='mood-input']",
       position: "right",
-      title: "Catatan Suasana Hati",
-      message: "Di sini kamu bisa mencatat suasana hatimu setiap hari. Aku juga akan berubah warna mengikuti perasaanmu loh!",
-      buttonText: "Lanjut"
+      title: t('onboarding.step2.title'),
+      message: t('onboarding.step2.desc'),
+      buttonText: t('onboarding.step2.btn')
     },
     {
       id: "mood-summary",
       target: "[data-tour-id='mood-summary']",
       position: "left",
-      title: "Riwayat Mood",
-      message: "Di sini kamu bisa melihat ringkasan mood-mu dalam seminggu atau sebulan terakhir. Makin sering mengisi, datanya makin akurat lho!",
-      buttonText: "Lanjut"
+      title: t('onboarding.step3.title'),
+      message: t('onboarding.step3.desc'),
+      buttonText: t('onboarding.step3.btn')
     },
     {
       id: "assessment-history",
       target: "[data-tour-id='assessment-history']",
       position: "right",
-      title: "Riwayat Pemeriksaan",
-      message: "Di sini kamu bisa melihat riwayat pemeriksaan kesehatan mentalmu. Semua hasilnya tersimpan aman dan bisa diakses kapan saja.",
-      buttonText: "Lanjut"
+      title: t('onboarding.step4.title'),
+      message: t('onboarding.step4.desc'),
+      buttonText: t('onboarding.step4.btn')
     },
     {
       id: "activity-suggestion",
       target: "[data-tour-id='activity-suggestion']",
       position: "left",
-      title: "Rekomendasi Aktivitas",
-      message: "Aku juga menyiapkan daftar aktivitas yang dirancang khusus untuk kondisi mood kamu saat ini. Coba luangkan waktu sebentar untuk relaksasi!",
-      buttonText: "Lanjut"
+      title: t('onboarding.step5.title'),
+      message: t('onboarding.step5.desc'),
+      buttonText: t('onboarding.step5.btn')
     },
     {
       id: "nav-reflection",
       target: "[data-tour-id='nav-reflection']",
       position: "right-sidebar",
-      title: "Jurnal Refleksi",
-      message: "Halaman Refleksi adalah tempat menulis jurnal harianmu. Semakin rutin menulis, streak-mu makin panjang dan Komi makin senang!",
-      buttonText: "Lanjut"
+      title: t('onboarding.step6.title'),
+      message: t('onboarding.step6.desc'),
+      buttonText: t('onboarding.step6.btn')
     },
     {
       id: "nav-diagnose",
       target: "[data-tour-id='nav-diagnose']",
       position: "right-sidebar",
-      title: "Diagnosa Kesehatan Mental",
-      message: "Butuh pemeriksaan? Di sini kamu bisa melakukan tes kesehatan mental yang dipandu oleh sistem pakar kami secara gratis.",
-      buttonText: "Lanjut"
+      title: t('onboarding.step7.title'),
+      message: t('onboarding.step7.desc'),
+      buttonText: t('onboarding.step7.btn')
     },
     {
       id: "nav-chat",
       target: "[data-tour-id='nav-chat']",
       position: "right-sidebar",
-      title: "Ngobrol dengan Komi",
-      message: "Kamu juga bisa klik 2x padaku kapan saja, atau kunjungi menu ini untuk ngobrol langsung denganku! Aku selalu siap mendengarkanmu.",
-      buttonText: "Lanjut"
+      title: t('onboarding.step8.title'),
+      message: t('onboarding.step8.desc'),
+      buttonText: t('onboarding.step8.btn')
     },
     {
       id: "nav-sharing",
       target: "[data-tour-id='nav-sharing']",
       position: "right-sidebar",
-      title: "Ruang Berbagi",
-      message: "Di Forum Sharing kamu bisa berbagi cerita, membaca pengalaman orang lain, dan saling mendukung dalam komunitas yang aman.",
-      buttonText: "Lanjut"
+      title: t('onboarding.step9.title'),
+      message: t('onboarding.step9.desc'),
+      buttonText: t('onboarding.step9.btn')
     },
     {
       id: "nav-help",
       target: "[data-tour-id='nav-help']",
       position: "right-sidebar",
-      title: "Bantuan Profesional",
-      message: "Butuh bantuan profesional? Di menu Help ini kamu bisa menemukan daftar Psikiater dan Psikolog terpercaya untuk konsultasi lebih lanjut.",
-      buttonText: "Lanjut"
+      title: t('onboarding.step10.title'),
+      message: t('onboarding.step10.desc'),
+      buttonText: t('onboarding.step10.btn')
     },
     {
       id: "closing",
       target: null,
       position: "center",
-      title: `Selamat Menjelajah, ${userName}!`,
-      message: "Itu dia semuanya! Kamu bisa mulai menjelajah sekarang. Aku akan selalu ada di pojok layar kalau kamu butuh teman. Jangan lupa isi jurnal harianmu ya!",
-      buttonText: "Mulai Sekarang!"
+      title: t('onboarding.step11.title', { name: userName || t('onboarding.fallback_name') }),
+      message: t('onboarding.step11.desc'),
+      buttonText: t('onboarding.step11.btn')
     }
-  ], [userName]);
+  ], [userName, t]);
 
   const tourSteps = useMemo(() => {
     // Pada mobile (layar di bawah 1024px), sidebar disembunyikan.
@@ -160,9 +162,9 @@ export function KomiOnboardingTour({ onComplete }) {
       id: "mobile-menu",
       target: null,
       position: "center",
-      title: "Menu Utama (Sidebar)",
-      message: "Untuk mengakses Jurnal Refleksi, Diagnosa Psikologi, Chat AI, dan Forum Berbagi, silakan tekan ikon Garis Tiga (☰) di pojok kanan atas layar ya!",
-      buttonText: "Lanjut"
+      title: t('onboarding.mobile.title'),
+      message: t('onboarding.mobile.desc'),
+      buttonText: t('onboarding.mobile.btn')
     });
 
     return mobileSteps;
@@ -438,7 +440,7 @@ export function KomiOnboardingTour({ onComplete }) {
                     onClick={handleSkip}
                     className="text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1"
                   >
-                    <X className="w-3 h-3" /> Lewati Tour
+                    <X className="w-3 h-3" /> {t('onboarding.skip')}
                   </button>
                 )}
               </div>

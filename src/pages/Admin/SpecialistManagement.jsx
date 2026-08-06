@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Skeleton } from "../../components/ui/Skeleton";
 import { ImageCropper } from "../../components/ui/ImageCropper";
+import useToastStore from "../../stores/useToastStore";
 
 const SPECIALIST_TITLES = ["Psikiater", "Psikolog Klinis", "Konsultan Psikiater"];
 
@@ -21,6 +22,7 @@ export default function SpecialistManagement() {
   const [specialists, setSpecialists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+  const { addToast } = useToastStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFileName, setOriginalFileName] = useState("");
@@ -132,7 +134,7 @@ export default function SpecialistManagement() {
       handleCloseModal();
     } catch (error) {
       console.error("Error saving specialist:", error);
-      alert("Failed to save specialist. Check console for details.");
+      addToast("Failed to save specialist. Check console for details.", 'error');
     }
   };
 
@@ -147,7 +149,7 @@ export default function SpecialistManagement() {
         setSpecialists(specialists.filter(s => s.id !== id));
       } catch (error) {
         console.error("Error deleting specialist:", error);
-        alert("Failed to delete specialist");
+        addToast("Failed to delete specialist", 'error');
       }
     }
   };
@@ -159,13 +161,13 @@ export default function SpecialistManagement() {
 
       // Check file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
-        alert("File size must be less than 2MB to ensure platform speed.");
+        addToast("File size must be less than 2MB to ensure platform speed.", 'error');
         return;
       }
 
       // Check file type
       if (!file.type.startsWith('image/')) {
-        alert("Please upload an image file (JPEG, PNG, WebP).");
+        addToast("Please upload an image file (JPEG, PNG, WebP).", 'error');
         return;
       }
 
@@ -181,7 +183,7 @@ export default function SpecialistManagement() {
       event.target.value = '';
     } catch (error) {
       console.error("Error reading image:", error);
-      alert("Failed to read image.");
+      addToast("Failed to read image.", 'error');
     }
   };
 
@@ -206,7 +208,7 @@ export default function SpecialistManagement() {
       setFormData({ ...formData, avatar_url: data.publicUrl });
     } catch (error) {
       console.error("Error uploading cropped image:", error);
-      alert("Failed to upload image.");
+      addToast("Failed to upload image.", 'error');
     } finally {
       setIsUploading(false);
     }
@@ -226,7 +228,7 @@ export default function SpecialistManagement() {
       ));
     } catch (error) {
       console.error("Error updating status:", error);
-      alert("Failed to update status");
+      addToast("Failed to update status", 'error');
     }
   };
 

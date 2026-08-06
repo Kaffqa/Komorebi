@@ -77,7 +77,13 @@
     "mood_input": {
       "title": "Bagaimana Perasaanmu Hari Ini?",
       "subtitle": "Membagikan suasana hati Anda memberi kami gambaran yang lebih jelas tentang kesejahteraan Anda sehingga kami dapat menyesuaikan perawatan Anda",
-      "labels": ["Buruk", "Lumayan", "Netral", "Baik", "Sangat Baik"],
+      "labels": [
+        "Buruk",
+        "Lumayan",
+        "Netral",
+        "Baik",
+        "Sangat Baik"
+      ],
       "placeholder": "Apa yang sedang Anda pikirkan hari ini?",
       "send": "Kirim",
       "sending": "Mengirim...",
@@ -115,7 +121,13 @@
     },
     "current_stress": {
       "title": "Tingkat Stres Saat Ini",
-      "labels": ["Sangat Rendah", "Rendah", "Netral", "Tinggi", "Sangat Tinggi"]
+      "labels": [
+        "Sangat Rendah",
+        "Rendah",
+        "Netral",
+        "Tinggi",
+        "Sangat Tinggi"
+      ]
     },
     "current_mood": {
       "title": "Suasana Hati Saat Ini"
@@ -132,13 +144,55 @@
       "modal_title": "Semua Jurnal",
       "loading": "Memuat jurnal...",
       "empty": "Belum ada entri jurnal.",
-      "no_data": "Tidak ada data"
+      "no_data": "Tidak ada data",
+      "guided_prompt": "Prompt Terpandu",
+      "shuffle_prompt": "Ganti Pertanyaan",
+      "close_prompt": "Tutup",
+      "help_me_write": "Bantu aku mulai menulis",
+      "toast_error": "Gagal menyimpan jurnal: ",
+      "toast_fallback": "Silakan coba lagi.",
+      "prompts": [
+        "Apa satu hal kecil yang berhasil kamu syukuri hari ini?",
+        "Sebutkan satu pikiran negatifmu, dan mari cari bukti bahwa pikiran itu belum tentu benar.",
+        "Jika sahabatmu sedang merasa sepertimu saat ini, apa yang akan kamu katakan padanya?",
+        "Apa satu hal yang berada di luar kendalimu hari ini, dan bagaimana kamu bisa merelakannya?",
+        "Tuliskan tiga kekuatan atau kelebihan dirimu yang membantumu bertahan sejauh ini.",
+        "Apa satu hal yang bisa kamu lakukan esok hari untuk membuat dirimu merasa sedikit lebih baik?"
+      ],
+      "tags": [
+        "Kecemasan",
+        "Kerja",
+        "Keluarga",
+        "Kesehatan",
+        "Sosial",
+        "Perawatan Diri",
+        "Stres",
+        "Syukur",
+        "Tidur",
+        "Olahraga"
+      ]
     },
     "activity_history": {
       "title": "Riwayat Aktivitas Kalender",
       "less": "Kurang",
       "more": "Lebih",
-      "journal_logged": "Jurnal dicatat"
+      "journal_logged": "Jurnal dicatat",
+      "months": [
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember"
+      ],
+      "mood": "Suasana Hati",
+      "stress": "Stres"
     },
     "insights": {
       "title": "Ringkasan Wawasan",
@@ -168,14 +222,19 @@
     }
   },
   "common": {
-    "start": "Mulai"
+    "start": "Mulai",
+    "cancel": "Batal",
+    "save": "Simpan",
+    "loading": "Memuat...",
+    "anonymous": "Anonim"
   },
   "helpPage": {
     "outOfRange": "Di Luar Jangkauan",
-    "outOfRangeDesc": "Saat ini belum ada praktisi yang tersedia dalam radius {{radius}} km dari lokasi Anda. Berikut adalah daftar rekomendasi praktisi terbaik dari kota lain.",
+    "outOfRangeDesc": "Saat ini tidak ada praktisi yang tersedia dalam radius {{radius}} km dari lokasi Anda. Berikut adalah daftar praktisi yang direkomendasikan dari kota lain.",
     "comingSoon": "Segera Hadir!",
-    "comingSoonDesc": "Fitur konsultasi langsung di dalam aplikasi saat ini sedang dalam tahap akhir pengembangan. Nantikan segera pembaruan dari kami!",
-    "gotIt": "Mengerti"
+    "comingSoonDesc": "Jadwal konsultasi akan segera dibuka! Mohon pantau terus pembaruan aplikasi kami.",
+    "gotIt": "Mengerti",
+    "nearbySpecialists": "Praktisi Terdekat"
   },
   "mindCheckFlow": {
     "title": "Mind Check-In",
@@ -186,20 +245,24 @@
     "disclaimer": "Hasil ini bersifat informatif dan bukan diagnosis medis. Jika gejala Anda berlanjut, silakan konsultasi dengan profesional kesehatan mental.",
     "startNow": "Mulai Sekarang"
   },
-  "helpPage": {
-    "outOfRange": "Di Luar Jangkauan",
-    "outOfRangeDesc": "Saat ini tidak ada praktisi yang tersedia dalam radius {{radius}} km dari lokasi Anda. Berikut adalah daftar praktisi yang direkomendasikan dari kota lain.",
-    "comingSoon": "Segera Hadir!",
-    "comingSoonDesc": "Jadwal konsultasi akan segera dibuka! Mohon pantau terus pembaruan aplikasi kami.",
-    "gotIt": "Mengerti",
-    "nearbySpecialists": "Praktisi Terdekat"
-  },
   "dass21": {
     "options": {
-      "never": { "label": "Tidak pernah", "desc": "Tidak sesuai dengan saya sama sekali" },
-      "sometimes": { "label": "Kadang-kadang", "desc": "Sesuai dengan saya sampai tingkat tertentu" },
-      "often": { "label": "Sering", "desc": "Sesuai dengan saya sampai tingkat yang cukup besar" },
-      "almostAlways": { "label": "Sangat sering", "desc": "Sangat sesuai dengan saya" }
+      "never": {
+        "label": "Tidak pernah",
+        "desc": "Tidak sesuai dengan saya sama sekali"
+      },
+      "sometimes": {
+        "label": "Kadang-kadang",
+        "desc": "Sesuai dengan saya sampai tingkat tertentu"
+      },
+      "often": {
+        "label": "Sering",
+        "desc": "Sesuai dengan saya sampai tingkat yang cukup besar"
+      },
+      "almostAlways": {
+        "label": "Sangat sering",
+        "desc": "Sangat sesuai dengan saya"
+      }
     },
     "subscale": {
       "depression": "Depresi",
@@ -229,5 +292,290 @@
       "q20": "Saya merasa ketakutan tanpa alasan yang jelas.",
       "q21": "Saya merasa bahwa hidup ini tidak ada maknanya."
     }
+  },
+  "komi": {
+    "thought": [
+      "Halo! Butuh teman cerita?",
+      "Jangan lupa jurnal harianmu ya! 📖",
+      "Kamu sudah melakukan yang terbaik hari ini!",
+      "Tarik napas dalam... hembuskan... 🌬️",
+      "Komi siap mendengarkanmu.",
+      "Banyak minum air putih ya! 💧"
+    ],
+    "motivation": [
+      "Kamu luar biasa hari ini! 🌟",
+      "Tetap semangat ya! ✨",
+      "Jangan lupa istirahat sejenak 🍃",
+      "Komi sangat bangga padamu! 💚",
+      "Satu langkah kecil juga sebuah kemajuan!",
+      "Hari yang berat? Kamu pasti bisa melewatinya!"
+    ],
+    "sad": [
+      "Tidak apa-apa merasa sedih. Aku di sini untukmu. 🫂",
+      "Menangis itu wajar. Jangan dipendam sendiri ya.",
+      "Peluk jauh untukmu! Badai pasti berlalu."
+    ],
+    "happy": [
+      "Wah, kamu terlihat sangat ceria hari ini! 🌟",
+      "Senyummu menular! Terus pertahankan semangatmu! ✨",
+      "Komi ikut bahagia melihatmu senang! 💚"
+    ],
+    "frozen": [
+      "Komi kedinginan... 🥶",
+      "Tulis jurnal hari ini untuk menghangatkanku!",
+      "Brrr... aku beku...",
+      "Tolong cairkan es ini dengan jurnalmu ❄️"
+    ],
+    "frozen_bubble": "Komi kedinginan... 🥶",
+    "frozen_btn": "Tulis Jurnal Sekarang",
+    "hover_tooltip": "Double click to Chat! 💬",
+    "sleep": "Zzz"
+  },
+  "onboarding": {
+    "fallback_name": "Teman",
+    "step1": {
+      "title": "Halo, {{name}}",
+      "desc": "Selamat datang di Komorebi! Aku Komi, teman virtualmu. Aku akan menemanimu menjelajahi platform ini. Yuk, ikuti tur singkatnya!",
+      "btn": "Ayo Mulai!"
+    },
+    "step2": {
+      "title": "Catatan Suasana Hati",
+      "desc": "Di sini kamu bisa mencatat suasana hatimu setiap hari. Aku juga akan berubah warna mengikuti perasaanmu loh!",
+      "btn": "Lanjut"
+    },
+    "step3": {
+      "title": "Riwayat Mood",
+      "desc": "Di sini kamu bisa melihat ringkasan mood-mu dalam seminggu atau sebulan terakhir. Makin sering mengisi, datanya makin akurat lho!",
+      "btn": "Lanjut"
+    },
+    "step4": {
+      "title": "Riwayat Pemeriksaan",
+      "desc": "Di sini kamu bisa melihat riwayat pemeriksaan kesehatan mentalmu. Semua hasilnya tersimpan aman dan bisa diakses kapan saja.",
+      "btn": "Lanjut"
+    },
+    "step5": {
+      "title": "Rekomendasi Aktivitas",
+      "desc": "Aku juga menyiapkan daftar aktivitas yang dirancang khusus untuk kondisi mood kamu saat ini. Coba luangkan waktu sebentar untuk relaksasi!",
+      "btn": "Lanjut"
+    },
+    "step6": {
+      "title": "Jurnal Refleksi",
+      "desc": "Halaman Refleksi adalah tempat menulis jurnal harianmu. Semakin rutin menulis, streak-mu makin panjang dan Komi makin senang!",
+      "btn": "Lanjut"
+    },
+    "step7": {
+      "title": "Diagnosa Kesehatan Mental",
+      "desc": "Butuh pemeriksaan? Di sini kamu bisa melakukan tes kesehatan mental yang dipandu oleh sistem pakar kami secara gratis.",
+      "btn": "Lanjut"
+    },
+    "step8": {
+      "title": "Ngobrol dengan Komi",
+      "desc": "Kamu juga bisa klik 2x padaku kapan saja, atau kunjungi menu ini untuk ngobrol langsung denganku! Aku selalu siap mendengarkanmu.",
+      "btn": "Lanjut"
+    },
+    "step9": {
+      "title": "Ruang Berbagi",
+      "desc": "Di Forum Sharing kamu bisa berbagi cerita, membaca pengalaman orang lain, dan saling mendukung dalam komunitas yang aman.",
+      "btn": "Lanjut"
+    },
+    "step10": {
+      "title": "Bantuan Profesional",
+      "desc": "Butuh bantuan profesional? Di menu Help ini kamu bisa menemukan daftar Psikiater dan Psikolog terpercaya untuk konsultasi lebih lanjut.",
+      "btn": "Lanjut"
+    },
+    "step11": {
+      "title": "Selamat Menjelajah, {{name}}!",
+      "desc": "Itu dia semuanya! Kamu bisa mulai menjelajah sekarang. Aku akan selalu ada di pojok layar kalau kamu butuh teman. Jangan lupa isi jurnal harianmu ya!",
+      "btn": "Mulai Sekarang!"
+    },
+    "mobile": {
+      "title": "Menu Utama (Sidebar)",
+      "desc": "Untuk mengakses Jurnal Refleksi, Diagnosa Psikologi, Chat AI, dan Forum Berbagi, silakan tekan ikon Garis Tiga (☰) di pojok kanan atas layar ya!",
+      "btn": "Lanjut"
+    },
+    "skip": "Lewati Tour"
+  },
+  "activities": {
+    "guided_meditation": {
+      "title": "Meditasi Terpandu",
+      "desc": "Luangkan 10 menit untuk fokus pada pernapasan dan melepaskan ketegangan."
+    },
+    "slow_jogging": {
+      "title": "Lari Pelan",
+      "desc": "Lari santai tanpa tekanan untuk menjernihkan pikiran dan melepaskan ketegangan."
+    },
+    "listening_podcast": {
+      "title": "Mendengarkan Podcast",
+      "desc": "Biarkan cerita menarik atau suara yang menenangkan mengalihkan fokusmu secara perlahan."
+    },
+    "deep_breathing": {
+      "title": "Napas Dalam",
+      "desc": "Latih teknik pernapasan 4-7-8 untuk menurunkan tingkat stres dengan cepat."
+    },
+    "warm_bath": {
+      "title": "Mandi Air Hangat",
+      "desc": "Cara sederhana untuk mengendurkan otot dan melupakan kekhawatiran hari ini."
+    },
+    "ambient_music": {
+      "title": "Musik Ambient",
+      "desc": "Putar musik lo-fi atau suara alam untuk menenangkan sistem sarafmu."
+    },
+    "learn_skill": {
+      "title": "Pelajari Hal Baru",
+      "desc": "Gunakan energimu yang tinggi untuk mencoba hobi baru atau menonton tutorial."
+    },
+    "organize_workspace": {
+      "title": "Rapikan Meja Kerja",
+      "desc": "Bersihkan lingkungan sekitarmu agar pikiran tetap tajam dan termotivasi."
+    },
+    "reading_book": {
+      "title": "Membaca Buku",
+      "desc": "Selami topik yang sudah lama ingin kamu eksplorasi."
+    },
+    "plan_week": {
+      "title": "Rencanakan Minggu Ini",
+      "desc": "Tulis prioritas utama dan jadwalkan untuk menjaga fokus dan momentum."
+    },
+    "creative_project": {
+      "title": "Proyek Kreatif",
+      "desc": "Gunakan energimu untuk menggambar, menulis, atau membuat sesuatu yang sempat tertunda."
+    },
+    "tackle_challenge": {
+      "title": "Selesaikan Tantangan",
+      "desc": "Gunakan energi puncakmu untuk menyelesaikan tugas tersulit di daftarmu."
+    },
+    "light_stretching": {
+      "title": "Peregangan Ringan",
+      "desc": "Gerakkan tubuhmu perlahan untuk menjaga keseimbangan."
+    },
+    "call_friend": {
+      "title": "Hubungi Teman",
+      "desc": "Mengobrol dengan seseorang yang kamu pedulikan."
+    },
+    "journaling": {
+      "title": "Menulis Jurnal",
+      "desc": "Renungkan harimu dan tuliskan beberapa pemikiran."
+    },
+    "nature_walk": {
+      "title": "Jalan di Alam",
+      "desc": "Luangkan 15 menit berjalan di luar untuk menyegarkan pikiran dan mendapat udara segar."
+    },
+    "mindful_break": {
+      "title": "Istirahat Mindful",
+      "desc": "Jauhkan diri dari layar dan fokuslah menikmati minuman favoritmu."
+    },
+    "digital_detox": {
+      "title": "Detoks Digital",
+      "desc": "Putuskan koneksi dari media sosial selama sejam untuk memusatkan diri."
+    },
+    "chat_prompt": "[START_ACTIVITY]\nNama Aktivitas: {{title}}\nDeskripsi: {{desc}}\n\nHalo Komi, tolong bimbing dan temani saya melakukan aktivitas ini sekarang."
+  },
+  "forum": {
+    "all_feed": "Semua Postingan",
+    "most_recent": "Terbaru",
+    "popular": "Terpopuler",
+    "most_discussed": "Paling Banyak Dibahas",
+    "tags": {
+      "all_feed": "Semua",
+      "anxiety": "Kecemasan",
+      "depression": "Depresi",
+      "grief": "Duka",
+      "self_improvement": "Pengembangan Diri",
+      "mindfulness": "Mindfulness",
+      "venting": "Keluh Kesah"
+    },
+    "time": {
+      "just_now": "Baru saja",
+      "min_ago": "{{count}} mnt lalu",
+      "hours_ago": "{{count}} jam lalu",
+      "days_ago": "{{count}} hari lalu"
+    },
+    "anonymous": "Anggota Anonim",
+    "anonymous_short": "Anonim",
+    "share_msg": "Lihat postingan dari {{author}} di Komorebi: \"{{content}}...\"\n\n{{url}}",
+    "share_title": "Postingan Forum Komorebi",
+    "copied": "Tautan disalin ke clipboard!",
+    "delete_success": "Postingan berhasil dihapus",
+    "delete_error": "Gagal menghapus postingan.",
+    "placeholder": "Ada yang bisa kami bantu hari ini?",
+    "empty": "Belum ada postingan. Jadilah yang pertama membagikan cerita!",
+    "delete_btn": "Hapus Postingan",
+    "report_btn": "Laporkan Postingan",
+    "modal_title": "Postingan",
+    "empty_comments": "Belum ada komentar. Jadilah yang pertama!",
+    "comment_placeholder": "Tulis komentar...",
+    "delete_modal": {
+      "title": "Hapus Postingan?",
+      "desc": "Apakah Anda yakin ingin menghapus postingan ini? Tindakan ini tidak dapat dibatalkan."
+    }
+  },
+  "newStory": {
+    "tags": [
+      "Kecemasan",
+      "Depresi",
+      "Duka",
+      "Pengembangan Diri",
+      "Mindfulness",
+      "Keluh Kesah"
+    ],
+    "placeholder_body": "Tulis cerita Anda di sini...",
+    "err_max_tags": "Maksimal hanya 3 tag.",
+    "err_upload": "Gagal mengupload gambar. Error: {{msg}}",
+    "err_mic": "Tidak dapat mengakses mikrofon. Pastikan Anda memberikan izin akses.",
+    "err_empty": "Judul dan konten (atau audio/gambar) tidak boleh kosong.",
+    "err_save": "Gagal menyimpan post. Error: {{msg}}",
+    "back": "Kembali ke Forum",
+    "placeholder_title": "Judul",
+    "anonymous": "Posting sebagai Anonim",
+    "add_tags": "Tambah Tag",
+    "link_modal": {
+      "title": "Sisipkan Tautan",
+      "label": "Alamat URL / Tautan",
+      "placeholder": "contoh.com"
+    },
+    "voice": {
+      "record": "Rekam Pesan Suara",
+      "max": "(maks 3 mnt)",
+      "recording": "Merekam...",
+      "stop": "Berhenti",
+      "attached": "Suara Terlampir ({{time}})",
+      "remove": "Hapus"
+    },
+    "tooltips": {
+      "image": "Tambah Gambar",
+      "video": "Video segera hadir"
+    },
+    "save": "Kirim",
+    "saving": "Mengirim...",
+    "drafts": "Draf"
+  },
+  "chat": {
+    "err_mic": "Maaf, browser Anda tidak mendukung fitur input suara.",
+    "err_fallback": "Maaf, saya sedang mengalami gangguan. Coba kirim pesan Anda lagi ya 🙏",
+    "err_quota": "Maaf, kuota percakapan gratis (Free Tier) saya saat ini sedang penuh. Mohon tunggu beberapa menit atau coba lagi nanti ya 🙏",
+    "today": "Hari ini",
+    "header": "Komi: Teman Harianmu",
+    "online": "Online",
+    "clear": "Hapus Percakapan",
+    "placeholder": "Ketik pesan untuk Komi...",
+    "disclaimer": "Komi adalah teman virtual, bukan pengganti konseling profesional.",
+    "msg_mindcheck": "Hasil Mind Check-In",
+    "msg_activity": "Mulai Aktivitas"
+  },
+  "diagnoseResult": {
+    "not_found": "Hasil tidak ditemukan.",
+    "back": "Kembali ke Cek Kondisi Pikiran",
+    "understanding": "Memahami Kesehatan Anda",
+    "wellness": "{{pct}}% Kesejahteraan",
+    "disclaimer": "Hasil ini hanya bersifat informatif. Harap konsultasikan dengan profesional jika gejala Anda berlanjut.",
+    "chat_payload": "[DIAGNOSIS_SUMMARY]\nHasil Mind Check-In terbaru:\nTingkat: {{level}}\nAkurasi: {{pct}}%\nDetail:\n- Depresi: {{dep}}\n- Kecemasan: {{anx}}\n- Stres: {{str}}\n\nBisakah kita bahas hasil ini?",
+    "chat_btn": "Ngobrol Dengan Komi",
+    "share_tooltip_share": "Bagikan ke Forum",
+    "share_tooltip_saved": "Sudah Tersimpan",
+    "share_tooltip_save": "Simpan ke Jurnal",
+    "share_title": "Mind Check-In: {{level}}",
+    "share_content": "📊 Hasil Mind Check-In Saya\n\nTingkat: {{level}}\nAkurasi: {{pct}}%\n\nDetail Breakdown:\n• Depresi: {{dep}}\n• Kecemasan: {{anx}}\n• Stres: {{str}}\n\nHasil ini hanya bersifat informatif dan bukan merupakan diagnosa medis profesional.",
+    "toast_success": "Berhasil Disimpan ke Jurnal!",
+    "toast_err": "Gagal menyimpan. {{msg}}"
   }
 }

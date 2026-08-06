@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { ChevronDown, Smile, CalendarCheck, TrendingUp, BookText } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useCallback } from 'react';
+import { Smile, CalendarCheck, TrendingUp, BookText } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { supabase } from '../../../services/supabase';
 import { useTranslation } from 'react-i18next';

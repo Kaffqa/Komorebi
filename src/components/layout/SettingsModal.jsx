@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, User, Bell, Shield, LogOut, Check, Loader2, RotateCcw } from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { useThemeStore } from '../../stores/useThemeStore';
+import useToastStore from '../../stores/useToastStore';
 import { supabase } from '../../services/supabase';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +18,7 @@ export function SettingsModal({ isOpen, onClose }) {
   const [activeTab, setActiveTab] = useState('profile');
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const { addToast } = useToastStore();
 
   // Form states for Profile
   const [displayName, setDisplayName] = useState('');
@@ -74,7 +76,7 @@ export function SettingsModal({ isOpen, onClose }) {
       setTimeout(() => setIsSaved(false), 3000);
     } catch (err) {
       console.error("Error updating profile:", err);
-      alert("Failed to update profile: " + (err.message || "Unknown error"));
+      addToast("Failed to update profile: " + (err.message || "Unknown error"), 'error');
     } finally {
       setIsSaving(false);
     }
@@ -83,11 +85,11 @@ export function SettingsModal({ isOpen, onClose }) {
   const handleChangePassword = async (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      alert(t('settings.account.password_mismatch', 'Passwords do not match.'));
+      addToast(t('settings.account.password_mismatch', 'Passwords do not match.'), 'error');
       return;
     }
     if (newPassword.length < 6) {
-      alert(t('settings.account.password_short', 'Password must be at least 6 characters.'));
+      addToast(t('settings.account.password_short', 'Password must be at least 6 characters.'), 'error');
       return;
     }
     
@@ -96,13 +98,13 @@ export function SettingsModal({ isOpen, onClose }) {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) throw error;
       
-      alert(t('settings.account.password_success', 'Password successfully updated!'));
+      addToast(t('settings.account.password_success', 'Password successfully updated!'), 'success');
       setShowPasswordModal(false);
       setNewPassword('');
       setConfirmPassword('');
     } catch (err) {
       console.error("Error updating password:", err);
-      alert(t('settings.account.password_error', 'Failed to update password: ') + err.message);
+      addToast(t('settings.account.password_error', 'Failed to update password: ') + err.message, 'error');
     } finally {
       setIsChangingPassword(false);
     }
@@ -235,7 +237,7 @@ export function SettingsModal({ isOpen, onClose }) {
       
     } catch (err) {
       console.error("Error exporting data:", err);
-      alert(t('settings.account.export_error', 'Failed to export data: ') + err.message);
+      addToast(t('settings.account.export_error', 'Failed to export data: ') + err.message, 'error');
     } finally {
       setIsExporting(false);
     }
@@ -282,7 +284,7 @@ export function SettingsModal({ isOpen, onClose }) {
       setImageSrc(null); // Close cropper modal
     } catch (error) {
       console.error('Error uploading avatar:', error);
-      alert('Gagal mengupload avatar. Pastikan bucket "avatars" sudah dibuat di Supabase Storage dan di-set ke public. Error: ' + error.message);
+      addToast('Gagal mengupload avatar. Pastikan bucket "avatars" sudah dibuat di Supabase Storage dan di-set ke public. Error: ' + error.message, 'error');
     } finally {
       setIsUploading(false);
     }

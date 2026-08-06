@@ -6,8 +6,10 @@ import { useKomiStore } from '../../stores/useKomiStore';
 import { supabase } from '../../services/supabase';
 import { getLocalDateString } from '../../utils/date';
 import { useStreak } from '../../hooks/useStreak';
+import { useTranslation } from 'react-i18next';
 
 export function KomiCompanion({ constraintsRef }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
@@ -37,35 +39,13 @@ export function KomiCompanion({ constraintsRef }) {
   const containerRef = useRef(null);
   const afkTimerRef = useRef(null);
 
-  const messages = [
-    "Halo! Butuh teman cerita?",
-    "Jangan lupa jurnal harianmu ya! 📖",
-    "Kamu sudah melakukan yang terbaik hari ini!",
-    "Tarik napas dalam... hembuskan... 🌬️",
-    "Komi siap mendengarkanmu.",
-    "Banyak minum air putih ya! 💧"
-  ];
+  const messages = t('komi.thought', { returnObjects: true });
 
-  const motivationQuotes = [
-    "Kamu luar biasa hari ini! 🌟",
-    "Tetap semangat ya! ✨",
-    "Jangan lupa istirahat sejenak 🍃",
-    "Komi sangat bangga padamu! 💚",
-    "Satu langkah kecil juga sebuah kemajuan!",
-    "Hari yang berat? Kamu pasti bisa melewatinya!"
-  ];
+  const motivationQuotes = t('komi.motivation', { returnObjects: true });
 
-  const sadQuotes = [
-    "Tidak apa-apa merasa sedih. Aku di sini untukmu. 🫂",
-    "Menangis itu wajar. Jangan dipendam sendiri ya.",
-    "Peluk jauh untukmu! Badai pasti berlalu."
-  ];
+  const sadQuotes = t('komi.sad', { returnObjects: true });
 
-  const happyQuotes = [
-    "Wah, kamu terlihat sangat ceria hari ini! 🌟",
-    "Senyummu menular! Terus pertahankan semangatmu! ✨",
-    "Komi ikut bahagia melihatmu senang! 💚"
-  ];
+  const happyQuotes = t('komi.happy', { returnObjects: true });
 
   // Load data
   useEffect(() => {
@@ -207,12 +187,7 @@ export function KomiCompanion({ constraintsRef }) {
       if (Math.random() > 0.7 && !showMessage) {
         let randomMsg;
         if (isFrozen) {
-          const frozenMsgs = [
-            "Komi kedinginan... 🥶",
-            "Tulis jurnal hari ini untuk menghangatkanku!",
-            "Brrr... aku beku...",
-            "Tolong cairkan es ini dengan jurnalmu ❄️"
-          ];
+          const frozenMsgs = t('komi.frozen', { returnObjects: true });
           randomMsg = frozenMsgs[Math.floor(Math.random() * frozenMsgs.length)];
         } else {
           randomMsg = messages[Math.floor(Math.random() * messages.length)];
@@ -401,12 +376,12 @@ export function KomiCompanion({ constraintsRef }) {
               >
                 {isFrozen ? (
                   <span>
-                    Komi kedinginan... 🥶<br/>
+                    {t('komi.frozen_bubble')}<br/>
                     <span className="font-bold text-[#448AFF] hover:text-blue-700 underline decoration-blue-300 decoration-2 underline-offset-2 transition-colors">
-                      Tulis Jurnal Sekarang
+                      {t('komi.frozen_btn')}
                     </span> ❄️
                   </span>
-                ) : (isHovered && !showMessage ? "Double click to Chat! 💬" : message)}
+                ) : (isHovered && !showMessage ? t('komi.hover_tooltip') : message)}
                 
                 {/* Thought Cloud Tail (Circles leading down to head) */}
                 <div className="absolute -bottom-3 right-6 w-5 h-5 bg-white/95 rounded-full border border-gray-100 border-t-0 border-l-0 shadow-sm z-[-1]"></div>
@@ -425,7 +400,7 @@ export function KomiCompanion({ constraintsRef }) {
                 className="absolute -top-8 right-2 text-2xl font-bold select-none pointer-events-none drop-shadow-md z-50 transition-colors duration-1000"
                 style={{ color: themeColors.base }}
               >
-                Zzz
+                {t('komi.sleep')}
               </motion.div>
             )}
           </AnimatePresence>

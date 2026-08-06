@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router";
 import {
   Send,
   MoreVertical,
   Trash2,
-  Smile,
-  Loader2,
   ArrowDown,
   Brain,
   Activity,
@@ -22,8 +20,11 @@ import Logo from "../../assets/logo.svg";
 
 const AI_AVATAR_URL = "https://images.unsplash.com/vector-1786021960404-cf958c7c70c2?q=80&w=879&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 import { Skeleton } from "../../components/ui/Skeleton";
+import useToastStore from "../../stores/useToastStore";
+import { useTranslation } from "react-i18next";
 
 export default function ChatPage() {
+  const { t } = useTranslation();
   const { user, profile } = useAuthStore();
   const { isDarkMode } = useThemeStore();
   const [messages, setMessages] = useState([]);
@@ -36,6 +37,7 @@ export default function ChatPage() {
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [hasSentDiagnosis, setHasSentDiagnosis] = useState(false);
   const [userContext, setUserContext] = useState(null);
+  const { addToast } = useToastStore();
   
   const location = useLocation();
 
@@ -88,7 +90,7 @@ export default function ChatPage() {
   const toggleRecording = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert("Maaf, browser Anda tidak mendukung fitur input suara.");
+      addToast(t('chat.err_mic'), 'error');
       return;
     }
     
@@ -322,9 +324,9 @@ export default function ChatPage() {
     } catch (error) {
       console.error("Chat error:", error);
       
-      let errorMessage = "Maaf, saya sedang mengalami gangguan. Coba kirim pesan Anda lagi ya 🙏";
+      let errorMessage = t('chat.err_fallback');
       if (error?.message?.includes("quota") || error?.status === 429) {
-        errorMessage = "Maaf, kuota percakapan gratis (Free Tier) saya saat ini sedang penuh. Mohon tunggu beberapa menit atau coba lagi nanti ya 🙏";
+        errorMessage = t('chat.err_quota');
       }
 
       const errorMsg = {
@@ -425,7 +427,7 @@ export default function ChatPage() {
         year: "numeric",
       });
 
-      const displayDate = msgDate === today ? "Today" : msgDate;
+      const displayDate = msgDate === today ? t('chat.today') : msgDate;
 
       if (displayDate !== currentDate) {
         currentDate = displayDate;
@@ -457,12 +459,12 @@ export default function ChatPage() {
             </div>
             <div>
               <h2 className="text-[15px] font-medium text-black dark:text-white font-sans transition-colors duration-300">
-                Komi: Your Daily Companion
+                {t('chat.header')}
               </h2>
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="text-[11px] text-emerald-500 font-sans font-medium">
-                  Online
+                  {t('chat.online')}
                 </span>
               </div>
             </div>
@@ -489,7 +491,7 @@ export default function ChatPage() {
                     className="w-full flex items-center gap-3 px-4 py-2.5 text-[13px] font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
-                    Clear Conversation
+                    {t('chat.clear')}
                   </button>
                 </motion.div>
               )}
@@ -645,7 +647,7 @@ export default function ChatPage() {
                     handleSend();
                   }
                 }}
-                placeholder="Ketik pesan untuk Komi..."
+                placeholder={t('chat.placeholder')}
                 rows={1}
                 disabled={isTyping}
                 className="w-full px-4 py-3 bg-[#F7FAF8] dark:bg-komorebi-dark-bg border border-gray-100 dark:border-[#32473D] rounded-[16px] text-[14px] font-sans text-black dark:text-white placeholder-gray-400 dark:placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#5D8B66]/20 focus:border-[#5D8B66]/30 transition-all resize-none overflow-hidden disabled:opacity-60"
@@ -679,7 +681,7 @@ export default function ChatPage() {
             </button>
           </div>
           <p className="text-[10px] text-gray-300 text-center mt-2 font-sans">
-            Komi adalah teman virtual, bukan pengganti konseling profesional.
+            {t('chat.disclaimer')}
           </p>
         </div>
       </div>
@@ -691,6 +693,7 @@ export default function ChatPage() {
 // Message Bubble Component
 // ═══════════════════════════════════════════
 function MessageBubble({ message, formatTime }) {
+  const { t } = useTranslation();
   const isUser = message.sender === "user";
   const isDiagnosisCard = isUser && message.content.startsWith("[DIAGNOSIS_SUMMARY]");
   const isActivityCard = isUser && message.content.startsWith("[START_ACTIVITY]");
@@ -732,7 +735,7 @@ function MessageBubble({ message, formatTime }) {
             <div className="bg-[#F7FAF8] dark:bg-komorebi-dark-bg border border-[#5D8B66]/20 rounded-[16px] p-4 text-[#2D4A34] dark:text-[#E8F1E9] shadow-sm transition-colors duration-300">
               <div className="flex items-center gap-2 mb-3 font-semibold border-b border-[#5D8B66]/10 dark:border-[#5D8B66]/30 pb-3 transition-colors duration-300">
                 <Brain className="w-5 h-5 text-[#5D8B66]" />
-                Hasil Mind Check-In
+                {t('chat.msg_mindcheck')}
               </div>
               <p className="whitespace-pre-wrap leading-relaxed">{displayContent}</p>
               <p className="text-[10px] mt-3 text-right text-gray-500 font-medium">
@@ -743,7 +746,7 @@ function MessageBubble({ message, formatTime }) {
             <div className="bg-[#FFF8EE] dark:bg-[#2A241A] border border-[#EACCA4] dark:border-[#8C5D2C] rounded-[16px] p-4 text-[#8C5D2C] dark:text-[#EACCA4] shadow-sm transition-colors duration-300">
               <div className="flex items-center gap-2 mb-3 font-semibold border-b border-[#EACCA4]/30 dark:border-[#8C5D2C]/50 pb-3 transition-colors duration-300">
                 <Activity className="w-5 h-5 text-[#C48943]" />
-                Mulai Aktivitas
+                {t('chat.msg_activity')}
               </div>
               <p className="whitespace-pre-wrap leading-relaxed">{displayContent}</p>
               <p className="text-[10px] mt-3 text-right text-[#8C5D2C]/60 font-medium">

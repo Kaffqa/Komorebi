@@ -121,9 +121,9 @@ export function ActivityHistoryWidget() {
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
 
-  const months = i18n.language === 'id' 
-    ? ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
-    : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const defaultMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const months = t('journaling.activity_history.months', { returnObjects: true }) || defaultMonths;
+  const displayMonths = Array.isArray(months) ? months : defaultMonths;
 
   return (
     <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col h-full relative z-0 transition-colors duration-300">
@@ -149,7 +149,7 @@ export function ActivityHistoryWidget() {
                   exit={{ opacity: 0, y: 10 }}
                   className="absolute top-full right-0 mt-2 bg-white dark:bg-komorebi-dark-bg rounded-xl shadow-lg border border-gray-100 dark:border-[#32473D] py-2 z-50 max-h-[200px] overflow-y-auto min-w-[140px] transition-colors duration-300"
                 >
-                  {months.map((m, idx) => (
+                  {displayMonths.map((m, idx) => (
                     <button
                       key={m}
                       onClick={() => { setCurrentDate(new Date(year, idx, 1)); setShowMonthPicker(false); }}
@@ -157,7 +157,7 @@ export function ActivityHistoryWidget() {
                         idx === month ? "bg-[#7DA085]/10 text-[#5D8B66]" : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-black/20"
                       }`}
                     >
-                      {m} {year}
+                      {displayMonths[idx]} {year}
                     </button>
                   ))}
                   <hr className="my-1 border-gray-100 dark:border-[#32473D]" />
@@ -219,14 +219,14 @@ export function ActivityHistoryWidget() {
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2 text-[12px] text-gray-500 dark:text-gray-400">
                                   <Smile className="w-4 h-4" strokeWidth={2.5} />
-                                  <span className="font-medium">Mood</span>
+                                  <span className="font-medium">{t('journaling.activity_history.mood', 'Mood')}</span>
                                 </div>
                                 <span className="text-[13px] font-semibold text-gray-800 dark:text-gray-200">{dayData.mood || moodLabels[dayData.moodScore] || "—"}</span>
                               </div>
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2 text-[12px] text-gray-500 dark:text-gray-400">
                                   <Activity className="w-4 h-4" strokeWidth={2.5} />
-                                  <span className="font-medium">Stress</span>
+                                  <span className="font-medium">{t('journaling.activity_history.stress', 'Stress')}</span>
                                 </div>
                                 <span className="text-[13px] font-semibold text-gray-800 dark:text-gray-200">{dayData.stressLevel || stressLabels[dayData.stressScore] || "—"}</span>
                               </div>

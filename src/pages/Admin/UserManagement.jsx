@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../../services/supabase";
-import { format } from "date-fns";
 import { 
   Search, 
   ShieldAlert, 
@@ -11,6 +10,7 @@ import {
   X
 } from "lucide-react";
 import { Skeleton } from "../../components/ui/Skeleton";
+import useToastStore from "../../stores/useToastStore";
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -20,6 +20,7 @@ export default function UserManagement() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [userStats, setUserStats] = useState(null);
   const [statsLoading, setStatsLoading] = useState(false);
+  const { addToast } = useToastStore();
   
   // Custom Confirmation Modal State
   const [confirmModal, setConfirmModal] = useState({ 
@@ -137,7 +138,7 @@ export default function UserManagement() {
       }
     } catch (error) {
       console.error(`Error executing ${actionType}:`, error);
-      alert(`Failed to ${actionType} user`);
+      addToast(`Failed to ${actionType} user`, 'error');
     } finally {
       setConfirmModal({ ...confirmModal, isOpen: false });
     }

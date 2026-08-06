@@ -10,10 +10,10 @@ import {
   Settings2, 
   Plus,
   Trash2,
-  Save,
-  Pencil
+  Save
 } from "lucide-react";
 import { Skeleton } from "../../components/ui/Skeleton";
+import useToastStore from "../../stores/useToastStore";
 
 const SEVERITY_COLORS = {
   'Normal': '#5D8B66',
@@ -27,6 +27,7 @@ export default function AssessmentAnalytics() {
   const [activeTab, setActiveTab] = useState("analytics");
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { addToast } = useToastStore();
 
   // Editor state
   const [assessments, setAssessments] = useState([]);
@@ -103,7 +104,7 @@ export default function AssessmentAnalytics() {
         
       if (error) throw error;
       
-      alert("Questions saved successfully!");
+      addToast("Questions saved successfully!", 'success');
       setIsEditing(false);
       
       // Update local assessments array
@@ -112,7 +113,7 @@ export default function AssessmentAnalytics() {
       ));
     } catch (error) {
       console.error("Error saving questions:", error);
-      alert("Failed to save questions");
+      addToast("Failed to save questions", 'error');
     }
   };
 

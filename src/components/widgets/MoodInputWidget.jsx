@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { supabase } from "../../services/supabase";
 import { dispatchMoodUpdate } from "../../hooks/useMoodEvent";
 import { useTranslation } from "react-i18next";
+import useToastStore from "../../stores/useToastStore";
 
 export function MoodInputWidget() {
   const { t } = useTranslation();
@@ -11,17 +12,19 @@ export function MoodInputWidget() {
   const [notes, setNotes] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const { addToast } = useToastStore();
+  
+  const uiLabels = t('dashboard.mood_input.labels', { returnObjects: true }) || ["Bad", "Not Bad", "Neutral", "Good", "Very Good"];
   
   const moodIcons = [
-    <img key="1" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f61e.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Bad" />,
-    <img key="2" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f615.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Not Bad" />,
-    <img key="3" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f610.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Neutral" />,
-    <img key="4" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f642.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Good" />,
-    <img key="5" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f604.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Very Good" />
+    <img key="1" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f61e.png" className="w-6 h-6 object-contain drop-shadow-sm" alt={uiLabels[0]} />,
+    <img key="2" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f615.png" className="w-6 h-6 object-contain drop-shadow-sm" alt={uiLabels[1]} />,
+    <img key="3" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f610.png" className="w-6 h-6 object-contain drop-shadow-sm" alt={uiLabels[2]} />,
+    <img key="4" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f642.png" className="w-6 h-6 object-contain drop-shadow-sm" alt={uiLabels[3]} />,
+    <img key="5" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f604.png" className="w-6 h-6 object-contain drop-shadow-sm" alt={uiLabels[4]} />
   ];
   // Internal labels for DB
   const labels = ["Bad", "Not Bad", "Neutral", "Good", "Very Good"];
-  const uiLabels = t('dashboard.mood_input.labels', { returnObjects: true });
 
   // Load today's mood if it exists
   useEffect(() => {
@@ -91,7 +94,7 @@ export function MoodInputWidget() {
       setTimeout(() => setIsSuccess(false), 3000);
     } catch (error) {
       console.error("Error saving mood:", error);
-      alert("Failed to save mood: " + (error.message || "Please try again."));
+      addToast(t('common.error', 'Failed to save mood: ') + (error.message || t('journaling.daily_journal.toast_fallback', 'Please try again.')), 'error');
     } finally {
       setIsLoading(false);
     }

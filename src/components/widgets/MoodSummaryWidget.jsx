@@ -22,12 +22,14 @@ export function MoodSummaryWidget() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const uiLabels = t('dashboard.mood_input.labels', { returnObjects: true }) || ["Bad", "Not Bad", "Neutral", "Good", "Very Good"];
+
   const emptyData = [
-    { label: "Neutral", percentage: 0, rawPercentage: 0, color: "#678D73" },
-    { label: "Not Bad", percentage: 0, rawPercentage: 0, color: "#8AAFA0" },
-    { label: "Bad", percentage: 0, rawPercentage: 0, color: "#C9DBCF" },
-    { label: "Very Good", percentage: 0, rawPercentage: 0, color: "#274230" },
-    { label: "Good", percentage: 0, rawPercentage: 0, color: "#486E53" },
+    { label: uiLabels[2], percentage: 0, rawPercentage: 0, color: "#678D73" },
+    { label: uiLabels[1], percentage: 0, rawPercentage: 0, color: "#8AAFA0" },
+    { label: uiLabels[0], percentage: 0, rawPercentage: 0, color: "#C9DBCF" },
+    { label: uiLabels[4], percentage: 0, rawPercentage: 0, color: "#274230" },
+    { label: uiLabels[3], percentage: 0, rawPercentage: 0, color: "#486E53" },
   ];
   
   const [data, setData] = useState(emptyData);
@@ -64,7 +66,7 @@ export function MoodSummaryWidget() {
     });
 
     const total = entries.length;
-    const uiLabels = t('dashboard.mood_input.labels', { returnObjects: true });
+    const uiLabels = t('dashboard.mood_input.labels', { returnObjects: true }) || ["Bad", "Not Bad", "Neutral", "Good", "Very Good"];
     
     setData([
       { label: uiLabels[2], percentage: Math.round((counts[3] / total) * 100), rawPercentage: counts[3] / total, color: "#678D73" },
@@ -121,7 +123,7 @@ export function MoodSummaryWidget() {
       return sliceData;
     });
 
-  const uiLabels = t('dashboard.mood_input.labels', { returnObjects: true });
+
   const legendData = [
     { label: uiLabels[0], color: "#C9DBCF" },
     { label: uiLabels[1], color: "#8AAFA0" },

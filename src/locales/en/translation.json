@@ -77,7 +77,13 @@
     "mood_input": {
       "title": "How Are You Feeling Today?",
       "subtitle": "Sharing your mood gives us a clearer picture of your well being so we can tailor your care",
-      "labels": ["Bad", "Not Bad", "Neutral", "Good", "Very Good"],
+      "labels": [
+        "Bad",
+        "Not Bad",
+        "Neutral",
+        "Good",
+        "Very Good"
+      ],
       "placeholder": "What's on your mind today?",
       "send": "Send",
       "sending": "Sending...",
@@ -115,7 +121,13 @@
     },
     "current_stress": {
       "title": "Current Stress",
-      "labels": ["Very Low", "Low", "Neutral", "High", "Very High"]
+      "labels": [
+        "Very Low",
+        "Low",
+        "Neutral",
+        "High",
+        "Very High"
+      ]
     },
     "current_mood": {
       "title": "Current Mood"
@@ -132,13 +144,55 @@
       "modal_title": "All Journals",
       "loading": "Loading journals...",
       "empty": "No journal entries yet.",
-      "no_data": "No data"
+      "no_data": "No data",
+      "guided_prompt": "Guided Prompt",
+      "shuffle_prompt": "Change Prompt",
+      "close_prompt": "Close",
+      "help_me_write": "Help me start writing",
+      "toast_error": "Failed to save journal: ",
+      "toast_fallback": "Please try again.",
+      "prompts": [
+        "What is one small thing you were grateful for today?",
+        "Name one negative thought, and let's find evidence that it might not be true.",
+        "If your best friend felt the way you do right now, what would you tell them?",
+        "What is one thing out of your control today, and how can you let it go?",
+        "Write down three strengths that have helped you survive so far.",
+        "What is one thing you can do tomorrow to make yourself feel a little better?"
+      ],
+      "tags": [
+        "Anxiety",
+        "Work",
+        "Family",
+        "Health",
+        "Social",
+        "Self-Care",
+        "Stress",
+        "Gratitude",
+        "Sleep",
+        "Exercise"
+      ]
     },
     "activity_history": {
       "title": "Calender Activity History",
       "less": "Less",
       "more": "More",
-      "journal_logged": "Journal logged"
+      "journal_logged": "Journal logged",
+      "months": [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ],
+      "mood": "Mood",
+      "stress": "Stress"
     },
     "insights": {
       "title": "Insights Overview",
@@ -168,14 +222,19 @@
     }
   },
   "common": {
-    "start": "Start"
+    "start": "Start",
+    "cancel": "Cancel",
+    "save": "Save",
+    "loading": "Loading...",
+    "anonymous": "Anonymous"
   },
   "helpPage": {
     "outOfRange": "Out of Range",
     "outOfRangeDesc": "There are currently no practitioners available within a {{radius}} km radius from your location. Here is a list of recommended practitioners from other cities.",
     "comingSoon": "Coming Soon!",
-    "comingSoonDesc": "The direct in-app consultation feature is currently in its final stages of development. Stay tuned for updates from us!",
-    "gotIt": "Got It"
+    "comingSoonDesc": "Consultation scheduling will open shortly! Please stay tuned for updates on our app.",
+    "gotIt": "Got It",
+    "nearbySpecialists": "Nearby Practitioners"
   },
   "mindCheckFlow": {
     "title": "Mind Check-In",
@@ -186,20 +245,24 @@
     "disclaimer": "These results are informational and not a medical diagnosis. If your symptoms persist, please consult a mental health professional.",
     "startNow": "Start Now"
   },
-  "helpPage": {
-    "outOfRange": "Out of Range",
-    "outOfRangeDesc": "There are currently no practitioners available within a {{radius}} km radius from your location. Here is a list of recommended practitioners from other cities.",
-    "comingSoon": "Coming Soon!",
-    "comingSoonDesc": "Consultation scheduling will open shortly! Please stay tuned for updates on our app.",
-    "gotIt": "Got It",
-    "nearbySpecialists": "Nearby Practitioners"
-  },
   "dass21": {
     "options": {
-      "never": { "label": "Never", "desc": "Did not apply to me at all" },
-      "sometimes": { "label": "Sometimes", "desc": "Applied to me to some degree, or some of the time" },
-      "often": { "label": "Often", "desc": "Applied to me to a considerable degree or a good part of time" },
-      "almostAlways": { "label": "Almost Always", "desc": "Applied to me very much or most of the time" }
+      "never": {
+        "label": "Never",
+        "desc": "Did not apply to me at all"
+      },
+      "sometimes": {
+        "label": "Sometimes",
+        "desc": "Applied to me to some degree, or some of the time"
+      },
+      "often": {
+        "label": "Often",
+        "desc": "Applied to me to a considerable degree or a good part of time"
+      },
+      "almostAlways": {
+        "label": "Almost Always",
+        "desc": "Applied to me very much or most of the time"
+      }
     },
     "subscale": {
       "depression": "Depression",
@@ -229,5 +292,290 @@
       "q20": "I felt scared without any good reason.",
       "q21": "I felt that life was meaningless."
     }
+  },
+  "komi": {
+    "thought": [
+      "Hello! Need someone to talk to?",
+      "Don't forget your daily journal! 📖",
+      "You did your best today!",
+      "Deep breath in... and out... 🌬️",
+      "Komi is here to listen.",
+      "Make sure to stay hydrated! 💧"
+    ],
+    "motivation": [
+      "You're amazing today! 🌟",
+      "Keep up the great work! ✨",
+      "Don't forget to take a break 🍃",
+      "Komi is so proud of you! 💚",
+      "A small step is still progress!",
+      "Tough day? You can get through this!"
+    ],
+    "sad": [
+      "It's okay to feel sad. I'm here for you. 🫂",
+      "Crying is natural. Don't bottle it up.",
+      "Sending a virtual hug! This storm will pass."
+    ],
+    "happy": [
+      "Wow, you look so cheerful today! 🌟",
+      "Your smile is contagious! Keep it up! ✨",
+      "Komi is happy to see you happy! 💚"
+    ],
+    "frozen": [
+      "Komi is freezing... 🥶",
+      "Write a journal today to warm me up!",
+      "Brrr... I'm frozen...",
+      "Please melt this ice with your journal ❄️"
+    ],
+    "frozen_bubble": "Komi is freezing... 🥶",
+    "frozen_btn": "Write Journal Now",
+    "hover_tooltip": "Double click to Chat! 💬",
+    "sleep": "Zzz"
+  },
+  "onboarding": {
+    "fallback_name": "Friend",
+    "step1": {
+      "title": "Hello, {{name}}",
+      "desc": "Welcome to Komorebi! I'm Komi, your virtual companion. I'll guide you through the platform. Let's take a quick tour!",
+      "btn": "Let's Start!"
+    },
+    "step2": {
+      "title": "Mood Tracker",
+      "desc": "You can log your daily mood here. I will even change my color based on how you feel!",
+      "btn": "Next"
+    },
+    "step3": {
+      "title": "Mood History",
+      "desc": "See a summary of your mood over the past week or month. The more you log, the more accurate the data!",
+      "btn": "Next"
+    },
+    "step4": {
+      "title": "Assessment History",
+      "desc": "View your mental health assessment history here. All results are securely stored and accessible anytime.",
+      "btn": "Next"
+    },
+    "step5": {
+      "title": "Activity Recommendations",
+      "desc": "I've also prepared a list of activities tailored to your current mood. Take a moment to relax!",
+      "btn": "Next"
+    },
+    "step6": {
+      "title": "Reflection Journal",
+      "desc": "The Reflection page is where you write your daily journal. The more you write, the longer your streak, and the happier I get!",
+      "btn": "Next"
+    },
+    "step7": {
+      "title": "Mental Health Diagnose",
+      "desc": "Need a check-up? You can take a free mental health test guided by our expert system here.",
+      "btn": "Next"
+    },
+    "step8": {
+      "title": "Chat with Komi",
+      "desc": "You can double-click me anytime, or visit this menu to chat directly with me! I'm always ready to listen.",
+      "btn": "Next"
+    },
+    "step9": {
+      "title": "Sharing Room",
+      "desc": "In the Sharing Forum, you can share stories, read others' experiences, and support each other in a safe community.",
+      "btn": "Next"
+    },
+    "step10": {
+      "title": "Professional Help",
+      "desc": "Need professional help? In this Help menu, you can find trusted Psychiatrists and Psychologists for further consultation.",
+      "btn": "Next"
+    },
+    "step11": {
+      "title": "Enjoy Exploring, {{name}}!",
+      "desc": "That's everything! You can start exploring now. I'll always be in the corner if you need a friend. Don't forget to log your journal!",
+      "btn": "Start Now!"
+    },
+    "mobile": {
+      "title": "Main Menu (Sidebar)",
+      "desc": "To access the Reflection Journal, Psychology Diagnose, AI Chat, and Sharing Forum, please tap the Hamburger icon (☰) in the top right corner!",
+      "btn": "Next"
+    },
+    "skip": "Skip Tour"
+  },
+  "activities": {
+    "guided_meditation": {
+      "title": "Guided Meditation",
+      "desc": "Take 10 minutes to focus on your breathing and release tension."
+    },
+    "slow_jogging": {
+      "title": "Slow Jogging",
+      "desc": "A gentle, low-pressure run to clear your mind and naturally release tension."
+    },
+    "listening_podcast": {
+      "title": "Listening To Podcast",
+      "desc": "Let an engaging story or a comforting voice gently shift your focus."
+    },
+    "deep_breathing": {
+      "title": "Deep Breathing",
+      "desc": "Practice 4-7-8 breathing technique to quickly lower your stress levels."
+    },
+    "warm_bath": {
+      "title": "Warm Bath",
+      "desc": "A simple way to physically relax your muscles and let go of the day's worries."
+    },
+    "ambient_music": {
+      "title": "Ambient Music",
+      "desc": "Put on some lo-fi or nature sounds to calm your nervous system."
+    },
+    "learn_skill": {
+      "title": "Learn a New Skill",
+      "desc": "Use your high energy to pick up a new hobby or watch a tutorial."
+    },
+    "organize_workspace": {
+      "title": "Organize Workspace",
+      "desc": "Declutter your environment to keep your mind sharp and motivated."
+    },
+    "reading_book": {
+      "title": "Reading A Book",
+      "desc": "Dive deep into a topic you've been wanting to explore."
+    },
+    "plan_week": {
+      "title": "Plan Your Week",
+      "desc": "Write down your top priorities and schedule them to maintain focus and momentum."
+    },
+    "creative_project": {
+      "title": "Creative Project",
+      "desc": "Use your energy to draw, write, or build something you've been putting off."
+    },
+    "tackle_challenge": {
+      "title": "Tackle a Challenge",
+      "desc": "Use your peak energy to complete the hardest task on your to-do list."
+    },
+    "light_stretching": {
+      "title": "Light Stretching",
+      "desc": "Keep your body moving gently to maintain your equilibrium."
+    },
+    "call_friend": {
+      "title": "Call a Friend",
+      "desc": "Catch up with someone you care about."
+    },
+    "journaling": {
+      "title": "Journaling",
+      "desc": "Reflect on your day and write down a few thoughts."
+    },
+    "nature_walk": {
+      "title": "Nature Walk",
+      "desc": "Spend 15 minutes walking outside to refresh your mind and get some fresh air."
+    },
+    "mindful_break": {
+      "title": "Mindful Break",
+      "desc": "Step away from your screen and fully focus on enjoying your favorite beverage."
+    },
+    "digital_detox": {
+      "title": "Digital Detox",
+      "desc": "Disconnect from social media for an hour to center yourself."
+    },
+    "chat_prompt": "[START_ACTIVITY]\nActivity Name: {{title}}\nDescription: {{desc}}\n\nHello Komi, please guide and accompany me in doing this activity now."
+  },
+  "forum": {
+    "all_feed": "All Feed",
+    "most_recent": "Most Recent",
+    "popular": "Popular",
+    "most_discussed": "Most Discussed",
+    "tags": {
+      "all_feed": "All Feed",
+      "anxiety": "Anxiety",
+      "depression": "Depression",
+      "grief": "Grief",
+      "self_improvement": "Self Improvement",
+      "mindfulness": "Mindfulness",
+      "venting": "Venting"
+    },
+    "time": {
+      "just_now": "Just now",
+      "min_ago": "{{count}} min ago",
+      "hours_ago": "{{count}} hours ago",
+      "days_ago": "{{count}} days ago"
+    },
+    "anonymous": "Anonymous Member",
+    "anonymous_short": "Anonymous",
+    "share_msg": "Check out this post by {{author}} on Komorebi: \"{{content}}...\"\n\n{{url}}",
+    "share_title": "Komorebi Forum Post",
+    "copied": "Link copied to clipboard!",
+    "delete_success": "Post successfully deleted",
+    "delete_error": "Failed to delete post.",
+    "placeholder": "How can we help you today?",
+    "empty": "No posts found. Be the first to share a story!",
+    "delete_btn": "Delete Post",
+    "report_btn": "Report Post",
+    "modal_title": "Post",
+    "empty_comments": "No comments yet. Be the first!",
+    "comment_placeholder": "Write a comment...",
+    "delete_modal": {
+      "title": "Delete Post?",
+      "desc": "Are you sure you want to delete this post? This action cannot be undone."
+    }
+  },
+  "newStory": {
+    "tags": [
+      "Anxiety",
+      "Depression",
+      "Grief",
+      "Self Improvement",
+      "Mindfulness",
+      "Venting"
+    ],
+    "placeholder_body": "Body text...",
+    "err_max_tags": "Maximum 3 tags allowed.",
+    "err_upload": "Failed to upload image. Error: {{msg}}",
+    "err_mic": "Cannot access microphone. Ensure you have granted permission.",
+    "err_empty": "Title and content (or audio/image) cannot be empty.",
+    "err_save": "Failed to save post. Error: {{msg}}",
+    "back": "Back to Forum",
+    "placeholder_title": "Title",
+    "anonymous": "Post as Anonymous",
+    "add_tags": "Add Tags",
+    "link_modal": {
+      "title": "Insert Link",
+      "label": "URL / Link Address",
+      "placeholder": "example.com"
+    },
+    "voice": {
+      "record": "Record Voice Message",
+      "max": "(max 3 min)",
+      "recording": "Recording...",
+      "stop": "Stop",
+      "attached": "Voice Attached ({{time}})",
+      "remove": "Remove"
+    },
+    "tooltips": {
+      "image": "Add Image",
+      "video": "Video coming soon"
+    },
+    "save": "Save",
+    "saving": "Saving...",
+    "drafts": "Drafts"
+  },
+  "chat": {
+    "err_mic": "Sorry, your browser doesn't support voice input.",
+    "err_fallback": "Sorry, I'm experiencing some issues. Please try sending your message again 🙏",
+    "err_quota": "Sorry, my free conversation tier is currently full. Please wait a few minutes or try again later 🙏",
+    "today": "Today",
+    "header": "Komi: Your Daily Companion",
+    "online": "Online",
+    "clear": "Clear Conversation",
+    "placeholder": "Type a message for Komi...",
+    "disclaimer": "Komi is a virtual companion, not a replacement for professional counseling.",
+    "msg_mindcheck": "Mind Check-In Result",
+    "msg_activity": "Start Activity"
+  },
+  "diagnoseResult": {
+    "not_found": "Result not found.",
+    "back": "Back to Mind Check-In",
+    "understanding": "Understanding Your Health",
+    "wellness": "{{pct}}% Wellness",
+    "disclaimer": "These results are for informational purposes only. Please consult a professional if your symptoms persist.",
+    "chat_payload": "[DIAGNOSIS_SUMMARY]\nLatest Mind Check-In Result:\nLevel: {{level}}\nAccuracy: {{pct}}%\nDetails:\n- Depression: {{dep}}\n- Anxiety: {{anx}}\n- Stress: {{str}}\n\nCan we discuss these results?",
+    "chat_btn": "Chat With Komi",
+    "share_tooltip_share": "Share to Forum",
+    "share_tooltip_saved": "Already Saved",
+    "share_tooltip_save": "Save to Journal",
+    "share_title": "Mind Check-In: {{level}}",
+    "share_content": "📊 My Mind Check-In Result\n\nLevel: {{level}}\nAccuracy: {{pct}}%\n\nDetail Breakdown:\n• Depression: {{dep}}\n• Anxiety: {{anx}}\n• Stress: {{str}}\n\nThese results are informational and not a professional medical diagnosis.",
+    "toast_success": "Saved to Journal!",
+    "toast_err": "Failed to save. {{msg}}"
   }
 }

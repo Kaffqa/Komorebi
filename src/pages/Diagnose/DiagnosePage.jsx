@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router";
-import { motion, AnimatePresence } from "framer-motion";
-import { Search, ArrowRight, X } from "lucide-react";
+import { motion } from "framer-motion";
+import { Search, ArrowRight } from "lucide-react";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { supabase } from "../../services/supabase";
 import { getSeverityLabel, getSeverityEmoji } from "../../data/diagnoseQuestions";

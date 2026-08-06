@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { supabase } from "../../services/supabase";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { ReportPostModal } from "../../components/modals/ReportPostModal";
@@ -22,16 +23,17 @@ import { Skeleton } from "../../components/ui/Skeleton";
 import { AudioPlayer } from "../../components/ui/AudioPlayer";
 
 export default function ForumPage() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const navigate = useNavigate();
   
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState("All Feed");
+  const [activeFilter, setActiveFilter] = useState(t('forum.tags.all_feed'));
   const [searchQuery, setSearchQuery] = useState("");
   const [likedPosts, setLikedPosts] = useState(new Set());
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [sortBy, setSortBy] = useState("Most Recent");
+  const [sortBy, setSortBy] = useState(t('forum.most_recent'));
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
   const [postToReport, setPostToReport] = useState(null);
@@ -48,7 +50,7 @@ export default function ForumPage() {
   const [newComment, setNewComment] = useState("");
   const [loadingComments, setLoadingComments] = useState(false);
 
-  const filters = ["All Feed", "Anxiety", "Depression", "Grief", "Self Improvement"];
+  const filters = [t('forum.tags.all_feed'), t('forum.tags.anxiety'), t('forum.tags.depression'), t('forum.tags.grief'), t('forum.tags.self_improvement')];
 
   useEffect(() => {
     fetchPosts();
@@ -77,15 +79,15 @@ export default function ForumPage() {
           profiles:user_id ( id, display_name, avatar_url )
         `);
 
-      if (sortBy === "Popular") {
+      if (sortBy === t('forum.popular')) {
         query = query.order("likes_count", { ascending: false }).order("created_at", { ascending: false });
-      } else if (sortBy === "Most Discussed") {
+      } else if (sortBy === t('forum.most_discussed')) {
         query = query.order("replies_count", { ascending: false }).order("created_at", { ascending: false });
       } else {
         query = query.order("created_at", { ascending: false });
       }
 
-      if (activeFilter !== "All Feed") {
+      if (activeFilter !== t('forum.tags.all_feed')) {
         query = query.contains("tags", [activeFilter]);
       }
 
@@ -202,22 +204,22 @@ export default function ForumPage() {
     const diffHours = Math.floor(diffMin / 60);
     const diffDays = Math.floor(diffHours / 24);
 
-    if (diffSec < 60) return "Just now";
-    if (diffMin < 60) return `${diffMin} min ago`;
-    if (diffHours < 24) return `${diffHours} hours ago`;
-    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffSec < 60) return t('forum.time.just_now');
+    if (diffMin < 60) return t('forum.time.min_ago', { count: diffMin });
+    if (diffHours < 24) return t('forum.time.hours_ago', { count: diffHours });
+    if (diffDays < 7) return t('forum.time.days_ago', { count: diffDays });
     return date.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
   };
 
   const handleShare = async (post) => {
     const shareUrl = `${window.location.origin}/forum`; 
-    const authorName = post.is_anonymous ? "Anonymous Member" : (post.profiles?.display_name || "Anonymous");
-    const text = `Lihat postingan dari ${authorName} di Komorebi: "${post.title || post.content.substring(0, 50)}..."\n\n${shareUrl}`;
+    const authorName = post.is_anonymous ? t('forum.anonymous') : (post.profiles?.display_name || t('forum.anonymous_short'));
+    const text = t('forum.share_msg', { author: authorName, content: post.title || post.content.substring(0,50), url: shareUrl });
     
     if (navigator.share) {
       try {
         await navigator.share({
-          title: post.title || "Komorebi Forum Post",
+          title: post.title || t('forum.share_title'),
           text: text,
         });
       } catch (err) {
@@ -225,7 +227,7 @@ export default function ForumPage() {
       }
     } else {
       navigator.clipboard.writeText(text);
-      showToast("Tautan disalin ke clipboard!");
+      showToast(t('forum.copied'));
     }
   };
 
@@ -236,10 +238,10 @@ export default function ForumPage() {
       if (error) throw error;
       setPosts(prev => prev.filter(p => p.id !== postToDelete));
       setActiveDropdown(null);
-      showToast("Postingan berhasil dihapus");
+      showToast(t('forum.delete_success'));
     } catch (err) {
       console.error("Error deleting post:", err);
-      showToast("Gagal menghapus postingan.", "error");
+      showToast(t('forum.delete_error'), "error");
     } finally {
       setPostToDelete(null);
     }
@@ -255,7 +257,7 @@ export default function ForumPage() {
         </div>
         <input 
           type="text"
-          placeholder="How can we help you today?"
+          placeholder={t('forum.placeholder')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full bg-transparent border-none outline-none text-gray-700 dark:text-gray-300 dark:placeholder-gray-500 py-3 font-sans transition-colors duration-300"
@@ -308,7 +310,7 @@ export default function ForumPage() {
                 exit={{ opacity: 0, y: 10 }}
                 className="absolute top-full right-0 mt-2 bg-white dark:bg-[#1c2620] rounded-xl shadow-lg border border-gray-100 dark:border-[#32473D] py-2 z-50 min-w-[160px]"
               >
-                {["Most Recent", "Popular", "Most Discussed"].map((option) => (
+                {[t('forum.most_recent'), t('forum.popular'), t('forum.most_discussed')].map((option) => (
                   <button 
                     key={option}
                     onClick={() => {
@@ -358,7 +360,7 @@ export default function ForumPage() {
           </>
         ) : posts.length === 0 ? (
           <div className="text-center py-10 text-gray-500 bg-white dark:bg-komorebi-dark-card rounded-2xl border border-gray-100 dark:border-[#32473D] transition-colors duration-300">
-            No posts found. Be the first to share a story!
+            {t('forum.empty')}
           </div>
         ) : (
           posts.map(post => (
@@ -372,22 +374,22 @@ export default function ForumPage() {
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-[48px] h-[48px] rounded-2xl bg-gray-200 dark:bg-[#32473D] overflow-hidden shrink-0 transition-colors duration-300">
+                  <div className="w-[44px] h-[44px] rounded-[14px] bg-gray-200 dark:bg-[#32473D] overflow-hidden shrink-0 transition-colors duration-300">
                     {post.is_anonymous ? (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-900 shadow-inner">
+                      <div className="w-full h-full flex items-center justify-center bg-[#5D8B66]">
                         <VenetianMask className="w-6 h-6 text-white/90" strokeWidth={1.5} />
                       </div>
                     ) : post.profiles?.avatar_url ? (
                       <img src={post.profiles.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 text-xl">👤</div>
+                      <img src={`https://api.dicebear.com/9.x/notionists/svg?seed=${post.profiles?.display_name || 'Komorebi'}`} alt="Avatar" className="w-full h-full object-cover bg-white dark:bg-[#32473D]" />
                     )}
                   </div>
                   <div className="flex items-center gap-3">
-                    <h4 className={`text-[20px] font-sans transition-colors duration-300 ${post.is_anonymous ? 'text-gray-600 dark:text-gray-400 italic font-medium' : 'text-gray-900 dark:text-white'}`}>
-                      {post.is_anonymous ? "Anonymous Member" : (post.profiles?.display_name || "Anonymous")}
+                    <h4 className={`text-[17px] font-sans transition-colors duration-300 ${post.is_anonymous ? 'text-[#5D8B66] dark:text-[#A7C4B0] italic font-semibold' : 'text-gray-900 dark:text-white font-bold'}`}>
+                      {post.is_anonymous ? t('forum.anonymous') : (post.profiles?.display_name || t('forum.anonymous_short'))}
                     </h4>
-                    <span className="text-[15px] text-gray-400 font-sans">{formatDate(post.created_at)}</span>
+                    <span className="text-[14px] text-gray-400 font-sans mt-0.5">{formatDate(post.created_at)}</span>
                   </div>
                 </div>
                 <div className="relative">
@@ -411,14 +413,14 @@ export default function ForumPage() {
                             onClick={(e) => { e.stopPropagation(); setPostToDelete(post.id); setActiveDropdown(null); }}
                             className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                           >
-                            Hapus Postingan
+                            {t('forum.delete_btn')}
                           </button>
                         ) : (
                           <button 
                             onClick={(e) => { e.stopPropagation(); setPostToReport(post); setActiveDropdown(null); }}
                             className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
                           >
-                            Laporkan Postingan
+                            {t('forum.report_btn')}
                           </button>
                         )}
                       </motion.div>
@@ -511,29 +513,29 @@ export default function ForumPage() {
                 <button onClick={() => setSelectedPost(null)} className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors">
                   <ArrowLeft className="w-5 h-5" />
                 </button>
-                <h3 className="text-xl font-bold font-sans text-gray-900 dark:text-white transition-colors duration-300">Post</h3>
+                <h3 className="text-xl font-bold font-sans text-gray-900 dark:text-white transition-colors duration-300">{t('forum.modal_title')}</h3>
               </div>
               
               <div className="flex-1 overflow-y-auto flex flex-col [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {/* Original Post */}
                 <div className="p-4 sm:p-6 bg-white dark:bg-komorebi-dark-card border-b border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300">
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="w-[48px] h-[48px] rounded-2xl bg-gray-200 dark:bg-[#32473D] overflow-hidden shrink-0 transition-colors duration-300">
+                    <div className="w-[44px] h-[44px] rounded-[14px] bg-gray-200 dark:bg-[#32473D] overflow-hidden shrink-0 transition-colors duration-300">
                       {selectedPost.is_anonymous ? (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-900 shadow-inner">
+                        <div className="w-full h-full flex items-center justify-center bg-[#5D8B66]">
                           <VenetianMask className="w-6 h-6 text-white/90" strokeWidth={1.5} />
                         </div>
                       ) : selectedPost.profiles?.avatar_url ? (
                         <img src={selectedPost.profiles.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400 text-xl">👤</div>
+                        <img src={`https://api.dicebear.com/9.x/notionists/svg?seed=${selectedPost.profiles?.display_name || 'Komorebi'}`} alt="Avatar" className="w-full h-full object-cover bg-white dark:bg-[#32473D]" />
                       )}
                     </div>
-                    <div className="flex flex-col">
-                      <h4 className={`text-[18px] font-sans transition-colors duration-300 ${selectedPost.is_anonymous ? 'text-gray-600 dark:text-gray-400 italic font-medium' : 'text-gray-900 dark:text-white font-bold'}`}>
-                        {selectedPost.is_anonymous ? "Anonymous Member" : (selectedPost.profiles?.display_name || "Anonymous")}
+                    <div className="flex items-center gap-3">
+                      <h4 className={`text-[17px] font-sans transition-colors duration-300 ${selectedPost.is_anonymous ? 'text-[#5D8B66] dark:text-[#A7C4B0] italic font-semibold' : 'text-gray-900 dark:text-white font-bold'}`}>
+                        {selectedPost.is_anonymous ? t('forum.anonymous') : (selectedPost.profiles?.display_name || t('forum.anonymous_short'))}
                       </h4>
-                      <span className="text-[14px] text-gray-500 font-sans">{formatDate(selectedPost.created_at)}</span>
+                      <span className="text-[14px] text-gray-400 font-sans mt-0.5">{formatDate(selectedPost.created_at)}</span>
                     </div>
                   </div>
                   
@@ -598,7 +600,7 @@ export default function ForumPage() {
                     ))}
                   </>
                 ) : comments.length === 0 ? (
-                  <div className="text-center py-10 text-gray-500">No comments yet. Be the first!</div>
+                  <div className="text-center py-10 text-gray-500">{t('forum.empty_comments')}</div>
                 ) : (
                   comments.map(c => (
                     <div key={c.id} className="flex gap-4">
@@ -606,12 +608,12 @@ export default function ForumPage() {
                         {c.profiles?.avatar_url ? (
                           <img src={c.profiles.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-xs text-gray-500 dark:text-gray-400">👤</div>
+                          <img src={`https://api.dicebear.com/9.x/notionists/svg?seed=${c.profiles?.display_name || 'Komorebi'}`} alt="Avatar" className="w-full h-full object-cover bg-white dark:bg-[#32473D]" />
                         )}
                       </div>
                       <div className="flex-1 bg-white dark:bg-[#32473D] border border-gray-100 dark:border-[#43674F] p-4 rounded-2xl rounded-tl-none shadow-sm transition-colors duration-300">
                         <div className="flex justify-between items-start mb-2">
-                          <h5 className="font-semibold text-sm font-sans text-gray-900 dark:text-white transition-colors duration-300">{c.profiles?.display_name || "Anonymous"}</h5>
+                          <h5 className="font-semibold text-sm font-sans text-gray-900 dark:text-white transition-colors duration-300">{c.profiles?.display_name || t('forum.anonymous_short')}</h5>
                           <span className="text-[10px] text-gray-400">{formatDate(c.created_at)}</span>
                         </div>
                         <p className="text-[14px] text-gray-700 dark:text-gray-300 font-sans leading-relaxed transition-colors duration-300">{c.content}</p>
@@ -627,7 +629,7 @@ export default function ForumPage() {
                 <div className="flex gap-3 items-center">
                   <input 
                     type="text" 
-                    placeholder="Write a comment..."
+                    placeholder={t('forum.comment_placeholder')}
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && submitComment()}
@@ -667,9 +669,9 @@ export default function ForumPage() {
               <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4">
                 <AlertTriangle className="w-8 h-8 text-red-500" />
               </div>
-              <h3 className="text-xl font-bold font-sans text-gray-900 dark:text-white mb-2 transition-colors duration-300">Hapus Postingan?</h3>
+              <h3 className="text-xl font-bold font-sans text-gray-900 dark:text-white mb-2 transition-colors duration-300">{t('forum.delete_modal.title')}</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400 font-sans mb-6 transition-colors duration-300">
-                Apakah Anda yakin ingin menghapus postingan ini? Tindakan ini tidak dapat dibatalkan.
+                {t('forum.delete_modal.desc')}
               </p>
               
               <div className="flex w-full gap-3">
@@ -677,13 +679,13 @@ export default function ForumPage() {
                   onClick={() => setPostToDelete(null)}
                   className="flex-1 px-4 py-2.5 rounded-full border border-gray-200 dark:border-komorebi-dark-border text-gray-700 dark:text-gray-300 font-medium font-sans hover:bg-gray-50 dark:hover:bg-white/5 transition-colors duration-300"
                 >
-                  Batal
+                  {t('common.cancel')}
                 </button>
                 <button 
                   onClick={confirmDeletePost}
                   className="flex-1 px-4 py-2.5 rounded-full bg-red-500 hover:bg-red-600 text-white font-medium font-sans shadow-sm transition-colors duration-300"
                 >
-                  Ya, Hapus
+                  {t('forum.delete_btn')}
                 </button>
               </div>
             </motion.div>

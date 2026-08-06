@@ -9,7 +9,7 @@ export function AssessmentHistoryWidget() {
   const { t } = useTranslation();
   const { user } = useAuthStore();
   const navigate = useNavigate();
-  const [summary, setSummary] = useState("Loading your latest assessment history...");
+  const [summary, setSummary] = useState(t('common.loading', "Loading your latest assessment history..."));
   const [latestId, setLatestId] = useState(null);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export function AssessmentHistoryWidget() {
         const latest = data[0];
         setLatestId(latest.id);
         const dateStr = new Date(latest.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-        const assessmentName = latest.assessments?.name || "assessment";
+        const assessmentName = latest.assessments?.name || t('common.assessment', 'assessment');
         setSummary(t('dashboard.assessment_history.summary', { name: assessmentName, date: dateStr, score: latest.total_score, max: latest.max_score, severity: latest.severity_level }));
       } else {
         setSummary(t('dashboard.assessment_history.empty'));

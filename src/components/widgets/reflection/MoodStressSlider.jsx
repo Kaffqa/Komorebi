@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function MoodStressSlider({ title, value, onValueChange, icons, labels }) {
+  const { t } = useTranslation();
+  const uiLabels = t('dashboard.mood_input.labels', { returnObjects: true }) || ["Bad", "Not Bad", "Neutral", "Good", "Very Good"];
   const defaultIcons = [
-    <img key="1" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f61e.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Bad" />,
-    <img key="2" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f615.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Not Bad" />,
-    <img key="3" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f610.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Neutral" />,
-    <img key="4" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f642.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Good" />,
-    <img key="5" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f604.png" className="w-6 h-6 object-contain drop-shadow-sm" alt="Very Good" />
+    <img key="1" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f61e.png" className="w-6 h-6 object-contain drop-shadow-sm" alt={uiLabels[0]} />,
+    <img key="2" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f615.png" className="w-6 h-6 object-contain drop-shadow-sm" alt={uiLabels[1]} />,
+    <img key="3" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f610.png" className="w-6 h-6 object-contain drop-shadow-sm" alt={uiLabels[2]} />,
+    <img key="4" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f642.png" className="w-6 h-6 object-contain drop-shadow-sm" alt={uiLabels[3]} />,
+    <img key="5" src="https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/1f604.png" className="w-6 h-6 object-contain drop-shadow-sm" alt={uiLabels[4]} />
   ];
   const displayIcons = icons || defaultIcons;
-  const displayLabels = labels || ["Bad", "Not Bad", "Neutral", "Good", "Very Good"];
+  const displayLabels = labels || uiLabels;
 
   const handleChange = (newValue) => {
     if (onValueChange) onValueChange(newValue);
