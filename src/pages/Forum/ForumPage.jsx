@@ -19,6 +19,7 @@ import {
   VenetianMask
 } from "lucide-react";
 import { Skeleton } from "../../components/ui/Skeleton";
+import { AudioPlayer } from "../../components/ui/AudioPlayer";
 
 export default function ForumPage() {
   const { user } = useAuthStore();
@@ -72,7 +73,7 @@ export default function ForumPage() {
       let query = supabase
         .from("forum_posts")
         .select(`
-          id, title, content, image_url, tags, created_at, likes_count, replies_count, user_id, is_anonymous,
+          id, title, content, image_url, audio_url, tags, created_at, likes_count, replies_count, user_id, is_anonymous,
           profiles:user_id ( id, display_name, avatar_url )
         `);
 
@@ -439,6 +440,12 @@ export default function ForumPage() {
                     <img src={post.image_url} alt="Post attachment" className="w-full h-full object-cover" />
                   </div>
                 )}
+
+                {post.audio_url && (
+                  <div className="mb-4">
+                    <AudioPlayer src={post.audio_url} />
+                  </div>
+                )}
                 
                 {/* Tags */}
                 {post.tags && post.tags.length > 0 && (
@@ -539,6 +546,11 @@ export default function ForumPage() {
                     {selectedPost.image_url && (
                       <div className="w-full rounded-2xl overflow-hidden bg-gray-100 dark:bg-[#32473D] mb-4 border border-gray-100 dark:border-transparent">
                         <img src={selectedPost.image_url} alt="Post image" className="w-full h-auto object-cover" />
+                      </div>
+                    )}
+                    {selectedPost.audio_url && (
+                      <div className="mb-4">
+                        <AudioPlayer src={selectedPost.audio_url} />
                       </div>
                     )}
                     {selectedPost.tags && selectedPost.tags.length > 0 && (

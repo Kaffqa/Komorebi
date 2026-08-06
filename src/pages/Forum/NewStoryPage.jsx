@@ -21,7 +21,14 @@ import {
   Loader2,
   ArrowLeft,
   EyeOff,
+  Mic,
+  MicOff,
+  Play,
+  Pause,
+  Trash2,
+  AlertCircle,
 } from "lucide-react";
+import { AudioPlayer } from "../../components/ui/AudioPlayer";
 
 export default function NewStoryPage() {
   const { user } = useAuthStore();
@@ -41,8 +48,27 @@ export default function NewStoryPage() {
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkInputUrl, setLinkInputUrl] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
+
+  // Voice Recording States
+  const [isRecordingAudio, setIsRecordingAudio] = useState(false);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const [audioPreviewUrl, setAudioPreviewUrl] = useState("");
+  const [audioDuration, setAudioDuration] = useState(0);
+  const [isUploadingAudio, setIsUploadingAudio] = useState(false);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const audioTimerRef = useRef(null);
   
   const fileInputRef = useRef(null);
+
+  const [toast, setToast] = useState(null); // { text: string, type: 'error' | 'success' }
+
+  const showToast = (text, type = 'error') => {
+    setToast({ text, type });
+    setTimeout(() => setToast(null), 3500);
+  };
+
+  const MAX_AUDIO_DURATION = 180; // 3 minutes
 
   const editor = useEditor({
     extensions: [
@@ -117,7 +143,7 @@ export default function NewStoryPage() {
       setTags(tags.filter((t) => t !== tag));
     } else {
       if (tags.length >= 3) {
-        alert("Maximum 3 tags allowed.");
+        showToast("Maximum 3 tags allowed.");
         return;
       }
       setTags([...tags, tag]);
@@ -146,26 +172,133 @@ export default function NewStoryPage() {
       setImageUrl(data.publicUrl);
     } catch (error) {
       console.error('Error uploading image:', error);
-      alert('Gagal mengupload gambar. Pastikan bucket "forum_images" sudah dibuat. Error: ' + error.message);
+      showToast('Gagal mengupload gambar. Error: ' + error.message);
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
+  // ═══════════════════════════════════════════
+  // Voice Recording Logic
+  // ═══════════════════════════════════════════
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      
+      // Determine supported MIME type
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+        ? 'audio/webm;codecs=opus'
+        : MediaRecorder.isTypeSupported('audio/webm')
+        ? 'audio/webm'
+        : 'audio/mp4';
+
+      const recorder = new MediaRecorder(stream, { mimeType });
+      audioChunksRef.current = [];
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+
+      recorder.onstop = () => {
+        const blob = new Blob(audioChunksRef.current, { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        setAudioBlob(blob);
+        setAudioPreviewUrl(url);
+        // Stop all tracks
+        stream.getTracks().forEach(t => t.stop());
+      };
+
+      recorder.start();
+      mediaRecorderRef.current = recorder;
+      setIsRecordingAudio(true);
+      setAudioDuration(0);
+
+      // Duration timer
+      audioTimerRef.current = setInterval(() => {
+        setAudioDuration(prev => {
+          if (prev >= MAX_AUDIO_DURATION - 1) {
+            stopRecording();
+            return MAX_AUDIO_DURATION;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+    } catch (err) {
+      console.error("Microphone access denied:", err);
+      showToast("Tidak dapat mengakses mikrofon. Pastikan Anda memberikan izin akses.");
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+    }
+    if (audioTimerRef.current) {
+      clearInterval(audioTimerRef.current);
+      audioTimerRef.current = null;
+    }
+    setIsRecordingAudio(false);
+  };
+
+  const deleteRecording = () => {
+    if (audioPreviewUrl) URL.revokeObjectURL(audioPreviewUrl);
+    setAudioBlob(null);
+    setAudioPreviewUrl("");
+    setAudioDuration(0);
+  };
+
+  const formatRecordTime = (sec) => {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (audioTimerRef.current) clearInterval(audioTimerRef.current);
+      if (audioPreviewUrl) URL.revokeObjectURL(audioPreviewUrl);
+    };
+  }, []);
+
+  // ═══════════════════════════════════════════
+  // Publish Logic
+  // ═══════════════════════════════════════════
   const handlePublish = async () => {
     const htmlContent = editor?.getHTML() || content;
     
     // Check if empty (TipTap empty is usually `<p></p>`)
     const isEmpty = !htmlContent || htmlContent === '<p></p>' || htmlContent.trim() === '';
     
-    if (!title.trim() || isEmpty) {
-      alert("Title and content cannot be empty.");
+    if (!title.trim() || (isEmpty && !audioBlob && !imageUrl)) {
+      showToast("Title and content (or audio/image) cannot be empty.");
       return;
     }
     
     setIsPublishing(true);
     try {
+      // Upload audio if exists
+      let uploadedAudioUrl = null;
+      if (audioBlob) {
+        setIsUploadingAudio(true);
+        const ext = audioBlob.type.includes('webm') ? 'webm' : 'mp4';
+        const fileName = `${user.id}-${Date.now()}.${ext}`;
+        
+        const { error: audioUploadErr } = await supabase.storage
+          .from('forum_audio')
+          .upload(fileName, audioBlob, { contentType: audioBlob.type });
+        
+        if (audioUploadErr) throw audioUploadErr;
+        
+        const { data: audioData } = supabase.storage
+          .from('forum_audio')
+          .getPublicUrl(fileName);
+        
+        uploadedAudioUrl = audioData.publicUrl;
+        setIsUploadingAudio(false);
+      }
+
       const { error } = await supabase
         .from("forum_posts")
         .insert({
@@ -174,6 +307,7 @@ export default function NewStoryPage() {
           content: htmlContent,
           tags: tags,
           image_url: imageUrl || null,
+          audio_url: uploadedAudioUrl,
           is_anonymous: isAnonymous
         });
         
@@ -182,7 +316,8 @@ export default function NewStoryPage() {
       navigate("/forum");
     } catch (error) {
       console.error("Error publishing post:", error);
-      alert("Gagal menyimpan post. Pastikan Anda telah menjalankan script SQL untuk menambahkan kolom title dan image_url di Supabase.");
+      setIsUploadingAudio(false);
+      showToast("Gagal menyimpan post. Error: " + error.message);
     } finally {
       setIsPublishing(false);
     }
@@ -192,8 +327,23 @@ export default function NewStoryPage() {
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="w-full pb-20"
+      className="w-full pb-20 relative"
     >
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: -50, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: -20, x: "-50%" }}
+            className="fixed top-8 left-1/2 z-[9999] flex items-center gap-3 px-6 py-3 rounded-2xl shadow-xl border bg-white dark:bg-[#2A3831] border-red-100 dark:border-red-900/30 text-gray-800 dark:text-gray-200"
+          >
+            <AlertCircle className="w-5 h-5 text-red-500" />
+            <span className="font-sans font-medium text-[15px]">{toast.text}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <button 
         onClick={() => navigate("/forum")} 
         className="flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-sans font-medium mb-6 transition-colors w-fit"
@@ -361,6 +511,62 @@ export default function NewStoryPage() {
               >
                 <X className="w-5 h-5" />
               </button>
+            </div>
+          )}
+        </div>
+
+        {/* Voice Recorder Section */}
+        <div className="mb-6">
+          {!audioBlob && !isRecordingAudio && (
+            <button
+              onClick={startRecording}
+              className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-dashed border-[#B5CCBD] dark:border-[#43674F] bg-[#F7FAF8] dark:bg-[#1A2B20] hover:bg-[#EDF5EF] dark:hover:bg-[#223D2B] transition-all duration-200 text-gray-600 dark:text-gray-300 font-sans text-sm font-medium w-full sm:w-auto"
+            >
+              <div className="w-9 h-9 rounded-full bg-[#5D8B66]/10 dark:bg-[#5D8B66]/20 flex items-center justify-center">
+                <Mic className="w-5 h-5 text-[#5D8B66]" />
+              </div>
+              Record Voice Message
+              <span className="text-[11px] text-gray-400 ml-auto sm:ml-2">(max 3 min)</span>
+            </button>
+          )}
+
+          {isRecordingAudio && (
+            <div className="flex items-center gap-4 px-5 py-4 rounded-2xl border border-red-200 dark:border-red-800/50 bg-red-50/50 dark:bg-red-900/10 transition-colors duration-300">
+              {/* Pulsing indicator */}
+              <div className="relative w-9 h-9 flex items-center justify-center">
+                <div className="absolute inset-0 rounded-full bg-red-500/20 animate-ping" />
+                <div className="relative w-4 h-4 rounded-full bg-red-500 animate-pulse" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-red-600 dark:text-red-400 font-sans">Recording...</p>
+                <p className="text-xs text-red-500/70 dark:text-red-400/60 font-mono">{formatRecordTime(audioDuration)} / {formatRecordTime(MAX_AUDIO_DURATION)}</p>
+              </div>
+              <button
+                onClick={stopRecording}
+                className="px-5 py-2 rounded-full bg-red-500 hover:bg-red-600 text-white text-sm font-medium font-sans transition-colors shadow-sm flex items-center gap-2"
+              >
+                <MicOff className="w-4 h-4 pointer-events-none" />
+                Stop
+              </button>
+            </div>
+          )}
+
+          {audioBlob && !isRecordingAudio && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300 font-sans flex items-center gap-2">
+                  <Mic className="w-4 h-4 text-[#5D8B66]" />
+                  Voice Attached ({formatRecordTime(audioDuration)})
+                </p>
+                <button
+                  onClick={deleteRecording}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-sans"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  Remove
+                </button>
+              </div>
+              <AudioPlayer src={audioPreviewUrl} />
             </div>
           )}
         </div>

@@ -10,6 +10,8 @@ import {
   ArrowDown,
   Brain,
   Activity,
+  Mic,
+  MicOff,
 } from "lucide-react";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useThemeStore } from "../../stores/useThemeStore";
@@ -17,6 +19,8 @@ import { supabase } from "../../services/supabase";
 import { sendMessageToKomi, getKomiGreeting, getKomiEmpatheticGreeting, getKomiHappyGreeting } from "../../services/gemini";
 import { getLocalDateString } from "../../utils/date";
 import Logo from "../../assets/logo.svg";
+
+const AI_AVATAR_URL = "https://images.unsplash.com/vector-1786021960404-cf958c7c70c2?q=80&w=879&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 import { Skeleton } from "../../components/ui/Skeleton";
 
 export default function ChatPage() {
@@ -41,6 +45,11 @@ export default function ChatPage() {
   const menuRef = useRef(null);
   const initLock = useRef(false);
 
+  // Speech Recognition States
+  const [isRecording, setIsRecording] = useState(false);
+  const [shouldAutoSend, setShouldAutoSend] = useState(false);
+  const recognitionRef = useRef(null);
+
   // Close menu on outside click
   useEffect(() => {
     function handleClick(e) {
@@ -63,6 +72,69 @@ export default function ChatPage() {
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
   }, []);
+
+
+
+  // Auto-send logic when recording stops
+  useEffect(() => {
+    if (shouldAutoSend) {
+      if (input.trim() && !isTyping) {
+        handleSend();
+      }
+      setShouldAutoSend(false);
+    }
+  }, [shouldAutoSend, input, isTyping]); // handleSend is not a dependency but it will be called correctly
+
+  const toggleRecording = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Maaf, browser Anda tidak mendukung fitur input suara.");
+      return;
+    }
+    
+    if (isRecording) {
+      if (recognitionRef.current) recognitionRef.current.stop();
+      setIsRecording(false);
+    } else {
+      setInput(""); // Clear input before starting
+      
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false; // Stop when the user pauses
+      recognition.interimResults = true;
+      recognition.lang = "id-ID";
+
+      recognition.onstart = () => {
+        setIsRecording(true);
+      };
+
+      recognition.onresult = (event) => {
+        let currentTranscript = "";
+        for (let i = 0; i < event.results.length; i++) {
+          currentTranscript += event.results[i][0].transcript;
+        }
+        setInput(currentTranscript);
+      };
+
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error", event.error);
+        setIsRecording(false);
+      };
+
+      recognition.onend = () => {
+        setIsRecording(false);
+        // Trigger auto-send flag so useEffect handles it with fresh state
+        setShouldAutoSend(true);
+      };
+
+      try {
+        recognition.start();
+        recognitionRef.current = recognition;
+      } catch (e) {
+        console.error(e);
+        setIsRecording(false);
+      }
+    }
+  };
 
   const scrollToBottom = (behavior = "smooth") => {
     messagesEndRef.current?.scrollIntoView({ behavior });
@@ -380,8 +452,8 @@ export default function ChatPage() {
         {/* Chat Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-komorebi-dark-border shrink-0 transition-colors duration-300">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#F7FAF8] dark:bg-komorebi-dark-bg flex items-center justify-center border border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300">
-              <img src={Logo} alt="Komi" className="w-6 h-6" />
+            <div className="w-10 h-10 rounded-full bg-[#F7FAF8] dark:bg-komorebi-dark-bg flex items-center justify-center border border-gray-100 dark:border-komorebi-dark-border transition-colors duration-300 overflow-hidden">
+              <img src={AI_AVATAR_URL} alt="Komi" className="w-full h-full object-cover" />
             </div>
             <div>
               <h2 className="text-[15px] font-medium text-black dark:text-white font-sans transition-colors duration-300">
@@ -579,6 +651,21 @@ export default function ChatPage() {
                 className="w-full px-4 py-3 bg-[#F7FAF8] dark:bg-komorebi-dark-bg border border-gray-100 dark:border-[#32473D] rounded-[16px] text-[14px] font-sans text-black dark:text-white placeholder-gray-400 dark:placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#5D8B66]/20 focus:border-[#5D8B66]/30 transition-all resize-none overflow-hidden disabled:opacity-60"
               />
             </div>
+            
+            {/* Mic Button */}
+            <button
+              onClick={toggleRecording}
+              disabled={isTyping}
+              className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+                isRecording
+                  ? "bg-red-500 hover:bg-red-600 text-white shadow-md animate-pulse"
+                  : "bg-gray-100 dark:bg-komorebi-dark-hover text-gray-500 hover:bg-gray-200 dark:hover:bg-white/10"
+              }`}
+            >
+              {isRecording ? <MicOff className="w-5 h-5 pointer-events-none" /> : <Mic className="w-5 h-5 pointer-events-none" />}
+            </button>
+
+            {/* Send Button */}
             <button
               onClick={handleSend}
               disabled={!input.trim() || isTyping}
@@ -635,8 +722,8 @@ function MessageBubble({ message, formatTime }) {
       >
         {/* Komi avatar inside bubble */}
         {!isUser && (
-          <div className="shrink-0 pt-0.5">
-            <img src={Logo} alt="Komi" className="w-6 h-6" />
+          <div className="w-8 h-8 rounded-full bg-[#F7FAF8] dark:bg-komorebi-dark-bg flex items-center justify-center border border-[#B5CCBD] dark:border-[#43674F] mt-0.5 shrink-0 transition-colors duration-300 overflow-hidden">
+            <img src={AI_AVATAR_URL} alt="Komi" className="w-full h-full object-cover opacity-90" />
           </div>
         )}
 
