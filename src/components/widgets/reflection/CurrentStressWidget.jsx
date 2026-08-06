@@ -3,6 +3,7 @@ import { MoodStressSlider } from './MoodStressSlider';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { supabase } from '../../../services/supabase';
 import { useTranslation } from 'react-i18next';
+import { getLocalDateString } from '../../../utils/date';
 
 export function CurrentStressWidget() {
   const { t } = useTranslation();
@@ -23,7 +24,7 @@ export function CurrentStressWidget() {
   useEffect(() => {
     async function loadStress() {
       if (!user) return;
-      const today = new Date().toISOString().split('T')[0];
+      const today = getLocalDateString();
       const { data } = await supabase
         .from('journal_entries')
         .select('stress_score')
@@ -45,7 +46,7 @@ export function CurrentStressWidget() {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
       if (!user) return;
-      const today = new Date().toISOString().split('T')[0];
+      const today = getLocalDateString();
       const stressLabelsForDB = ["Very Low", "Low", "Moderate", "High", "Very High"];
       
       const { data: existing } = await supabase

@@ -4,6 +4,7 @@ import { useAuthStore } from '../../../stores/useAuthStore';
 import { supabase } from '../../../services/supabase';
 import { dispatchMoodUpdate } from '../../../hooks/useMoodEvent';
 import { useTranslation } from 'react-i18next';
+import { getLocalDateString } from '../../../utils/date';
 
 export function CurrentMoodWidget() {
   const { t } = useTranslation();
@@ -17,7 +18,7 @@ export function CurrentMoodWidget() {
   useEffect(() => {
     async function loadMood() {
       if (!user) return;
-      const today = new Date().toISOString().split('T')[0];
+      const today = getLocalDateString();
       const { data } = await supabase
         .from('mood_entries')
         .select('mood_score')
@@ -44,7 +45,7 @@ export function CurrentMoodWidget() {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
       if (!user) return;
-      const today = new Date().toISOString().split('T')[0];
+      const today = getLocalDateString();
       
       const { data: existing } = await supabase
         .from('mood_entries')
