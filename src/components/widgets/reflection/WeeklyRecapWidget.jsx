@@ -8,6 +8,7 @@ import html2canvas from 'html2canvas';
 import { extractFavoriteActivities } from '../../../services/gemini';
 import CardShareTemplate from '../../../assets/Card-share.svg';
 import useToastStore from '../../../stores/useToastStore';
+import { getLocalDateString } from '../../../utils/date';
 
 export function WeeklyRecapWidget() {
   const { t } = useTranslation();
@@ -41,7 +42,7 @@ export function WeeklyRecapWidget() {
       case 5: return "had a fantastic day!";
       case 4: return "mood was good";
       case 3: return "had an okay day";
-      case 2: return "isnt good";
+      case 2: return "isn't good";
       case 1: return "had a bad day";
       default: return "took a break";
     }
@@ -53,20 +54,29 @@ export function WeeklyRecapWidget() {
 
     try {
       const now = new Date();
-      const periodStart = new Date(now);
-      periodStart.setDate(periodStart.getDate() - 7);
+      // Get index of today (0 = Mon, 6 = Sun)
+      const currentDayIdx = now.getDay() === 0 ? 6 : now.getDay() - 1;
+      
+      // Calculate this week's Monday
+      const monday = new Date(now);
+      monday.setDate(now.getDate() - currentDayIdx);
+      const mondayStr = getLocalDateString(monday);
       
       const { data: moodEntries } = await supabase
         .from('mood_entries')
         .select('entry_date, mood_score')
         .eq('user_id', user.id)
-        .gte('entry_date', periodStart.toISOString().split('T')[0])
+        .gte('entry_date', mondayStr)
         .order('entry_date', { ascending: true });
 
       const dayMap = {};
       if (moodEntries) {
         moodEntries.forEach(entry => {
-          let dayIdx = new Date(entry.entry_date).getDay() - 1;
+          // entry_date is YYYY-MM-DD, parsing it directly in JS might use UTC depending on browser.
+          // Better to split and create local date to avoid timezone shift
+          const [y, m, d] = entry.entry_date.split('-');
+          const entryDate = new Date(y, m - 1, d);
+          let dayIdx = entryDate.getDay() - 1;
           if (dayIdx === -1) dayIdx = 6; // Sunday
           dayMap[dayIdx] = entry.mood_score;
         });
@@ -75,10 +85,22 @@ export function WeeklyRecapWidget() {
       const formattedMoods = [];
       const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
       for (let i = 0; i < 7; i++) {
+        const isFuture = i > currentDayIdx;
+        let descText = "";
+        
+        if (isFuture) {
+          descText = "is still a mystery ✨";
+        } else if (dayMap[i]) {
+          descText = getMoodSentence(dayMap[i]);
+        } else {
+          descText = "took a break";
+        }
+
         formattedMoods.push({
           day: days[i],
-          desc: dayMap[i] ? `${userName} ${getMoodSentence(dayMap[i])}` : `${userName} took a break`,
-          color: dayColors[i]
+          desc: `${userName} ${descText}`,
+          color: isFuture ? "#A0AAB2" : dayColors[i],
+          isFuture
         });
       }
 
@@ -170,8 +192,8 @@ export function WeeklyRecapWidget() {
     <>
       <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-4 lg:p-5 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col w-full">
         <div className="flex justify-between items-center mb-3">
-          <h3 className="text-[18px] font-sans font-semibold text-black dark:text-white flex items-center gap-2">
-            Weekly Recap
+          <h3 className="text-[20px] font-sans font-semibold text-black dark:text-white mb-6">
+            {t('journaling.weekly_recap.title')}
           </h3>
         </div>
 
@@ -179,11 +201,11 @@ export function WeeklyRecapWidget() {
           <div className="w-12 h-12 bg-[#5F916F]/10 text-[#5F916F] rounded-full flex items-center justify-center mb-2">
             <ImageIcon className="w-5 h-5" />
           </div>
-          <h4 className="font-sans font-semibold text-gray-800 dark:text-gray-200 mb-2">
-            {generatedUrl ? "Your recap is ready!" : "Ready to see your wrapped?"}
+          <h4 className="font-sans font-semibold text-[17px] text-gray-800 dark:text-gray-100 mb-2">
+            {generatedUrl ? t('journaling.weekly_recap.modal_title') : t('journaling.weekly_recap.subtitle')}
           </h4>
-          <p className="font-sans text-gray-500 dark:text-gray-400 text-sm mb-6 max-w-xs">
-            {generatedUrl ? "Click below to view, share or save your beautiful weekly card." : "We will generate a beautiful card containing your mood logs and favorite actions of the week."}
+          <p className="text-[14px] text-gray-500 dark:text-gray-400 font-sans max-w-[280px] mx-auto">
+            {generatedUrl ? t('journaling.weekly_recap.modal_desc') : t('journaling.weekly_recap.description')}
           </p>
           <button
             onClick={() => {
@@ -200,12 +222,12 @@ export function WeeklyRecapWidget() {
             {isGenerating ? (
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                Generating...
+                {t('journaling.weekly_recap.generating')}
               </>
             ) : generatedUrl ? (
-              "View My Recap"
+              t('journaling.weekly_recap.view_button')
             ) : (
-              "Generate My Recap"
+              t('journaling.weekly_recap.generate_button')
             )}
           </button>
         </div>
@@ -231,14 +253,14 @@ export function WeeklyRecapWidget() {
                 className="flex-1 flex items-center justify-center gap-2 py-3 px-2 bg-gradient-to-b from-[#5F916F] to-[#94B59F] border border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px] text-white font-sans font-medium rounded-full transition-all"
               >
                 <Share2 className="w-4 h-4" />
-                Share
+                {t('journaling.weekly_recap.share')}
               </button>
               <button
                 onClick={handleSave}
                 className="flex-1 flex items-center justify-center gap-2 py-3 px-2 bg-gradient-to-b from-gray-50 to-gray-200 dark:from-gray-700 dark:to-gray-800 border border-gray-300 dark:border-gray-600 shadow-[inset_0_2px_3px_rgba(255,255,255,0.8),inset_0_-2px_3px_rgba(0,0,0,0.05),0_4px_6px_rgba(0,0,0,0.05)] hover:brightness-105 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] active:translate-y-[1px] text-gray-700 dark:text-gray-200 font-sans font-medium rounded-full transition-all"
               >
                 <Download className="w-4 h-4" />
-                Save
+                {t('journaling.weekly_recap.save')}
               </button>
             </div>
           </div>

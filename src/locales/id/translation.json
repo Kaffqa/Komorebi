@@ -202,6 +202,28 @@
       "mood_progress": "Kemajuan Suasana Hati",
       "journal_completion": "Penyelesaian Jurnal",
       "new": "Baru"
+    },
+    "weekly_recap": {
+      "title": "Rekap Mingguan",
+      "subtitle": "Siap melihat ringkasanmu?",
+      "description": "Buat kartu cantik berisi ringkasan mood dan aktivitas favoritmu minggu ini.",
+      "generate_button": "Buat Rekap Saya",
+      "generating": "Membuat...",
+      "view_button": "Lihat Rekap Saya",
+      "modal_title": "Rekap kamu sudah siap!",
+      "modal_desc": "Klik di bawah untuk melihat, membagikan, atau menyimpan kartu mingguanmu.",
+      "share": "Bagikan",
+      "save": "Simpan",
+      "days": ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"],
+      "mood_sentences": {
+        "fantastic": "memiliki hari yang luar biasa!",
+        "good": "sedang dalam mood baik",
+        "okay": "melewati hari dengan biasa saja",
+        "bad": "sedang tidak baik-baik saja",
+        "very_bad": "memiliki hari yang buruk",
+        "break": "sedang beristirahat",
+        "future": "masih menjadi misteri ✨"
+      }
     }
   },
   "diagnose": {

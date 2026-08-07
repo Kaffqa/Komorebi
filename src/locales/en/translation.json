@@ -202,6 +202,28 @@
       "mood_progress": "Mood Progress",
       "journal_completion": "Journaling Completion",
       "new": "New"
+    },
+    "weekly_recap": {
+      "title": "Weekly Recap",
+      "subtitle": "Ready to see your wrapped?",
+      "description": "We will generate a beautiful card containing your mood logs and favorite actions of the week.",
+      "generate_button": "Generate My Recap",
+      "generating": "Generating...",
+      "view_button": "View My Recap",
+      "modal_title": "Your recap is ready!",
+      "modal_desc": "Click below to view, share or save your beautiful weekly card.",
+      "share": "Share",
+      "save": "Save",
+      "days": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      "mood_sentences": {
+        "fantastic": "had a fantastic day!",
+        "good": "mood was good",
+        "okay": "had an okay day",
+        "bad": "isn't good",
+        "very_bad": "had a bad day",
+        "break": "took a break",
+        "future": "is still a mystery ✨"
+      }
     }
   },
   "diagnose": {

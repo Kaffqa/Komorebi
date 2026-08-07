@@ -512,8 +512,8 @@ export function SettingsModal({ isOpen, onClose }) {
 
                   <div className="p-5 mt-2 rounded-2xl bg-gradient-to-r from-[#F5F8F6] to-[#E9F0EC] dark:from-[#1c2620] dark:to-[#141c17] border border-[#D3E1D7]/50 dark:border-komorebi-dark-border relative overflow-hidden">
                     <div className="relative z-10">
-                      <p className="font-semibold text-gray-900 dark:text-gray-200 text-[15px] mb-1">Tour Platform 🍃</p>
-                      <p className="text-[13px] text-gray-600 dark:text-komorebi-dark-muted mb-4 leading-relaxed max-w-[280px]">Tampilkan ulang tur pengenalan fitur platform oleh Komi.</p>
+                      <p className="font-semibold text-gray-900 dark:text-gray-200 text-[15px] mb-1">{t('settings.preferences.tour_title')}</p>
+                      <p className="text-[13px] text-gray-600 dark:text-komorebi-dark-muted mb-4 leading-relaxed max-w-[280px]">{t('settings.preferences.tour_desc')}</p>
                       <button
                         onClick={() => {
                           onClose();
@@ -522,7 +522,7 @@ export function SettingsModal({ isOpen, onClose }) {
                         className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white dark:bg-[#233028] text-[#5D8B66] dark:text-[#7DA085] shadow-sm hover:shadow-md font-medium text-[14px] transition-all border border-[#D3E1D7] dark:border-[#32473D] hover:border-[#A8D8B6] dark:hover:border-[#5D8B66]"
                       >
                         <RotateCcw className="w-4 h-4" />
-                        Ulangi Tour Komi
+                        {t('settings.preferences.tour_button')}
                       </button>
                     </div>
                   </div>
