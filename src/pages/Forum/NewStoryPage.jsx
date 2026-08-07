@@ -120,10 +120,12 @@ export default function NewStoryPage() {
     setShowLinkModal(false);
   };
 
-  // Pre-fill from draft (e.g. shared diagnosis result)
+  const DRAFT_KEY = user ? `forum_draft_${user.id}` : null;
+
+  // Pre-fill from draft (e.g. shared diagnosis result) or localStorage
   useEffect(() => {
     const state = location.state;
-    if (state) {
+    if (state && (state.draftTitle || state.draftContent || state.draftTags)) {
       if (state.draftTitle) setTitle(state.draftTitle);
       if (state.draftContent) {
         setContent(state.draftContent);
@@ -132,8 +134,24 @@ export default function NewStoryPage() {
         }
       }
       if (state.draftTags) setTags(state.draftTags);
+    } else if (DRAFT_KEY) {
+      try {
+        const savedDraft = localStorage.getItem(DRAFT_KEY);
+        if (savedDraft) {
+          const parsed = JSON.parse(savedDraft);
+          if (parsed.title) setTitle(parsed.title);
+          if (parsed.content) {
+            setContent(parsed.content);
+            if (editor) editor.commands.setContent(parsed.content);
+          }
+          if (parsed.tags) setTags(parsed.tags);
+          if (parsed.isAnonymous !== undefined) setIsAnonymous(parsed.isAnonymous);
+        }
+      } catch (e) {
+        console.error("Failed to parse draft", e);
+      }
     }
-  }, [location.state, editor]);
+  }, [location.state, editor, DRAFT_KEY]);
 
   const toggleTag = (tag) => {
     if (tags.includes(tag)) {
@@ -310,6 +328,9 @@ export default function NewStoryPage() {
         
       if (error) throw error;
       
+      if (DRAFT_KEY) localStorage.removeItem(DRAFT_KEY);
+      
+      showToast(t('newStory.success') || 'Story published successfully!', 'success');
       navigate("/forum");
     } catch (error) {
       console.error("Error publishing post:", error);
@@ -608,7 +629,13 @@ export default function NewStoryPage() {
               {isPublishing ? t('newStory.saving') : t('newStory.save')}
             </button>
             <button 
-              onClick={() => navigate("/forum")}
+              onClick={() => {
+                if (DRAFT_KEY) {
+                  localStorage.setItem(DRAFT_KEY, JSON.stringify({ title, content, tags, isAnonymous }));
+                  showToast(t('newStory.draft_saved') || "Draft saved!", 'success');
+                  navigate("/forum");
+                }
+              }}
               className="flex-1 sm:flex-none px-8 py-2.5 border border-[#B5CCBD] dark:border-komorebi-dark-border bg-white dark:bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/10 rounded-full font-medium font-sans transition-colors duration-300"
             >
               {t('newStory.drafts')}

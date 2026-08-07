@@ -567,9 +567,11 @@
       "image": "Tambah Gambar",
       "video": "Video segera hadir"
     },
-    "save": "Kirim",
-    "saving": "Mengirim...",
-    "drafts": "Draf"
+    "save": "Publikasikan",
+    "saving": "Mempublikasikan...",
+    "drafts": "Simpan Draf",
+    "draft_saved": "Draf berhasil disimpan!",
+    "success": "Cerita berhasil dipublikasikan!"
   },
   "chat": {
     "err_mic": "Maaf, browser Anda tidak mendukung fitur input suara.",

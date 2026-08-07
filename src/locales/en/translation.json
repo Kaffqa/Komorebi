@@ -567,9 +567,11 @@
       "image": "Add Image",
       "video": "Video coming soon"
     },
-    "save": "Save",
-    "saving": "Saving...",
-    "drafts": "Drafts"
+    "save": "Publish",
+    "saving": "Publishing...",
+    "drafts": "Save Draft",
+    "draft_saved": "Draft saved successfully!",
+    "success": "Story published successfully!"
   },
   "chat": {
     "err_mic": "Sorry, your browser doesn't support voice input.",
