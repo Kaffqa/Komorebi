@@ -311,7 +311,7 @@ export default function LandingPage() {
                 transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.3 }}
                 className="absolute bottom-0 left-0 right-0 md:left-auto md:right-0 bg-white/95 md:bg-white backdrop-blur-sm md:backdrop-blur-none rounded-t-[24px] md:rounded-t-none md:rounded-tl-[32px] p-5 md:p-8 w-full md:max-w-[450px] lg:max-w-[500px] shadow-2xl"
               >
-                <p className="text-[#5F916F] text-[16px] md:text-[18px] lg:text-[16px] font-light leading-[1.6]">
+                <p className="text-[#5F916F] text-[16px] md:text-[18px] lg:text-[16px] font-medium leading-[1.6]">
                   {steps[activeStep].desc}
                 </p>
               </motion.div>
@@ -350,7 +350,7 @@ export default function LandingPage() {
             {/* Text Box (Animated on hover for desktop, always visible on mobile) */}
             <div className="absolute bottom-0 left-0 right-0 px-8 py-8 md:px-10 md:py-8 bg-white flex flex-col justify-center transform translate-y-0 md:translate-y-full md:group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
               <h3 className="text-xl md:text-2xl font-medium text-[#5D8B66] mb-3">Therapy from Home</h3>
-              <p className="text-[#5D8B66]/80 text-[14px] md:text-[16px] font-sans font-normal leading-relaxed">
+              <p className="text-[#5D8B66]/80 text-[14px] md:text-[16px] font-sans font-medium leading-relaxed">
                 Skip the commute. Speak to a dedicated expert via secure online video calls from a space where you feel safest.
               </p>
             </div>
@@ -366,7 +366,7 @@ export default function LandingPage() {
             {/* Text Box (Animated on hover for desktop, always visible on mobile) */}
             <div className="absolute bottom-0 left-0 right-0 px-8 py-8 md:px-10 md:py-8 bg-white flex flex-col justify-center transform translate-y-0 md:translate-y-full md:group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
               <h3 className="text-xl md:text-2xl font-medium text-[#5D8B66] mb-3">Local Clinic Visits</h3>
-              <p className="text-[#5D8B66]/80 text-[14px] md:text-[16px] font-sans font-normal leading-relaxed">
+              <p className="text-[#5D8B66]/80 text-[14px] md:text-[16px] font-sans font-medium leading-relaxed">
                 Meet your doctor in a supportive, physical clinical environment. We track your location to surface nearby experts ready to welcome you.
               </p>
             </div>
@@ -499,7 +499,7 @@ export default function LandingPage() {
                   <img src={item.image} alt={`Review ${idx + 1}`} loading="lazy" className="w-full h-full object-cover object-[center_15%] rounded-t-[24px]" />
                 </div>
                 <div className="p-5 md:p-6 flex flex-col flex-1 justify-between gap-3">
-                  <p className="text-[#5D8B66] text-[14px] md:text-[15px] font-sans font-normal leading-relaxed">
+                  <p className="text-[#5D8B66] text-[14px] md:text-[15px] font-sans font-medium leading-relaxed">
                     {item.text}
                   </p>
                   <p className="text-gray-400 text-[13px] md:text-[14px] font-light">
