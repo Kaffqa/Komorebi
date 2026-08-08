@@ -241,6 +241,7 @@ export default function LandingPage() {
               <img 
                 src={AboutImg} 
                 alt="Our Stories" 
+                loading="lazy"
                 className="w-full h-full object-cover object-[center_15%]" 
               />
             </div>
@@ -299,6 +300,7 @@ export default function LandingPage() {
                 transition={{ duration: 1.5, ease: "easeOut" }}
                 src={steps[activeStep].image} 
                 alt={steps[activeStep].title} 
+                loading="lazy"
                 className={`w-full h-full object-cover ${activeStep === 1 ? "object-[center_85%]" : "object-[center_20%]"}`} 
               />
               
@@ -343,7 +345,7 @@ export default function LandingPage() {
             initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} 
             className="group relative flex flex-col rounded-[32px] overflow-hidden border border-gray-200/80 bg-white shadow-sm h-[550px] md:h-[750px] lg:h-[800px] xl:h-[850px]"
           >
-            <img src={Expert1} alt="Expert 1" className="w-full h-full object-cover object-top" />
+            <img src={Expert1} alt="Expert 1" loading="lazy" className="w-full h-full object-cover object-top" />
             
             {/* Text Box (Animated on hover for desktop, always visible on mobile) */}
             <div className="absolute bottom-0 left-0 right-0 px-8 py-8 md:px-10 md:py-8 bg-white flex flex-col justify-center transform translate-y-0 md:translate-y-full md:group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
@@ -359,7 +361,7 @@ export default function LandingPage() {
             initial="hidden" whileInView="visible" viewport={{ once: true, transition: { delay: 0.2 } }} variants={fadeIn} 
             className="group relative rounded-[32px] overflow-hidden shadow-sm border border-gray-200/50 h-[550px] md:h-[750px] lg:h-[800px] xl:h-[850px]"
           >
-            <img src={Expert2} alt="Expert 2" className="w-full h-full object-cover object-top" />
+            <img src={Expert2} alt="Expert 2" loading="lazy" className="w-full h-full object-cover object-top" />
 
             {/* Text Box (Animated on hover for desktop, always visible on mobile) */}
             <div className="absolute bottom-0 left-0 right-0 px-8 py-8 md:px-10 md:py-8 bg-white flex flex-col justify-center transform translate-y-0 md:translate-y-full md:group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
@@ -494,7 +496,7 @@ export default function LandingPage() {
             {testimonialsData.map((item, idx) => (
               <div key={idx} className="w-[280px] sm:w-[320px] md:w-[350px] lg:w-[380px] h-auto shrink-0 bg-white rounded-[24px] shadow-sm border border-gray-100 flex flex-col overflow-hidden">
                 <div className="w-full aspect-[5/4] relative shrink-0 rounded-t-[24px] overflow-hidden">
-                  <img src={item.image} alt={`Review ${idx + 1}`} className="w-full h-full object-cover object-[center_15%] rounded-t-[24px]" />
+                  <img src={item.image} alt={`Review ${idx + 1}`} loading="lazy" className="w-full h-full object-cover object-[center_15%] rounded-t-[24px]" />
                 </div>
                 <div className="p-5 md:p-6 flex flex-col flex-1 justify-between gap-3">
                   <p className="text-[#5D8B66] text-[14px] md:text-[15px] font-sans font-normal leading-relaxed">
@@ -531,7 +533,7 @@ export default function LandingPage() {
         <div className="w-full flex flex-col bg-white">
           {/* Top Image Banner */}
           <div className="w-full relative h-[350px] md:h-[500px] rounded-[32px] overflow-hidden shadow-sm flex items-end">
-            <img src={FooterImg} alt="Clear Answers" className="absolute inset-0 w-full h-full object-cover object-[center_30%]" />
+            <img src={FooterImg} alt="Clear Answers" loading="lazy" className="absolute inset-0 w-full h-full object-cover object-[center_30%]" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
             <div className="relative w-full px-8 pb-3">
               <h2 className="w-full hidden md:block text-center text-[#CDDDD2] text-[40px] md:text-[5.5vw] xl:text-[90px] 2xl:text-[96px] font-heading leading-none tracking-tight whitespace-nowrap">

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldAlert, Trash2, CheckCircle, Ban, AlertTriangle, X } from 'lucide-react';
 import { Skeleton } from '../../components/ui/Skeleton';
 import useToastStore from '../../stores/useToastStore';
+import DOMPurify from 'dompurify';
 
 export default function ForumModeration() {
   const [reports, setReports] = useState([]);
@@ -166,7 +167,7 @@ export default function ForumModeration() {
                     <h4 className="font-bold text-gray-900 text-[15px] font-sans mb-1 line-clamp-1">
                       {report.post?.title || 'Untitled Post'}
                     </h4>
-                    <p className="text-[13px] text-gray-500 font-sans mb-4 line-clamp-2" dangerouslySetInnerHTML={{ __html: report.post?.content || '<em>Content deleted</em>' }} />
+                    <p className="text-[13px] text-gray-500 font-sans mb-4 line-clamp-2" dangerouslySetInnerHTML={{ __html: report.post?.content ? DOMPurify.sanitize(report.post.content) : '<em>Content deleted</em>' }} />
                     
                     <div className="flex items-center gap-3 pt-4 border-t border-gray-100/50">
                       <div className="flex items-center gap-2">
@@ -220,7 +221,7 @@ export default function ForumModeration() {
                       </div>
                     </div>
                     {selectedReport.post.title && <h5 className="font-bold text-[18px] text-gray-900 mb-2">{selectedReport.post.title}</h5>}
-                    <div className="prose prose-sm text-gray-700 max-w-none" dangerouslySetInnerHTML={{ __html: selectedReport.post.content }} />
+                    <div className="prose prose-sm text-gray-700 max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedReport.post.content) }} />
                   </div>
                 ) : (
                   <div className="p-6 bg-red-50 text-red-500 rounded-2xl text-center font-bold">

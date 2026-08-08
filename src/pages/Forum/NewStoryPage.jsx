@@ -7,6 +7,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import LinkExtension from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
+import DOMPurify from 'dompurify';
 import { supabase } from "../../services/supabase";
 import { useAuthStore } from "../../stores/useAuthStore";
 import useToastStore from "../../stores/useToastStore";
@@ -281,7 +282,8 @@ export default function NewStoryPage() {
   // Publish Logic
   // ═══════════════════════════════════════════
   const handlePublish = async () => {
-    const htmlContent = editor?.getHTML() || content;
+    let rawHtml = editor?.getHTML() || content;
+    const htmlContent = DOMPurify.sanitize(rawHtml);
     
     // Check if empty (TipTap empty is usually `<p></p>`)
     const isEmpty = !htmlContent || htmlContent === '<p></p>' || htmlContent.trim() === '';

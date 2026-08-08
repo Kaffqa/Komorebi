@@ -33,6 +33,11 @@ export default function ChatPage() {
   const [streamingText, setStreamingText] = useState("");
   const [conversationId, setConversationId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const MSG_PER_PAGE = 50;
+  
   const [showMenu, setShowMenu] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [hasSentDiagnosis, setHasSentDiagnosis] = useState(false);
@@ -70,11 +75,14 @@ export default function ChatPage() {
     const handleScroll = () => {
       const { scrollTop, scrollHeight, clientHeight } = container;
       setShowScrollBtn(scrollHeight - scrollTop - clientHeight > 120);
+      
+      if (scrollTop === 0 && hasMore && !loadingMore && conversationId) {
+        loadMoreMessages();
+      }
     };
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, []);
-
+  }, [hasMore, loadingMore, page, conversationId]);
 
 
   // Auto-send logic when recording stops
@@ -178,9 +186,12 @@ export default function ChatPage() {
         .from("chat_messages")
         .select("*")
         .eq("conversation_id", conv.id)
-        .order("created_at", { ascending: true });
+        .order("created_at", { ascending: false })
+        .limit(MSG_PER_PAGE);
 
-      let finalMsgs = msgs || [];
+      let finalMsgs = msgs ? msgs.reverse() : [];
+      if (msgs && msgs.length < MSG_PER_PAGE) setHasMore(false);
+      else setHasMore(true);
 
       // Emotion-Aware Proactivity Check
       const today = getLocalDateString();
@@ -256,6 +267,46 @@ export default function ChatPage() {
   useEffect(() => {
     initChat();
   }, [initChat]);
+
+  const loadMoreMessages = async () => {
+    if (loadingMore || !hasMore || !conversationId) return;
+    setLoadingMore(true);
+    const nextPage = page + 1;
+    
+    try {
+      const container = chatContainerRef.current;
+      const prevScrollHeight = container ? container.scrollHeight : 0;
+
+      const { data: msgs } = await supabase
+        .from("chat_messages")
+        .select("*")
+        .eq("conversation_id", conversationId)
+        .order("created_at", { ascending: false })
+        .range(nextPage * MSG_PER_PAGE, (nextPage + 1) * MSG_PER_PAGE - 1);
+        
+      if (msgs && msgs.length > 0) {
+        if (msgs.length < MSG_PER_PAGE) setHasMore(false);
+        setPage(nextPage);
+        setMessages(prev => {
+          const newIds = msgs.map(m => m.id);
+          const filteredPrev = prev.filter(p => !newIds.includes(p.id));
+          return [...msgs.reverse(), ...filteredPrev];
+        });
+        
+        requestAnimationFrame(() => {
+          if (container) {
+            container.scrollTop = container.scrollHeight - prevScrollHeight;
+          }
+        });
+      } else {
+        setHasMore(false);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   // Build conversation history for Gemini
   const buildHistory = () => {
@@ -540,6 +591,11 @@ export default function ChatPage() {
             </div>
           ) : (
             <>
+              {loadingMore && (
+                <div className="flex justify-center py-4">
+                  <div className="w-6 h-6 border-2 border-komorebi-green/30 border-t-komorebi-green rounded-full animate-spin"></div>
+                </div>
+              )}
               {grouped.map((item, idx) =>
                 item.type === "date" ? (
                   <div

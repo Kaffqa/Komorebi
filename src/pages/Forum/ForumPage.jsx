@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { supabase } from "../../services/supabase";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { ReportPostModal } from "../../components/modals/ReportPostModal";
+import DOMPurify from 'dompurify';
 import {
   Search,
   ChevronDown,
@@ -29,6 +30,12 @@ export default function ForumPage() {
   
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const observerTarget = useRef(null);
+  const POSTS_PER_PAGE = 10;
+  
   const [activeFilter, setActiveFilter] = useState(t('forum.tags.all_feed'));
   const [searchQuery, setSearchQuery] = useState("");
   const [likedPosts, setLikedPosts] = useState(new Set());
@@ -53,8 +60,33 @@ export default function ForumPage() {
   const filters = [t('forum.tags.all_feed'), t('forum.tags.anxiety'), t('forum.tags.depression'), t('forum.tags.grief'), t('forum.tags.self_improvement')];
 
   useEffect(() => {
-    fetchPosts();
+    setPage(0);
+    setHasMore(true);
+    fetchPosts(0);
   }, [activeFilter, searchQuery, sortBy]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && hasMore && !loading && !loadingMore) {
+          const nextPage = page + 1;
+          setPage(nextPage);
+          fetchPosts(nextPage);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [hasMore, loading, loadingMore, page, activeFilter, searchQuery, sortBy]);
 
   // Fetch which posts the current user has liked
   const fetchLikedPosts = async (postIds) => {
@@ -69,8 +101,10 @@ export default function ForumPage() {
     }
   };
 
-  const fetchPosts = async () => {
-    setLoading(true);
+  const fetchPosts = async (pageIndex = 0) => {
+    if (pageIndex === 0) setLoading(true);
+    else setLoadingMore(true);
+
     try {
       let query = supabase
         .from("forum_posts")
@@ -91,27 +125,37 @@ export default function ForumPage() {
         query = query.contains("tags", [activeFilter]);
       }
 
-      const { data, error } = await query;
-      if (error) throw error;
-      
-      let filteredData = data;
       if (searchQuery) {
-        const lowerQ = searchQuery.toLowerCase();
-        filteredData = data.filter(p => 
-          (p.title && p.title.toLowerCase().includes(lowerQ)) || 
-          (p.content && p.content.toLowerCase().includes(lowerQ))
-        );
+        query = query.or(`title.ilike.%${searchQuery}%,content.ilike.%${searchQuery}%`);
       }
 
-      setPosts(filteredData || []);
-      // Fetch liked state for all visible posts
-      if (filteredData && filteredData.length > 0) {
-        fetchLikedPosts(filteredData.map(p => p.id));
+      const { data, error } = await query.range(pageIndex * POSTS_PER_PAGE, (pageIndex + 1) * POSTS_PER_PAGE - 1);
+      
+      if (error) throw error;
+      
+      if (data) {
+        if (data.length < POSTS_PER_PAGE) setHasMore(false);
+        else setHasMore(true);
+
+        if (pageIndex === 0) {
+          setPosts(data);
+        } else {
+          setPosts(prev => {
+            // Prevent duplicates in case of strict mode double fetch
+            const newIds = data.map(d => d.id);
+            const filteredPrev = prev.filter(p => !newIds.includes(p.id));
+            return [...filteredPrev, ...data];
+          });
+        }
+        
+        fetchLikedPosts(data.map(p => p.id));
       }
     } catch (err) {
-      console.error("Error fetching posts:", err);
+      console.error(err);
+      showToast("Error fetching posts", "error");
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
@@ -144,7 +188,7 @@ export default function ForumPage() {
       }
     } catch (err) {
       console.error("Error toggling like:", err);
-      fetchPosts();
+      fetchPosts(0);
     }
   };
 
@@ -189,7 +233,7 @@ export default function ForumPage() {
       
       setNewComment("");
       openComments(selectedPost);
-      fetchPosts(); 
+      fetchPosts(0); 
     } catch (err) {
       console.error("Error submitting comment:", err);
     }
@@ -325,8 +369,8 @@ export default function ForumPage() {
               </motion.div>
             )}
           </AnimatePresence>
+          </div>
         </div>
-      </div>
 
       {/* Feed List */}
       <div className="space-y-6">
@@ -434,7 +478,7 @@ export default function ForumPage() {
                 {post.title && <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 font-sans transition-colors duration-300">{post.title}</h3>}
                 <div 
                   className="prose dark:prose-invert prose-sm prose-p:leading-relaxed prose-a:text-[#5F916F] max-w-none text-[15px] text-gray-700 dark:text-gray-300 font-sans line-clamp-3 mb-4 transition-colors duration-300"
-                  dangerouslySetInnerHTML={{ __html: post.content }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
                 />
                 
                 {post.image_url && (
@@ -488,6 +532,21 @@ export default function ForumPage() {
               </div>
             </motion.div>
           ))
+        )}
+        
+        {/* Infinite Scroll Indicators */}
+        {loadingMore && (
+          <div className="flex justify-center py-6">
+            <div className="w-8 h-8 border-4 border-[#3A4335]/20 border-t-[#3A4335] rounded-full animate-spin"></div>
+          </div>
+        )}
+        {!loadingMore && hasMore && posts.length > 0 && (
+          <div ref={observerTarget} className="h-10 w-full" />
+        )}
+        {!hasMore && posts.length > 0 && (
+          <div className="text-center py-8 text-gray-500 font-sans text-sm tracking-wide">
+            You have reached the end of the feed. 🌱
+          </div>
         )}
       </div>
 
@@ -543,7 +602,7 @@ export default function ForumPage() {
                     {selectedPost.title && <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 font-sans transition-colors duration-300">{selectedPost.title}</h3>}
                     <div 
                       className="prose dark:prose-invert prose-base prose-p:leading-relaxed prose-a:text-[#5F916F] max-w-none text-gray-800 dark:text-gray-300 font-sans mb-4 transition-colors duration-300"
-                      dangerouslySetInnerHTML={{ __html: selectedPost.content }}
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedPost.content) }}
                     />
                     {selectedPost.image_url && (
                       <div className="w-full rounded-2xl overflow-hidden bg-gray-100 dark:bg-[#32473D] mb-4 border border-gray-100 dark:border-transparent">
