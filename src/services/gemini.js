@@ -174,7 +174,7 @@ export async function extractFavoriteActivities(chatLogsText) {
   if (!chatLogsText || chatLogsText.trim() === "") return ["Resting", "Listening to Music", "Reflecting"];
   
   const currentApi = API_KEYS[currentKeyIndex];
-  const prompt = `Based on the following chat logs between a user and a mental health assistant, extract up to 3 of the user's favorite activities, hobbies, or things they enjoy doing. Return the result strictly as a valid JSON array of short strings (max 3 words per string) (e.g. ["Reading", "Walking", "Gaming"]). Do not include markdown formatting or other text, just the raw JSON array. If you cannot find any, return a generic self-care activity array like ["Listening to music", "Taking a walk", "Resting"]. \n\nChat logs:\n${chatLogsText.substring(0, 3000)}`;
+  const prompt = `Based on the following chat logs between a user and a mental health assistant, extract up to 3 of the user's favorite activities, hobbies, or things they enjoy doing. Return the result strictly as a valid JSON array of short strings (max 3 words per string). IMPORTANT: Each activity MUST start with an action verb ending in '-ing' (e.g. ["Playing basketball", "Watching anime", "Reading a book"]). Do not return just single nouns like "Basket" or "Anime". Do not include markdown formatting or other text, just the raw JSON array. If you cannot find any, return a generic self-care activity array like ["Listening to music", "Taking a walk", "Resting"]. \n\nChat logs:\n${chatLogsText.substring(0, 3000)}`;
 
   try {
     if (currentApi.provider === "groq") {

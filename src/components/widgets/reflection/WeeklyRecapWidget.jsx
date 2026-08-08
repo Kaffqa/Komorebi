@@ -104,16 +104,24 @@ export function WeeklyRecapWidget() {
         });
       }
 
-      const { data: chatLogs } = await supabase
-        .from('chat_messages')
-        .select('content, role')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(20);
+      const { data: conv } = await supabase
+        .from("chat_conversations")
+        .select("id")
+        .eq("user_id", user.id)
+        .single();
 
       let chatText = "";
-      if (chatLogs && chatLogs.length > 0) {
-        chatText = chatLogs.reverse().map(c => `${c.role}: ${c.content}`).join("\n");
+      if (conv) {
+        const { data: chatLogs } = await supabase
+          .from('chat_messages')
+          .select('content, sender')
+          .eq('conversation_id', conv.id)
+          .order('created_at', { ascending: false })
+          .limit(20);
+
+        if (chatLogs && chatLogs.length > 0) {
+          chatText = chatLogs.reverse().map(c => `${c.sender}: ${c.content}`).join("\n");
+        }
       }
 
       const favActions = await extractFavoriteActivities(chatText);
@@ -284,7 +292,7 @@ export function WeeklyRecapWidget() {
 
             {/* Profile Picture Box (Matched 1:1 to inner frame area) */}
             <div 
-              className="absolute z-10 overflow-hidden bg-[#EFEFE5]"
+              className="absolute z-10 overflow-hidden bg-[#5F916F]"
               style={{ 
                 top: '190px', 
                 left: '190px', 
@@ -294,13 +302,18 @@ export function WeeklyRecapWidget() {
                 borderRadius: '50%' // Circular frame
               }}
             >
-              <img src={avatarUrl} crossOrigin="anonymous" className="w-full h-full object-cover" alt="avatar" />
+              <img 
+                src={profile?.avatar_url || `https://api.dicebear.com/9.x/notionists/png?seed=${profile?.username || userName}`} 
+                crossOrigin="anonymous" 
+                className="w-full h-full object-cover" 
+                alt="avatar" 
+              />
             </div>
 
             {/* User Name */}
             <div 
               className="absolute z-10 w-full text-center"
-              style={{ top: '615px', left: '0' }}
+              style={{ top: '595px', left: '0' }}
             >
               <h1 className="text-[#203323] m-0 leading-none tracking-tight" style={{ fontSize: '46px', fontFamily: '"Sen", sans-serif', fontWeight: 700 }}>
                 {userName}
@@ -336,7 +349,7 @@ export function WeeklyRecapWidget() {
             </div>
 
             {/* Right Column: Fav Actions */}
-            <div className="absolute z-10" style={{ top: '665px', left: '465px' }}>
+            <div className="absolute z-10" style={{ top: '665px', left: '500px' }}>
               <h2 className="text-[#5E7764] mb-4" style={{ fontSize: '26px', fontFamily: '"Sen", sans-serif', fontWeight: 500, letterSpacing: '0.02em' }}>
                 Fav actions
               </h2>
