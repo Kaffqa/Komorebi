@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Plus, X, BookOpen } from 'lucide-react';
-import { Lightbulb, RefreshCw } from 'lucide-react';
+import { Plus, X, BookOpen, Lightbulb, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { supabase } from '../../../services/supabase';
@@ -29,6 +28,7 @@ export function DailyJournalWidget() {
   const [selectedJournal, setSelectedJournal] = useState(null);
   const [existingEntryId, setExistingEntryId] = useState(null);
   const [activePrompt, setActivePrompt] = useState(null);
+  const [isMinimized, setIsMinimized] = useState(false);
   const tagInputRef = useRef(null);
 
   // Load today's journal if it exists
@@ -176,33 +176,88 @@ export function DailyJournalWidget() {
   return (
     <>
       <div className="bg-white dark:bg-komorebi-dark-card rounded-[24px] p-6 lg:p-8 shadow-sm border border-gray-100 dark:border-komorebi-dark-border flex flex-col w-full transition-colors duration-300">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-          <h3 className="text-[20px] font-sans font-medium text-black dark:text-white transition-colors duration-300">{t('journaling.daily_journal.title')}</h3>
-          <div className="flex items-center gap-3">
+        <div className={`flex flex-col sm:flex-row sm:items-center justify-between ${isMinimized ? '' : 'mb-6'} gap-4 transition-all duration-300`}>
+          <div className="flex items-center justify-between w-full sm:w-auto gap-3">
+            <h3 className="text-[20px] font-sans font-medium text-black dark:text-white transition-colors duration-300">{t('journaling.daily_journal.title')}</h3>
             <button 
-              onClick={handleSave}
-              disabled={isSaving || isSaved || !content.trim()}
-              className={`w-[140px] flex justify-center items-center py-2 border rounded-full text-[13px] font-light transition-all duration-300 text-white ${
-                isSaved 
-                  ? "bg-green-500 border-transparent shadow-sm" 
-                  : !content.trim() || isSaving 
-                    ? "bg-gray-300 border-transparent cursor-not-allowed shadow-sm" 
-                    : "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px]"
-              }`}
+              onClick={() => setIsMinimized(!isMinimized)} 
+              className="p-1.5 hover:bg-gray-100 dark:hover:bg-[#32473D] rounded-xl transition-colors text-gray-500 dark:text-gray-400 sm:hidden"
             >
-              {isSaving ? t('journaling.daily_journal.saving') : isSaved ? t('journaling.daily_journal.saved') : t('journaling.daily_journal.save')}
+              {isMinimized ? <ChevronDown className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
             </button>
-              <button 
-                onClick={loadPastJournals}
-                className="w-[140px] flex justify-center items-center border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg text-black dark:text-white hover:bg-gray-50 dark:hover:bg-black/20 py-1.5 rounded-full text-[13px] font-medium transition-colors"
-              >
-                {t('journaling.daily_journal.see_all')}
-              </button>
           </div>
+          
+          <AnimatePresence mode="wait">
+            {!isMinimized ? (
+              <motion.div 
+                key="buttons-expanded"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-3"
+              >
+                <div className="flex items-center gap-3">
+                  <button 
+                    onClick={handleSave}
+                    disabled={isSaving || isSaved || !content.trim()}
+                    className={`w-[140px] flex justify-center items-center py-2 border rounded-full text-[13px] font-light transition-all duration-300 text-white ${
+                      isSaved 
+                        ? "bg-green-500 border-transparent shadow-sm" 
+                        : !content.trim() || isSaving 
+                          ? "bg-gray-300 border-transparent cursor-not-allowed shadow-sm" 
+                          : "bg-gradient-to-b from-[#5F916F] to-[#94B59F] border-[#43674F] shadow-[inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-2px_3px_rgba(0,0,0,0.15),0_4px_6px_rgba(0,0,0,0.1)] hover:brightness-110 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-[1px]"
+                    }`}
+                  >
+                    {isSaving ? t('journaling.daily_journal.saving') : isSaved ? t('journaling.daily_journal.saved') : t('journaling.daily_journal.save')}
+                  </button>
+                  <button 
+                    onClick={loadPastJournals}
+                    className="w-[140px] flex justify-center items-center border border-[#B5CCBD] dark:border-[#32473D] bg-white dark:bg-komorebi-dark-bg text-black dark:text-white hover:bg-gray-50 dark:hover:bg-black/20 py-1.5 rounded-full text-[13px] font-medium transition-colors"
+                  >
+                    {t('journaling.daily_journal.see_all')}
+                  </button>
+                </div>
+                
+                <button 
+                  onClick={() => setIsMinimized(!isMinimized)} 
+                  className="hidden sm:flex p-1.5 hover:bg-gray-100 dark:hover:bg-[#32473D] rounded-xl transition-colors text-gray-500 dark:text-gray-400"
+                >
+                  <ChevronUp className="w-5 h-5" />
+                </button>
+              </motion.div>
+            ) : (
+              <motion.div 
+                key="buttons-minimized"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="hidden sm:flex"
+              >
+                <button 
+                  onClick={() => setIsMinimized(false)} 
+                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-[#32473D] rounded-xl transition-colors text-gray-500 dark:text-gray-400"
+                >
+                  <ChevronDown className="w-5 h-5" />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Guided CBT Prompts Area */}
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
+          {!isMinimized && (
+            <motion.div
+              key="journal-body"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="overflow-hidden flex flex-col"
+            >
+              <AnimatePresence>
           {activePrompt && (
             <motion.div 
               initial={{ opacity: 0, height: 0, marginBottom: 0 }}
@@ -310,6 +365,9 @@ export function DailyJournalWidget() {
             )}
           </div>
         </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* See All Journal Modal */}
