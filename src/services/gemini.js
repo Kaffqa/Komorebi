@@ -59,7 +59,7 @@ async function callStreamWithRetry(history, userMessage, onChunk, retryCount = 0
       }));
 
       const response = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
+        model: "llama-3.1-8b-instant",
         messages: [
           { role: "system", content: dynamicPrompt },
           ...groqHistory,
@@ -80,7 +80,7 @@ async function callStreamWithRetry(history, userMessage, onChunk, retryCount = 0
     } else { // Gemini
       const ai = new GoogleGenAI({ apiKey: currentApi.key });
       const response = await ai.models.generateContentStream({
-        model: "gemini-2.0-flash",
+        model: "gemini-3.5-flash",
         contents: [
           ...history,
           { role: "user", parts: [{ text: userMessage }] },
@@ -102,9 +102,9 @@ async function callStreamWithRetry(history, userMessage, onChunk, retryCount = 0
       return fullText;
     }
   } catch (error) {
-    // Jika error 429 (Quota Exceeded) dan masih ada key cadangan
-    if ((error?.message?.includes("quota") || error?.status === 429 || error?.status === 400 || error?.status === 503) && retryCount < API_KEYS.length - 1) {
-      console.warn(`[AI] Provider ${currentApi.provider} (Key ${currentKeyIndex + 1}) gagal. Merotasi ke key berikutnya...`);
+    // Jika gagal (entah quota, model not found, atau key invalid) dan masih ada key cadangan
+    if (retryCount < API_KEYS.length - 1) {
+      console.warn(`[AI] Provider ${currentApi.provider} (Key ${currentKeyIndex + 1}) gagal. Error: ${error?.message || error}. Merotasi ke key berikutnya...`);
       // Pindah ke key berikutnya (rotasi melingkar)
       currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
       return callStreamWithRetry(history, userMessage, onChunk, retryCount + 1, dynamicPrompt);
@@ -180,7 +180,7 @@ export async function extractFavoriteActivities(chatLogsText) {
     if (currentApi.provider === "groq") {
       const groq = new Groq({ apiKey: currentApi.key, dangerouslyAllowBrowser: true });
       const response = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
+        model: "llama-3.1-8b-instant",
         messages: [{ role: "user", content: prompt }],
         temperature: 0.1,
       });
@@ -189,7 +189,7 @@ export async function extractFavoriteActivities(chatLogsText) {
     } else {
       const ai = new GoogleGenAI({ apiKey: currentApi.key });
       const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-3.5-flash",
         contents: prompt,
         config: { temperature: 0.1 }
       });
