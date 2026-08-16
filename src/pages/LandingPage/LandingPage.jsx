@@ -228,7 +228,7 @@ export default function LandingPage() {
           >
             <SpotlightText 
               className="w-full mb-16 mx-auto text-center"
-              textClassName="text-[28px] md:text-[36px] lg:text-[42px] xl:text-[48px] leading-[1.4]"
+              textClassName="text-[24px] md:text-[28px] lg:text-[34px] xl:text-[38px] 2xl:text-[42px] leading-[1.4]"
             >
               Mental health journeys rarely start with clear answers. Too often, people <br className="hidden lg:block" />
               spend months trying to figure out what they are feeling and who they <br className="hidden lg:block" />
